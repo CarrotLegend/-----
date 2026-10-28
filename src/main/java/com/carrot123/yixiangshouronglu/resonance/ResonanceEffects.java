@@ -1,0 +1,87 @@
+package com.carrot123.yixiangshouronglu.resonance;
+
+import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
+import com.carrot123.yixiangshouronglu.registry.ModItems;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
+
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+@Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+public final class ResonanceEffects {
+    private static final List<Attribute> ATTRIBUTES = List.of(Attributes.MAX_HEALTH, Attributes.ATTACK_DAMAGE, Attributes.MOVEMENT_SPEED, Attributes.KNOCKBACK_RESISTANCE);
+
+    private ResonanceEffects() {
+    }
+
+    private record Key(Attribute attribute, AttributeModifier.Operation operation) {
+    }
+
+    private static UUID modifierId(Key key) {
+        return UUID.nameUUIDFromBytes(("yixiangshouronglu:resonance_core:" + key.attribute().getDescriptionId() + ":" + key.operation().name()).getBytes(StandardCharsets.UTF_8));
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player) || player.tickCount % 20 != 0) {
+            return;
+        }
+        Map<Key, Double> amounts = new HashMap<>();
+        CuriosApi.getCuriosInventory(player).ifPresent(inventory -> {
+            ICurioStacksHandler handler = inventory.getCurios().get("resonance_core");
+            if (handler == null) {
+                return;
+            }
+            for (int slot = 0; slot < handler.getStacks().getSlots(); slot++) {
+                ItemStack core = handler.getStacks().getStackInSlot(slot);
+                if (!core.is(ModItems.RESONANCE_CORE.get())) {
+                    continue;
+                }
+                for (ResonanceLinks.Link link : ResonanceLinks.list(core)) {
+                    String entityId = ResonanceLinks.containedEntity(player.server, link);
+                    if (entityId.isEmpty()) {
+                        continue;
+                    }
+                    ResonanceRules.Bonus bonus = ResonanceRules.fromEntity(entityId);
+                    if (bonus != null) {
+                        amounts.merge(new Key(bonus.attribute(), bonus.operation()), bonus.amount(), Double::sum);
+                    }
+                }
+            }
+        });
+        for (Attribute attribute : ATTRIBUTES) {
+            AttributeInstance instance = player.getAttribute(attribute);
+            if (instance == null) {
+                continue;
+            }
+            for (AttributeModifier.Operation operation : AttributeModifier.Operation.values()) {
+                Key key = new Key(attribute, operation);
+                UUID id = modifierId(key);
+                double amount = amounts.getOrDefault(key, 0.0D);
+                AttributeModifier previous = instance.getModifier(id);
+                if (previous != null && Math.abs(previous.getAmount() - amount) < 0.000001D) {
+                    continue;
+                }
+                if (previous != null) {
+                    instance.removeModifier(id);
+                }
+                if (Math.abs(amount) > 0.000001D) {
+                    instance.addTransientModifier(new AttributeModifier(id, "ACC Resonance Core", amount, operation));
+                }
+            }
+        }
+    }
+}

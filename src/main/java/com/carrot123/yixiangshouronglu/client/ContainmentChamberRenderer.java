@@ -33,9 +33,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ContainmentChamberRenderer implements BlockEntityRenderer<ContainmentChamberBlockEntity> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "textures/block/containment_chamber.png");
+    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
+    private static final ResourceLocation TEXTURE = new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "textures/block/containment_chamber_geometry.png");
     private static final ResourceLocation GEOMETRY = new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "models/block/containment_chamber_geometry.json");
     private final List<Cube> cubes = new ArrayList<>();
+    private final java.util.Map<ContainmentChamberBlockEntity, Preview> previews = new java.util.WeakHashMap<>();
+
+    private static final class Preview {
+        private String entityId = "";
+        private net.minecraft.world.entity.Entity entity;
+    }
 
     public ContainmentChamberRenderer(BlockEntityRendererProvider.Context context) {
         try {
@@ -68,11 +75,47 @@ public final class ContainmentChamberRenderer implements BlockEntityRenderer<Con
             cube.render(poseStack, consumer, packedLight, packedOverlay);
         }
         poseStack.popPose();
+        renderSoul(blockEntity, partialTick, poseStack, buffers, packedLight);
+    }
+
+    private void renderSoul(ContainmentChamberBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffers, int packedLight) {
+        if (blockEntity.getLevel() == null) {
+            return;
+        }
+        String id = blockEntity.getEntityId();
+        Preview preview = previews.computeIfAbsent(blockEntity, unused -> new Preview());
+        if (!id.equals(preview.entityId)) {
+            preview.entityId = id;
+            preview.entity = null;
+            net.minecraft.resources.ResourceLocation entityId = net.minecraft.resources.ResourceLocation.tryParse(id);
+            if (entityId != null) {
+                net.minecraft.world.entity.EntityType<?> type = net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getValue(entityId);
+                if (type != null) {
+                    preview.entity = type.create(blockEntity.getLevel());
+                }
+            }
+        }
+        if (preview.entity == null) {
+            return;
+        }
+        float width = Math.max(0.2F, preview.entity.getBbWidth());
+        float height = Math.max(0.2F, preview.entity.getBbHeight());
+        float scale = Math.min(2.5F, Math.min(0.82F / width, 0.86F / height));
+        poseStack.pushPose();
+        poseStack.translate(0.5D, 2.06D, 0.5D);
+        poseStack.scale(scale, scale, scale);
+        try {
+            Minecraft.getInstance().getEntityRenderDispatcher().render(preview.entity, 0.0D, 0.0D, 0.0D, 0.0F, partialTick, poseStack, buffers, packedLight);
+        } catch (RuntimeException exception) {
+            LOGGER.warn("Failed to display contained entity {}", id, exception);
+            preview.entity = null;
+        }
+        poseStack.popPose();
     }
 
     @Override
     public boolean shouldRenderOffScreen(ContainmentChamberBlockEntity blockEntity) {
-        return false;
+        return true;
     }
 
     private static float[] array(JsonArray arr) {
@@ -137,7 +180,7 @@ public final class ContainmentChamberRenderer implements BlockEntityRenderer<Con
             draw(pose, consumer, light, overlay, 2, new float[][] {{x0,y0,z0},{x0,y0,z1},{x0,y1,z1},{x0,y1,z0}}, -1,0,0);
             draw(pose, consumer, light, overlay, 3, new float[][] {{x1,y0,z1},{x1,y0,z0},{x1,y1,z0},{x1,y1,z1}}, 1,0,0);
             draw(pose, consumer, light, overlay, 4, new float[][] {{x0,y1,z0},{x0,y1,z1},{x1,y1,z1},{x1,y1,z0}}, 0,1,0);
-            draw(pose, consumer, light, overlay, 5, new float[][] {{x0,y0,z1},{x0,y0,z0},{x1,y0,z0},{x1,y0,z1}}, 0,-1,0);
+            draw(pose, consumer, light, overlay, 5, new float[][] {{x0,y0,z1},{x0,y0,z0},{x1,y0,z0},{x1,y0,z1},{x0,y0,z1}}, 0,-1,0);
             pose.popPose();
         }
 

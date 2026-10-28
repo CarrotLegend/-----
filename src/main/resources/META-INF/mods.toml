@@ -1,3 +1,4 @@
+
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
@@ -21,4 +22,11 @@ modId="minecraft"
 mandatory=true
 versionRange="${minecraft_version_range}"
 ordering="NONE"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="curios"
+mandatory=true
+versionRange="[5.14.1,)"
+ordering="AFTER"
 side="BOTH"
