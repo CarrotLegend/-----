@@ -13,9 +13,17 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Set;
+
 @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class SoulDropEvents {
     private static final String DROPPED_KEY = "yixiangshouronglu_soul_dropped";
+    private static final Set<ResourceLocation> ALLOWED_ENTITIES = Set.of(
+            new ResourceLocation("mutantmonsters", "mutant_zombie"),
+            new ResourceLocation("mutantmonsters", "mutant_skeleton"),
+            new ResourceLocation("mutantmonsters", "mutant_creeper"),
+            new ResourceLocation("mutantmonsters", "mutant_enderman")
+    );
 
     private SoulDropEvents() {
     }
@@ -29,7 +37,7 @@ public final class SoulDropEvents {
             return;
         }
         ResourceLocation id = ForgeRegistries.ENTITY_TYPES.getKey(mob.getType());
-        if (id == null) {
+        if (id == null || !ALLOWED_ENTITIES.contains(id)) {
             return;
         }
         mob.getPersistentData().putBoolean(DROPPED_KEY, true);

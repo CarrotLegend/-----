@@ -29,10 +29,13 @@ public final class ResonanceCoreItem extends Item implements ICurioItem {
         super(properties);
     }
 
-    public static void bindOrUnbind(ItemStack stack, ServerPlayer player, BlockPos pos, boolean unlink) {
+    public static void bindOrUnbind(ItemStack stack, ServerPlayer player, BlockPos pos) {
         Link link = new Link(player.level().dimension().location().toString(), pos.immutable());
-        boolean success = unlink ? ResonanceLinks.remove(stack, link) : ResonanceLinks.add(stack, link);
-        String key = unlink ? (success ? "message.yixiangshouronglu.unbound" : "message.yixiangshouronglu.not_bound") : success ? "message.yixiangshouronglu.bound" : ResonanceLinks.contains(stack, link) ? "message.yixiangshouronglu.already_bound" : "message.yixiangshouronglu.bind_limit";
+        boolean alreadyBound = ResonanceLinks.contains(stack, link);
+        boolean success = alreadyBound ? ResonanceLinks.remove(stack, link) : ResonanceLinks.add(stack, link);
+        String key = alreadyBound
+                ? (success ? "message.yixiangshouronglu.unbound" : "message.yixiangshouronglu.not_bound")
+                : (success ? "message.yixiangshouronglu.bound" : "message.yixiangshouronglu.bind_limit");
         player.displayClientMessage(Component.translatable(key), true);
         if (success) {
             player.getInventory().setChanged();

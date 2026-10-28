@@ -3,7 +3,7 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [128, 128],
 	"textures": {
-		"texture_d7c42d3a-5413-43bd-b279-3a1ba0cee3cc": "texture"
+		"texture_d7c42d3a-5413-43bd-b279-3a1ba0cee3cc": "containment_chamber"
 	},
 	"elements": [
 		{

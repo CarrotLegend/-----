@@ -7,7 +7,7 @@
   "item.yixiangshouronglu.soul.named": "%s的灵魂",
   "item.yixiangshouronglu.resonance_core": "共鸣核心",
   "curios.identifier.resonance_core": "共鸣核心",
-  "tooltip.yixiangshouronglu.resonance_core.bind": "{goldflow/}右键收容室绑定，潜行右键解绑。{goldflow/}",
+  "tooltip.yixiangshouronglu.resonance_core.bind": "{goldflow/}右键收容室绑定，再次右键解绑。{goldflow/}",
   "tooltip.yixiangshouronglu.resonance_core.open": "潜行右键展开收容共鸣界面。",
   "screen.yixiangshouronglu.resonance": "收容共鸣",
   "screen.yixiangshouronglu.no_links": "尚未绑定任何收容室",

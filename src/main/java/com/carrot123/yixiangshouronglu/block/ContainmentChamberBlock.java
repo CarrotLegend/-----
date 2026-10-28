@@ -1,8 +1,16 @@
 package com.carrot123.yixiangshouronglu.block;
 
 import com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity;
+import com.carrot123.yixiangshouronglu.item.ResonanceCoreItem;
+import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -18,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -39,7 +48,7 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
+        return state.getValue(HALF) == DoubleBlockHalf.UPPER ? RenderShape.MODEL : RenderShape.INVISIBLE;
     }
 
     @Override
@@ -63,7 +72,7 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, net.minecraft.world.entity.LivingEntity placer, net.minecraft.world.item.ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
     }
 
@@ -74,16 +83,70 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        super.onRemove(state, level, pos, newState, isMoving);
-        if (level.isClientSide || state.is(newState.getBlock())) {
-            return;
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (hand != InteractionHand.MAIN_HAND) {
+            return InteractionResult.PASS;
         }
-
         BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
-        BlockPos upperPos = lowerPos.above();
-        restoreBlock(level, lowerPos, Blocks.IRON_BLOCK.defaultBlockState());
-        restoreBlock(level, upperPos, Blocks.GLASS.defaultBlockState());
+        if (!(level.getBlockEntity(lowerPos) instanceof ContainmentChamberBlockEntity chamber)) {
+            return InteractionResult.PASS;
+        }
+        ItemStack held = player.getItemInHand(hand);
+        if (held.is(ModItems.RESONANCE_CORE.get())) {
+            if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                ResonanceCoreItem.bindOrUnbind(held, serverPlayer, lowerPos);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        if (player.isShiftKeyDown()) {
+            if (!level.isClientSide) {
+                ItemStack returned = chamber.extractSoul();
+                if (!returned.isEmpty() && !player.getInventory().add(returned)) {
+                    player.drop(returned, false);
+                }
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        if (held.is(ModItems.SOUL.get())) {
+            if (!level.isClientSide && chamber.insertSoul(held)) {
+                if (!player.getAbilities().instabuild) {
+                    held.shrink(1);
+                }
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide) {
+            BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+            if (level.getBlockEntity(lowerPos) instanceof ContainmentChamberBlockEntity chamber) {
+                ItemStack extracted = chamber.extractSoul();
+                if (!extracted.isEmpty()) {
+                    Block.popResource(level, lowerPos, extracted);
+                }
+            }
+        }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!level.isClientSide && !state.is(newState.getBlock())) {
+            BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+            if (level.getBlockEntity(lowerPos) instanceof ContainmentChamberBlockEntity chamber) {
+                ItemStack extracted = chamber.extractSoul();
+                if (!extracted.isEmpty()) {
+                    Block.popResource(level, lowerPos, extracted);
+                }
+            }
+            BlockPos upperPos = lowerPos.above();
+            restoreBlock(level, lowerPos, Blocks.IRON_BLOCK.defaultBlockState());
+            restoreBlock(level, upperPos, Blocks.GLASS.defaultBlockState());
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
     }
 
     private void restoreBlock(Level level, BlockPos pos, BlockState restoredState) {
