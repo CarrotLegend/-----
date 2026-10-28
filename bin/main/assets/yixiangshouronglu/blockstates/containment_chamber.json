@@ -1,0 +1,29 @@
+
+{
+  "variants": {
+    "facing=north,half=lower": {
+      "model": "yixiangshouronglu:block/containment_chamber_empty"
+    },
+    "facing=east,half=lower": {
+      "model": "yixiangshouronglu:block/containment_chamber_empty"
+    },
+    "facing=south,half=lower": {
+      "model": "yixiangshouronglu:block/containment_chamber_empty"
+    },
+    "facing=west,half=lower": {
+      "model": "yixiangshouronglu:block/containment_chamber_empty"
+    },
+    "facing=north,half=upper": {
+      "model": "yixiangshouronglu:block/containment_chamber_empty"
+    },
+    "facing=east,half=upper": {
+      "model": "yixiangshouronglu:block/containment_chamber_empty"
+    },
+    "facing=south,half=upper": {
+      "model": "yixiangshouronglu:block/containment_chamber_empty"
+    },
+    "facing=west,half=upper": {
+      "model": "yixiangshouronglu:block/containment_chamber_empty"
+    }
+  }
+}
