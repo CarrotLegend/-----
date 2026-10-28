@@ -1,4 +1,3 @@
-
 {
   "mod.yixiangshouronglu.name": "异想收容录",
   "attribute.name.yixiangshouronglu.all_damage": "全伤害",
@@ -18,10 +17,10 @@
   "message.yixiangshouronglu.unbound": "已解除该收容室的绑定",
   "message.yixiangshouronglu.already_bound": "已绑定该收容室",
   "message.yixiangshouronglu.bind_limit": "收容室绑定数量已达到上限",
-  "bonus.yixiangshouronglu.mutant_zombie": "最大生命值 +8",
-  "bonus.yixiangshouronglu.mutant_skeleton": "攻击伤害 +4",
-  "bonus.yixiangshouronglu.mutant_creeper": "击退抗性 +30%%",
-  "bonus.yixiangshouronglu.mutant_enderman": "移动速度 +15%%",
+  "bonus.yixiangshouronglu.mutant_zombie": "生命恢复Ⅱ\n最大生命值 +10",
+  "bonus.yixiangshouronglu.mutant_skeleton": "枪械通用伤害 +4%%\n射击速度 +2%%",
+  "bonus.yixiangshouronglu.mutant_creeper": "发射器伤害 +5%%\n爆头倍率 +2%%\n最大生命值 +5",
+  "bonus.yixiangshouronglu.mutant_enderman": "移动速度 +10%%\n持枪移动速度 +10%%",
   "bonus.yixiangshouronglu.monster": "攻击伤害 +1",
   "bonus.yixiangshouronglu.creature": "最大生命值 +2",
   "bonus.yixiangshouronglu.other": "移动速度 +5%%",
