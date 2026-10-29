@@ -19,7 +19,10 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class SoulDropEvents {
     private static final String DROPPED_KEY = "yixiangshouronglu_soul_dropped";
-    private static final ResourceLocation BOSS = new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "tenacious_shield");
+
+    private static final ResourceLocation BOSS =
+            new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "tenacious_shield");
+
     private static final Set<ResourceLocation> ALLOWED_ENTITIES = Set.of(
             new ResourceLocation("mutantmonsters", "mutant_zombie"),
             new ResourceLocation("mutantmonsters", "mutant_skeleton"),
@@ -27,6 +30,10 @@ public final class SoulDropEvents {
             new ResourceLocation("mutantmonsters", "mutant_enderman"),
             new ResourceLocation("cataclysm", "amethyst_crab"),
             new ResourceLocation("cataclysm", "clawdian"),
+            new ResourceLocation("mutantmore", "mutant_jungle_zombie"),
+            new ResourceLocation("mutantmore", "mutant_frozen_zombie"),
+            new ResourceLocation("mutantmore", "mutant_husk"),
+            new ResourceLocation("mutantmore", "mutant_wither_skeleton"),
             BOSS
     );
 
@@ -38,18 +45,34 @@ public final class SoulDropEvents {
         if (!(event.getEntity() instanceof Mob mob)) {
             return;
         }
+
         ResourceLocation id = ForgeRegistries.ENTITY_TYPES.getKey(mob.getType());
-        if (id == null || (!ALLOWED_ENTITIES.contains(id) && !ResonanceRules.isAntlersWendigo(id.toString()))) {
+
+        if (id == null || (!ALLOWED_ENTITIES.contains(id)
+                && !ResonanceRules.isAntlersWendigo(id.toString()))) {
             return;
         }
+
         if (!id.equals(BOSS) && !(event.getSource().getEntity() instanceof ServerPlayer)) {
             return;
         }
+
         if (mob.getPersistentData().getBoolean(DROPPED_KEY)) {
             return;
         }
+
         mob.getPersistentData().putBoolean(DROPPED_KEY, true);
+
         ItemStack soul = SoulItem.create(ModItems.SOUL.get(), id);
-        event.getDrops().add(new ItemEntity(mob.level(), mob.getX(), mob.getY() + 0.3D, mob.getZ(), soul));
+
+        event.getDrops().add(
+                new ItemEntity(
+                        mob.level(),
+                        mob.getX(),
+                        mob.getY() + 0.3D,
+                        mob.getZ(),
+                        soul
+                )
+        );
     }
 }

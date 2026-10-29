@@ -168,7 +168,9 @@ public final class ResonanceScreen extends AbstractContainerScreen<ResonanceMenu
                 ? null
                 : ResonanceRules.fromEntity(entry.entityId());
 
-        Component description = bonus == null
+        Component description = ResonanceRules.grantsBlazeProtection(entry.entityId())
+            ? Component.translatable("bonus.yixiangshouronglu.mutantmore_blaze")
+            : bonus == null
                 ? Component.translatable("screen.yixiangshouronglu.no_bonus")
                 : Component.translatable(bonus.translationKey());
 

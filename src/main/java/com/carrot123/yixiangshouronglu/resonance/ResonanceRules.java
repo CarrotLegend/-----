@@ -19,7 +19,18 @@ public final class ResonanceRules {
     private static final String CLAWDIAN = "cataclysm:clawdian";
     private static final String TENACIOUS_SHIELD = "yixiangshouronglu:tenacious_shield";
 
-    public record Bonus(Attribute attribute, AttributeModifier.Operation operation, double amount, String translationKey) {
+    private static final String JUNGLE_ZOMBIE = "mutantmore:mutant_jungle_zombie";
+    private static final String FROZEN_ZOMBIE = "mutantmore:mutant_frozen_zombie";
+    private static final String HUSK = "mutantmore:mutant_husk";
+    private static final String WITHER_SKELETON = "mutantmore:mutant_wither_skeleton";
+    private static final String MUTANT_BLAZE = "mutantmore:mutant_blaze";
+
+    public record Bonus(
+            Attribute attribute,
+            AttributeModifier.Operation operation,
+            double amount,
+            String translationKey
+    ) {
     }
 
     private ResonanceRules() {
@@ -27,15 +38,28 @@ public final class ResonanceRules {
 
     public static boolean isAntlersWendigo(String entityId) {
         ResourceLocation id = ResourceLocation.tryParse(entityId);
-        return id != null && id.getNamespace().equals("antlers") && id.getPath().contains("wendigo");
+
+        return id != null
+                && id.getNamespace().equals("antlers")
+                && id.getPath().contains("wendigo");
+    }
+
+    public static boolean isMutantMoreZombie(String entityId) {
+        return JUNGLE_ZOMBIE.equals(entityId)
+                || FROZEN_ZOMBIE.equals(entityId)
+                || HUSK.equals(entityId);
     }
 
     public static boolean grantsRegeneration(String entityId) {
-        return ZOMBIE.equals(entityId);
+        return ZOMBIE.equals(entityId) || isMutantMoreZombie(entityId);
     }
 
     public static boolean grantsResistance(String entityId) {
         return TENACIOUS_SHIELD.equals(entityId);
+    }
+
+    public static boolean grantsBlazeProtection(String entityId) {
+        return MUTANT_BLAZE.equals(entityId);
     }
 
     public static Bonus fromEntity(String entityId) {
@@ -45,53 +69,110 @@ public final class ResonanceRules {
 
     public static List<Bonus> allBonusesForEntity(String entityId) {
         List<Bonus> bonuses = new ArrayList<>();
+
         if (isAntlersWendigo(entityId)) {
-            add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION, 10.0D, "bonus.yixiangshouronglu.wendigo");
-            add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION, 2.0D, "bonus.yixiangshouronglu.wendigo");
-            add(bonuses, Attributes.MOVEMENT_SPEED, AttributeModifier.Operation.MULTIPLY_TOTAL, 0.10D, "bonus.yixiangshouronglu.wendigo");
+            add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                    10.0D, "bonus.yixiangshouronglu.wendigo");
+            add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION,
+                    2.0D, "bonus.yixiangshouronglu.wendigo");
+            add(bonuses, Attributes.MOVEMENT_SPEED, AttributeModifier.Operation.MULTIPLY_TOTAL,
+                    0.10D, "bonus.yixiangshouronglu.wendigo");
             return bonuses;
         }
+
+        if (isMutantMoreZombie(entityId)) {
+            add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                    10.0D, "bonus.yixiangshouronglu.mutantmore_zombie");
+            add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION,
+                    2.0D, "bonus.yixiangshouronglu.mutantmore_zombie");
+            return bonuses;
+        }
+
         switch (entityId) {
-            case ZOMBIE -> add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION, 10.0D, "bonus.yixiangshouronglu.mutant_zombie");
+            case ZOMBIE -> add(
+                    bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                    10.0D, "bonus.yixiangshouronglu.mutant_zombie"
+            );
+
             case SKELETON -> {
-                addTaa(bonuses, "bullet_gundamage", 0.04D, "bonus.yixiangshouronglu.mutant_skeleton");
-                addTaa(bonuses, "rounds_per_minute", 0.02D, "bonus.yixiangshouronglu.mutant_skeleton");
+                addTaa(bonuses, "bullet_gundamage", 0.04D,
+                        "bonus.yixiangshouronglu.mutant_skeleton");
+                addTaa(bonuses, "rounds_per_minute", 0.02D,
+                        "bonus.yixiangshouronglu.mutant_skeleton");
             }
+
             case CREEPER -> {
-                addTaa(bonuses, "bullet_gundamage_launcher", 0.05D, "bonus.yixiangshouronglu.mutant_creeper");
-                addTaa(bonuses, "headshot_multiplier", 0.02D, "bonus.yixiangshouronglu.mutant_creeper");
-                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION, 5.0D, "bonus.yixiangshouronglu.mutant_creeper");
+                addTaa(bonuses, "bullet_gundamage_launcher", 0.05D,
+                        "bonus.yixiangshouronglu.mutant_creeper");
+                addTaa(bonuses, "headshot_multiplier", 0.02D,
+                        "bonus.yixiangshouronglu.mutant_creeper");
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        5.0D, "bonus.yixiangshouronglu.mutant_creeper");
             }
+
             case ENDERMAN -> {
-                add(bonuses, Attributes.MOVEMENT_SPEED, AttributeModifier.Operation.MULTIPLY_TOTAL, 0.10D, "bonus.yixiangshouronglu.mutant_enderman");
-                addTaa(bonuses, "move_speed", 0.10D, "bonus.yixiangshouronglu.mutant_enderman");
+                add(bonuses, Attributes.MOVEMENT_SPEED, AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.10D, "bonus.yixiangshouronglu.mutant_enderman");
+                addTaa(bonuses, "move_speed", 0.10D,
+                        "bonus.yixiangshouronglu.mutant_enderman");
             }
+
             case CRAB -> {
-                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION, 4.0D, "bonus.yixiangshouronglu.amethyst_crab");
-                addTaa(bonuses, "weight", -0.05D, "bonus.yixiangshouronglu.amethyst_crab");
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        4.0D, "bonus.yixiangshouronglu.amethyst_crab");
+                addTaa(bonuses, "weight", -0.05D,
+                        "bonus.yixiangshouronglu.amethyst_crab");
             }
-            case CLAWDIAN -> add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL, 0.02D, "bonus.yixiangshouronglu.clawdian");
+
+            case CLAWDIAN -> add(
+                    bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                    0.02D, "bonus.yixiangshouronglu.clawdian"
+            );
+
             case TENACIOUS_SHIELD -> {
-                add(bonuses, Attributes.ARMOR, AttributeModifier.Operation.ADDITION, 4.0D, "bonus.yixiangshouronglu.tenacious_shield");
-                add(bonuses, Attributes.ARMOR_TOUGHNESS, AttributeModifier.Operation.ADDITION, 2.0D, "bonus.yixiangshouronglu.tenacious_shield");
+                add(bonuses, Attributes.ARMOR, AttributeModifier.Operation.ADDITION,
+                        4.0D, "bonus.yixiangshouronglu.tenacious_shield");
+                add(bonuses, Attributes.ARMOR_TOUGHNESS, AttributeModifier.Operation.ADDITION,
+                        2.0D, "bonus.yixiangshouronglu.tenacious_shield");
             }
+
+            case WITHER_SKELETON -> add(
+                    bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                    0.04D, "bonus.yixiangshouronglu.mutantmore_wither_skeleton"
+            );
+
             default -> {
             }
         }
+
         return bonuses;
     }
 
-    private static void addTaa(List<Bonus> bonuses, String path, double amount, String translationKey) {
+    private static void addTaa(
+            List<Bonus> bonuses,
+            String path,
+            double amount,
+            String translationKey
+    ) {
         ResourceLocation id = new ResourceLocation("taa", path);
+
         if (ForgeRegistries.ATTRIBUTES.containsKey(id)) {
             Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(id);
+
             if (attribute != null) {
-                add(bonuses, attribute, AttributeModifier.Operation.MULTIPLY_TOTAL, amount, translationKey);
+                add(bonuses, attribute, AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        amount, translationKey);
             }
         }
     }
 
-    private static void add(List<Bonus> bonuses, Attribute attribute, AttributeModifier.Operation operation, double amount, String translationKey) {
+    private static void add(
+            List<Bonus> bonuses,
+            Attribute attribute,
+            AttributeModifier.Operation operation,
+            double amount,
+            String translationKey
+    ) {
         bonuses.add(new Bonus(attribute, operation, amount, translationKey));
     }
 }

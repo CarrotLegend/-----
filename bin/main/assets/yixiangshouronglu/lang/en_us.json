@@ -46,5 +46,9 @@
   "item.yixiangshouronglu.exemption_shield": "Exemption Shield",
   "tooltip.yixiangshouronglu.exemption_shield": "Protects you from two instances of damage.",
   "item.yixiangshouronglu.wendigo_sight": "Wendigo's Sight",
-  "tooltip.yixiangshouronglu.wendigo_sight": "Grants Night Vision and Strength."
+  "tooltip.yixiangshouronglu.wendigo_sight": "Grants Night Vision and Strength.",
+  "item.yixiangshouronglu.blaze_cage": "Blaze Cage",
+  "tooltip.yixiangshouronglu.blaze_cage": "Can contain Blaze Rod Sprites.",
+  "item.yixiangshouronglu.ender_dragon_wings": "Ender Dragon Wings",
+  "tooltip.yixiangshouronglu.ender_dragon_wings": "Creative Flight"
 }
