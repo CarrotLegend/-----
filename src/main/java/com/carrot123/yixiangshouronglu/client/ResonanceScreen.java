@@ -336,6 +336,9 @@ public final class ResonanceScreen extends AbstractContainerScreen<ResonanceMenu
                 2.5F,
                 Math.min(0.82F / width, 0.86F / height)
         );
+        if (ResonanceRules.isAntlersWendigo(entityId)) {
+            scale = Math.min(scale, 0.14F);
+        }
 
         pose.pushPose();
 

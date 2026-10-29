@@ -2,6 +2,7 @@ package com.carrot123.yixiangshouronglu.resonance;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
+import com.carrot123.yixiangshouronglu.registry.ModAttributes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -32,7 +33,8 @@ public final class ResonanceEffects {
             "rounds_per_minute",
             "bullet_gundamage_launcher",
             "headshot_multiplier",
-            "move_speed"
+            "move_speed",
+            "weight"
     };
 
     private ResonanceEffects() {
@@ -42,10 +44,7 @@ public final class ResonanceEffects {
     }
 
     private static UUID modifierId(Key key) {
-        return UUID.nameUUIDFromBytes(
-                ("yixiangshouronglu:resonance_core:" + key.attribute().getDescriptionId() + ":" + key.operation().name())
-                        .getBytes(StandardCharsets.UTF_8)
-        );
+        return UUID.nameUUIDFromBytes(("yixiangshouronglu:resonance_core:" + key.attribute().getDescriptionId() + ":" + key.operation().name()).getBytes(StandardCharsets.UTF_8));
     }
 
     @SubscribeEvent
@@ -56,30 +55,31 @@ public final class ResonanceEffects {
 
         Map<Key, Double> amounts = new HashMap<>();
         boolean[] regeneration = {false};
+        boolean[] resistance = {false};
 
         CuriosApi.getCuriosInventory(player).ifPresent(inventory -> {
             ICurioStacksHandler handler = inventory.getCurios().get("resonance_core");
-
             if (handler == null) {
                 return;
             }
 
             for (int slot = 0; slot < handler.getStacks().getSlots(); slot++) {
                 ItemStack core = handler.getStacks().getStackInSlot(slot);
-
                 if (!core.is(ModItems.RESONANCE_CORE.get())) {
                     continue;
                 }
 
                 for (ResonanceLinks.Link link : ResonanceLinks.list(core)) {
                     String entityId = ResonanceLinks.containedEntity(player.server, link);
-
                     if (entityId.isEmpty()) {
                         continue;
                     }
 
                     if (ResonanceRules.grantsRegeneration(entityId)) {
                         regeneration[0] = true;
+                    }
+                    if (ResonanceRules.grantsResistance(entityId)) {
+                        resistance[0] = true;
                     }
 
                     for (ResonanceRules.Bonus bonus : ResonanceRules.allBonusesForEntity(entityId)) {
@@ -95,13 +95,14 @@ public final class ResonanceEffects {
         managed.add(Attributes.MOVEMENT_SPEED);
         managed.add(Attributes.ATTACK_DAMAGE);
         managed.add(Attributes.KNOCKBACK_RESISTANCE);
+        managed.add(Attributes.ARMOR);
+        managed.add(Attributes.ARMOR_TOUGHNESS);
+        managed.add(ModAttributes.ALL_DAMAGE.get());
 
         for (String path : TAA_ATTRIBUTES) {
             ResourceLocation id = new ResourceLocation("taa", path);
-
             if (ForgeRegistries.ATTRIBUTES.containsKey(id)) {
                 Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(id);
-
                 if (attribute != null) {
                     managed.add(attribute);
                 }
@@ -110,7 +111,6 @@ public final class ResonanceEffects {
 
         for (Attribute attribute : managed) {
             AttributeInstance instance = player.getAttribute(attribute);
-
             if (instance == null) {
                 continue;
             }
@@ -130,22 +130,22 @@ public final class ResonanceEffects {
                 }
 
                 if (Math.abs(amount) > 0.000001D) {
-                    instance.addTransientModifier(
-                            new AttributeModifier(id, "ACC Resonance Core", amount, operation)
-                    );
+                    instance.addTransientModifier(new AttributeModifier(id, "ACC Resonance Core", amount, operation));
                 }
+            }
+        }
+
+        if (resistance[0]) {
+            MobEffectInstance current = player.getEffect(MobEffects.DAMAGE_RESISTANCE);
+            if (current == null || current.getAmplifier() < 0 || (current.getAmplifier() == 0 && current.getDuration() <= 25)) {
+                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 45, 0, false, true, true));
             }
         }
 
         if (regeneration[0]) {
             MobEffectInstance current = player.getEffect(MobEffects.REGENERATION);
-
-            if (current == null
-                    || current.getAmplifier() < 1
-                    || (current.getAmplifier() == 1 && current.getDuration() <= 25)) {
-                player.addEffect(
-                        new MobEffectInstance(MobEffects.REGENERATION, 45, 1, false, true, true)
-                );
+            if (current == null || current.getAmplifier() < 1 || (current.getAmplifier() == 1 && current.getDuration() <= 25)) {
+                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 45, 1, false, true, true));
             }
         }
     }

@@ -4,6 +4,8 @@ import com.carrot123.yixiangshouronglu.combat.AllDamageEvents;
 import com.carrot123.yixiangshouronglu.registry.ModAttributes;
 import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import com.carrot123.yixiangshouronglu.registry.ModBlocks;
+import com.carrot123.yixiangshouronglu.registry.ModCreativeTabs;
+import com.carrot123.yixiangshouronglu.registry.ModEntities;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
 import net.minecraftforge.common.MinecraftForge;
@@ -17,12 +19,17 @@ public final class AnomalousContainmentChronicles {
 
     public AnomalousContainmentChronicles(FMLJavaModLoadingContext context) {
         IEventBus modBus = context.getModEventBus();
+
         ModAttributes.ATTRIBUTES.register(modBus);
         ModBlocks.BLOCKS.register(modBus);
+        ModEntities.ENTITIES.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModMenus.MENUS.register(modBus);
+        ModCreativeTabs.CREATIVE_TABS.register(modBus);
+
         modBus.addListener(ModAttributes::addPlayerAttribute);
+
         MinecraftForge.EVENT_BUS.register(AllDamageEvents.class);
     }
 }

@@ -3,10 +3,11 @@ package com.carrot123.yixiangshouronglu.event;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
+import com.carrot123.yixiangshouronglu.resonance.ResonanceRules;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,11 +19,15 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class SoulDropEvents {
     private static final String DROPPED_KEY = "yixiangshouronglu_soul_dropped";
+    private static final ResourceLocation BOSS = new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "tenacious_shield");
     private static final Set<ResourceLocation> ALLOWED_ENTITIES = Set.of(
             new ResourceLocation("mutantmonsters", "mutant_zombie"),
             new ResourceLocation("mutantmonsters", "mutant_skeleton"),
             new ResourceLocation("mutantmonsters", "mutant_creeper"),
-            new ResourceLocation("mutantmonsters", "mutant_enderman")
+            new ResourceLocation("mutantmonsters", "mutant_enderman"),
+            new ResourceLocation("cataclysm", "amethyst_crab"),
+            new ResourceLocation("cataclysm", "clawdian"),
+            BOSS
     );
 
     private SoulDropEvents() {
@@ -30,14 +35,17 @@ public final class SoulDropEvents {
 
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
-        if (!(event.getEntity() instanceof Mob mob) || !(event.getSource().getEntity() instanceof ServerPlayer)) {
-            return;
-        }
-        if (mob.getPersistentData().getBoolean(DROPPED_KEY)) {
+        if (!(event.getEntity() instanceof Mob mob)) {
             return;
         }
         ResourceLocation id = ForgeRegistries.ENTITY_TYPES.getKey(mob.getType());
-        if (id == null || !ALLOWED_ENTITIES.contains(id)) {
+        if (id == null || (!ALLOWED_ENTITIES.contains(id) && !ResonanceRules.isAntlersWendigo(id.toString()))) {
+            return;
+        }
+        if (!id.equals(BOSS) && !(event.getSource().getEntity() instanceof ServerPlayer)) {
+            return;
+        }
+        if (mob.getPersistentData().getBoolean(DROPPED_KEY)) {
             return;
         }
         mob.getPersistentData().putBoolean(DROPPED_KEY, true);

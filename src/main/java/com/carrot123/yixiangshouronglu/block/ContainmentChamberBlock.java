@@ -2,12 +2,16 @@ package com.carrot123.yixiangshouronglu.block;
 
 import com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity;
 import com.carrot123.yixiangshouronglu.item.ResonanceCoreItem;
+import com.carrot123.yixiangshouronglu.menu.ContainmentChamberMenu;
+import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -17,8 +21,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.Containers;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -30,6 +37,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class ContainmentChamberBlock extends BaseEntityBlock {
@@ -82,6 +90,15 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
         return state.getValue(HALF) == DoubleBlockHalf.LOWER ? new ContainmentChamberBlockEntity(pos, state) : null;
     }
 
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide || state.getValue(HALF) != DoubleBlockHalf.LOWER) {
+            return null;
+        }
+        return createTickerHelper(type, ModBlockEntities.CONTAINMENT_CHAMBER.get(), ContainmentChamberBlockEntity::serverTick);
+    }
+
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (hand != InteractionHand.MAIN_HAND) {
@@ -107,11 +124,20 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        if (held.is(ModItems.SOUL.get())) {
-            if (!level.isClientSide && chamber.insertSoul(held)) {
-                if (!player.getAbilities().instabuild) {
-                    held.shrink(1);
-                }
+        if (held.is(ModItems.SOUL.get()) && chamber.getSoul().isEmpty()) {
+            if (!level.isClientSide && chamber.insertSoul(held) && !player.getAbilities().instabuild) {
+                held.shrink(1);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        if (!chamber.getSoul().isEmpty()) {
+            if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                NetworkHooks.openScreen(serverPlayer,
+                        new SimpleMenuProvider((id, inventory, menuPlayer) -> new ContainmentChamberMenu(id, inventory, chamber), Component.translatable("screen.yixiangshouronglu.chamber.title")),
+                        buffer -> {
+                            buffer.writeBlockPos(lowerPos);
+                            buffer.writeUtf(chamber.getEntityId());
+                        });
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -141,6 +167,7 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
                 if (!extracted.isEmpty()) {
                     Block.popResource(level, lowerPos, extracted);
                 }
+                Containers.dropContents(level, lowerPos, chamber);
             }
             BlockPos upperPos = lowerPos.above();
             restoreBlock(level, lowerPos, Blocks.IRON_BLOCK.defaultBlockState());

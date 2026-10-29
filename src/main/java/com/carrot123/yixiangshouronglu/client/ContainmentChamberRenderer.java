@@ -15,37 +15,32 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 public final class ContainmentChamberRenderer implements BlockEntityRenderer<ContainmentChamberBlockEntity> {
     private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
     private static final ResourceLocation TEXTURE = new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "textures/block/containment_chamber.png");
     private static final ResourceLocation GEOMETRY = new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "models/block/containment_chamber_geometry.json");
-
     private final List<Cube> cubes = new ArrayList<>();
-    private final Map<ContainmentChamberBlockEntity, Preview> previews = new WeakHashMap<>();
+    private final java.util.Map<ContainmentChamberBlockEntity, Preview> previews = new java.util.WeakHashMap<>();
 
     private static final class Preview {
         private String entityId = "";
-        private Entity entity;
+        private net.minecraft.world.entity.Entity entity;
     }
 
     public ContainmentChamberRenderer(BlockEntityRendererProvider.Context context) {
@@ -70,100 +65,60 @@ public final class ContainmentChamberRenderer implements BlockEntityRenderer<Con
         if (blockEntity.getBlockState().getValue(ContainmentChamberBlock.HALF) != DoubleBlockHalf.LOWER) {
             return;
         }
-
         VertexConsumer consumer = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
-
         poseStack.pushPose();
         poseStack.translate(0.5D, 0.0D, 0.5D);
-
         Direction facing = blockEntity.getBlockState().getValue(ContainmentChamberBlock.FACING);
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - facing.toYRot()));
         poseStack.translate(-0.5D, 0.0D, -0.5D);
-
         for (Cube cube : cubes) {
             cube.render(poseStack, consumer, packedLight, packedOverlay);
         }
-
         poseStack.popPose();
-
-        renderSoul(blockEntity, poseStack, buffers, packedLight);
+        renderSoul(blockEntity, partialTick, poseStack, buffers, packedLight);
     }
 
-    private void renderSoul(ContainmentChamberBlockEntity blockEntity, PoseStack poseStack, MultiBufferSource buffers, int packedLight) {
+    private void renderSoul(ContainmentChamberBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffers, int packedLight) {
         if (blockEntity.getLevel() == null) {
             return;
         }
-
         String id = blockEntity.getEntityId();
         Preview preview = previews.computeIfAbsent(blockEntity, unused -> new Preview());
-
         if (id.isBlank()) {
             preview.entityId = "";
             preview.entity = null;
             return;
         }
-
         if (!id.equals(preview.entityId)) {
             preview.entityId = id;
             preview.entity = null;
-
-            ResourceLocation entityId = ResourceLocation.tryParse(id);
-
-            if (entityId != null && ForgeRegistries.ENTITY_TYPES.containsKey(entityId)) {
-                EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(entityId);
+            net.minecraft.resources.ResourceLocation entityId = net.minecraft.resources.ResourceLocation.tryParse(id);
+            if (entityId != null && net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.containsKey(entityId)) {
+                net.minecraft.world.entity.EntityType<?> type = net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getValue(entityId);
                 if (type != null) {
                     preview.entity = type.create(blockEntity.getLevel());
                 }
             }
         }
-
         if (preview.entity == null) {
             return;
         }
-
-        stabilizePreview(preview.entity);
-
         float width = Math.max(0.2F, preview.entity.getBbWidth());
         float height = Math.max(0.2F, preview.entity.getBbHeight());
         float scale = Math.min(2.5F, Math.min(0.82F / width, 0.86F / height));
-
+        if (com.carrot123.yixiangshouronglu.resonance.ResonanceRules.isAntlersWendigo(id)) {
+            scale = Math.min(scale, 0.14F);
+        }
         poseStack.pushPose();
         poseStack.translate(0.5D, 1.5D - height * scale * 0.5D, 0.5D);
         poseStack.scale(scale, scale, scale);
-
         try {
-            Minecraft.getInstance().getEntityRenderDispatcher().render(
-                    preview.entity,
-                    0.0D,
-                    0.0D,
-                    0.0D,
-                    0.0F,
-                    0.0F,
-                    poseStack,
-                    buffers,
-                    packedLight
-            );
+            Minecraft.getInstance().getEntityRenderDispatcher().render(preview.entity, 0.0D, 0.0D, 0.0D, 0.0F, partialTick, poseStack, buffers, packedLight);
         } catch (RuntimeException exception) {
             LOGGER.warn("Failed to display contained entity {}", id, exception);
             preview.entity = null;
         }
-
         poseStack.popPose();
-    }
-
-    private static void stabilizePreview(Entity entity) {
-        entity.tickCount = 0;
-        entity.setYRot(0.0F);
-        entity.yRotO = 0.0F;
-        entity.setXRot(0.0F);
-        entity.xRotO = 0.0F;
-
-        if (entity instanceof LivingEntity living) {
-            living.yBodyRot = 0.0F;
-            living.yBodyRotO = 0.0F;
-            living.yHeadRot = 0.0F;
-            living.yHeadRotO = 0.0F;
-        }
     }
 
     @Override
@@ -191,41 +146,23 @@ public final class ContainmentChamberRenderer implements BlockEntityRenderer<Con
         Cube(JsonObject json) {
             from = array(json.getAsJsonArray("from"));
             to = array(json.getAsJsonArray("to"));
-
-            JsonObject rotation = json.has("rotation")
-                    ? json.getAsJsonObject("rotation")
-                    : new JsonObject();
-
-            origin = rotation.has("origin")
-                    ? array(rotation.getAsJsonArray("origin"))
-                    : new float[] {0, 0, 0};
-
+            JsonObject rotation = json.has("rotation") ? json.getAsJsonObject("rotation") : new JsonObject();
+            origin = rotation.has("origin") ? array(rotation.getAsJsonArray("origin")) : new float[] {0, 0, 0};
             float xa = rotation.has("x") ? rotation.get("x").getAsFloat() : 0;
             float ya = rotation.has("y") ? rotation.get("y").getAsFloat() : 0;
             float za = rotation.has("z") ? rotation.get("z").getAsFloat() : 0;
-
             if (rotation.has("angle")) {
                 float angle = rotation.get("angle").getAsFloat();
                 String axis = GsonHelper.getAsString(rotation, "axis", "y");
-
-                if (axis.equals("x")) {
-                    xa += angle;
-                }
-                if (axis.equals("y")) {
-                    ya += angle;
-                }
-                if (axis.equals("z")) {
-                    za += angle;
-                }
+                if (axis.equals("x")) xa += angle;
+                if (axis.equals("y")) ya += angle;
+                if (axis.equals("z")) za += angle;
             }
-
             xAngle = xa;
             yAngle = ya;
             zAngle = za;
-
             JsonObject faces = json.getAsJsonObject("faces");
             String[] names = {"north", "south", "west", "east", "up", "down"};
-
             for (int i = 0; i < names.length; i++) {
                 if (faces.has(names[i])) {
                     uv[i] = array(faces.getAsJsonObject(names[i]).getAsJsonArray("uv"));
@@ -240,21 +177,18 @@ public final class ContainmentChamberRenderer implements BlockEntityRenderer<Con
             pose.mulPose(Axis.YP.rotationDegrees(yAngle));
             pose.mulPose(Axis.XP.rotationDegrees(xAngle));
             pose.translate(-origin[0], -origin[1], -origin[2]);
-
             float x0 = Math.min(from[0], to[0]);
             float x1 = Math.max(from[0], to[0]);
             float y0 = Math.min(from[1], to[1]);
             float y1 = Math.max(from[1], to[1]);
             float z0 = Math.min(from[2], to[2]);
             float z1 = Math.max(from[2], to[2]);
-
             draw(pose, consumer, light, overlay, 0, new float[][] {{x1,y0,z0},{x0,y0,z0},{x0,y1,z0},{x1,y1,z0}}, 0,0,-1);
             draw(pose, consumer, light, overlay, 1, new float[][] {{x0,y0,z1},{x1,y0,z1},{x1,y1,z1},{x0,y1,z1}}, 0,0,1);
             draw(pose, consumer, light, overlay, 2, new float[][] {{x0,y0,z0},{x0,y0,z1},{x0,y1,z1},{x0,y1,z0}}, -1,0,0);
             draw(pose, consumer, light, overlay, 3, new float[][] {{x1,y0,z1},{x1,y0,z0},{x1,y1,z0},{x1,y1,z1}}, 1,0,0);
             draw(pose, consumer, light, overlay, 4, new float[][] {{x0,y1,z0},{x0,y1,z1},{x1,y1,z1},{x1,y1,z0}}, 0,1,0);
             draw(pose, consumer, light, overlay, 5, new float[][] {{x0,y0,z1},{x0,y0,z0},{x1,y0,z0},{x1,y0,z1}}, 0,-1,0);
-
             pose.popPose();
         }
 
@@ -262,19 +196,14 @@ public final class ContainmentChamberRenderer implements BlockEntityRenderer<Con
             if (uv[face] == null) {
                 return;
             }
-
             PoseStack.Pose current = pose.last();
-
             float u0 = uv[face][0];
             float v0 = uv[face][1];
             float u1 = uv[face][2];
             float v1 = uv[face][3];
-
             float[][] tex = {{u0,v1},{u1,v1},{u1,v0},{u0,v0}};
-
             for (int i = 0; i < 4; i++) {
                 float[] p = vertices[i];
-
                 consumer.vertex(current.pose(), p[0], p[1], p[2])
                         .color(255, 255, 255, 255)
                         .uv(tex[i][0], tex[i][1])

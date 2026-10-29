@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "yixiangshouronglu:item/tenacious_shield_fragment"
+  }
+}

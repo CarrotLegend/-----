@@ -1,4 +1,5 @@
 {
+  "itemGroup.yixiangshouronglu.main": "异想收容录",
   "mod.yixiangshouronglu.name": "异想收容录",
   "attribute.name.yixiangshouronglu.all_damage": "全伤害",
   "block.yixiangshouronglu.containment_chamber": "收容室",
@@ -24,5 +25,22 @@
   "bonus.yixiangshouronglu.monster": "攻击伤害 +1",
   "bonus.yixiangshouronglu.creature": "最大生命值 +2",
   "bonus.yixiangshouronglu.other": "移动速度 +5%%",
-  "message.yixiangshouronglu.not_bound": "尚未绑定该收容室"
+  "message.yixiangshouronglu.not_bound": "尚未绑定该收容室",
+  "bonus.yixiangshouronglu.wendigo": "最大生命值 +10\n攻击伤害 +2\n移动速度 +10%%",
+  "item.yixiangshouronglu.wendigo_eye": "温迪戈之眼",
+  "tooltip.yixiangshouronglu.wendigo_eye": "食用后获得2分钟夜视",
+  "screen.yixiangshouronglu.chamber.title": "收容室",
+  "screen.yixiangshouronglu.chamber.rate": "产出率：%s · %s",
+  "screen.yixiangshouronglu.chamber.rate_two_per_minute": "2个/分钟",
+  "screen.yixiangshouronglu.chamber.rate_two_minutes": "1个/2分钟",
+  "screen.yixiangshouronglu.chamber.rate_five_minutes": "1个/5分钟",
+  "screen.yixiangshouronglu.chamber.no_production": "没有可产出的资源",
+  "entity.yixiangshouronglu.tenacious_shield": "坚韧之盾",
+  "item.yixiangshouronglu.tenacious_shield_fragment": "坚韧之盾碎片",
+  "item.yixiangshouronglu.tenacious_shield_spawn_egg": "坚韧之盾刷怪蛋",
+  "bonus.yixiangshouronglu.amethyst_crab": "最大生命值 +4\n枪械重量 -5%%",
+  "bonus.yixiangshouronglu.clawdian": "全伤害 +2%%",
+  "bonus.yixiangshouronglu.tenacious_shield": "护甲 +4\n盔甲韧性 +2\n抗性提升Ⅰ",
+  "screen.yixiangshouronglu.chamber.rate_one_per_minute": "1个/分钟",
+  "screen.yixiangshouronglu.chamber.rate_four_minutes": "1个/4分钟"
 }
