@@ -1,4 +1,9 @@
 {
-  "entities": ["minecraft:player"],
-  "slots": ["resonance_core"]
+  "entities": [
+    "minecraft:player"
+  ],
+  "slots": [
+    "resonance_core",
+    "head"
+  ]
 }

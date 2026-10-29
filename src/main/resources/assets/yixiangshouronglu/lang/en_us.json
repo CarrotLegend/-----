@@ -42,5 +42,9 @@
   "bonus.yixiangshouronglu.clawdian": "All Damage +2%%",
   "bonus.yixiangshouronglu.tenacious_shield": "Armor +4\nArmor Toughness +2\nResistance I",
   "screen.yixiangshouronglu.chamber.rate_one_per_minute": "1/min",
-  "screen.yixiangshouronglu.chamber.rate_four_minutes": "1/4 min"
+  "screen.yixiangshouronglu.chamber.rate_four_minutes": "1/4 min",
+  "item.yixiangshouronglu.exemption_shield": "Exemption Shield",
+  "tooltip.yixiangshouronglu.exemption_shield": "Protects you from two instances of damage.",
+  "item.yixiangshouronglu.wendigo_sight": "Wendigo's Sight",
+  "tooltip.yixiangshouronglu.wendigo_sight": "Grants Night Vision and Strength."
 }

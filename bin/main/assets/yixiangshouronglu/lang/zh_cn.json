@@ -42,5 +42,9 @@
   "bonus.yixiangshouronglu.clawdian": "全伤害 +2%%",
   "bonus.yixiangshouronglu.tenacious_shield": "护甲 +4\n盔甲韧性 +2\n抗性提升Ⅰ",
   "screen.yixiangshouronglu.chamber.rate_one_per_minute": "1个/分钟",
-  "screen.yixiangshouronglu.chamber.rate_four_minutes": "1个/4分钟"
+  "screen.yixiangshouronglu.chamber.rate_four_minutes": "1个/4分钟",
+  "item.yixiangshouronglu.exemption_shield": "豁免盾牌",
+  "tooltip.yixiangshouronglu.exemption_shield": "为你抵御两次伤害。",
+  "item.yixiangshouronglu.wendigo_sight": "温迪戈之视",
+  "tooltip.yixiangshouronglu.wendigo_sight": "获得夜视与力量。"
 }
