@@ -34,7 +34,12 @@ public final class ResonanceEffects {
             "bullet_gundamage_launcher",
             "headshot_multiplier",
             "move_speed",
-            "weight"
+            "weight",
+            "bullet_gundamage_sniper",
+            "bullet_gundamage_smg",
+            "bullet_gundamage_shotgun",
+            "bullet_gundamage_rifle",
+            "bullet_gundamage_pistol"
     };
 
     private ResonanceEffects() {

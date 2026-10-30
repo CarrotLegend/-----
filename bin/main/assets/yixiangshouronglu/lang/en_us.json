@@ -50,5 +50,13 @@
   "item.yixiangshouronglu.blaze_cage": "Blaze Cage",
   "tooltip.yixiangshouronglu.blaze_cage": "Can contain Blaze Rod Sprites.",
   "item.yixiangshouronglu.ender_dragon_wings": "Ender Dragon Wings",
-  "tooltip.yixiangshouronglu.ender_dragon_wings": "Creative Flight"
+  "tooltip.yixiangshouronglu.ender_dragon_wings": "Creative Flight",
+  "bonus.yixiangshouronglu.mutantmore_zombie": "Regeneration II\nMax Health +10\nAttack Damage +2",
+  "bonus.yixiangshouronglu.mutantmore_wither_skeleton": "All Damage +4%%",
+  "bonus.yixiangshouronglu.mutantmore_blaze": "Immune to Fire Damage\n+10%% Damage to Burning Enemies",
+  "screen.yixiangshouronglu.chamber.rate_four_per_minute": "4/min",
+  "bonus.yixiangshouronglu.scylla": "Max Health +5\nSniper Damage +10%%\nLauncher Damage +10%%",
+  "bonus.yixiangshouronglu.the_leviathan": "Max Health +5\nSMG Damage +10%%\nShotgun Damage +10%%",
+  "bonus.yixiangshouronglu.ender_guardian": "Max Health +5\nRifle Damage +10%%\nPistol Damage +10%%",
+  "bonus.yixiangshouronglu.wither": "Max Health +5\nAll Damage +6%%"
 }

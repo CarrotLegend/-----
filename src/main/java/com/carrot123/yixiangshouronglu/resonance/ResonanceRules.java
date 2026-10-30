@@ -15,8 +15,12 @@ public final class ResonanceRules {
     private static final String SKELETON = "mutantmonsters:mutant_skeleton";
     private static final String CREEPER = "mutantmonsters:mutant_creeper";
     private static final String ENDERMAN = "mutantmonsters:mutant_enderman";
+    private static final String WITHER = "minecraft:wither";
     private static final String CRAB = "cataclysm:amethyst_crab";
     private static final String CLAWDIAN = "cataclysm:clawdian";
+    private static final String SCYLLA = "cataclysm:scylla";
+    private static final String LEVIATHAN = "cataclysm:the_leviathan";
+    private static final String ENDER_GUARDIAN = "cataclysm:ender_guardian";
     private static final String TENACIOUS_SHIELD = "yixiangshouronglu:tenacious_shield";
 
     private static final String JUNGLE_ZOMBIE = "mutantmore:mutant_jungle_zombie";
@@ -117,6 +121,13 @@ public final class ResonanceRules {
                         "bonus.yixiangshouronglu.mutant_enderman");
             }
 
+            case WITHER -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        5.0D, "bonus.yixiangshouronglu.wither");
+                add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.06D, "bonus.yixiangshouronglu.wither");
+            }
+
             case CRAB -> {
                 add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
                         4.0D, "bonus.yixiangshouronglu.amethyst_crab");
@@ -128,6 +139,33 @@ public final class ResonanceRules {
                     bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
                     0.02D, "bonus.yixiangshouronglu.clawdian"
             );
+
+            case SCYLLA -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        5.0D, "bonus.yixiangshouronglu.scylla");
+                addTaa(bonuses, "bullet_gundamage_sniper", 0.10D,
+                        "bonus.yixiangshouronglu.scylla");
+                addTaa(bonuses, "bullet_gundamage_launcher", 0.10D,
+                        "bonus.yixiangshouronglu.scylla");
+            }
+
+            case LEVIATHAN -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        5.0D, "bonus.yixiangshouronglu.the_leviathan");
+                addTaa(bonuses, "bullet_gundamage_smg", 0.10D,
+                        "bonus.yixiangshouronglu.the_leviathan");
+                addTaa(bonuses, "bullet_gundamage_shotgun", 0.10D,
+                        "bonus.yixiangshouronglu.the_leviathan");
+            }
+
+            case ENDER_GUARDIAN -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        5.0D, "bonus.yixiangshouronglu.ender_guardian");
+                addTaa(bonuses, "bullet_gundamage_rifle", 0.10D,
+                        "bonus.yixiangshouronglu.ender_guardian");
+                addTaa(bonuses, "bullet_gundamage_pistol", 0.10D,
+                        "bonus.yixiangshouronglu.ender_guardian");
+            }
 
             case TENACIOUS_SHIELD -> {
                 add(bonuses, Attributes.ARMOR, AttributeModifier.Operation.ADDITION,

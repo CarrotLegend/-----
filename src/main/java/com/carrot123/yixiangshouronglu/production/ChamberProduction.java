@@ -1,4 +1,3 @@
-
 package com.carrot123.yixiangshouronglu.production;
 
 import com.carrot123.yixiangshouronglu.registry.ModItems;
@@ -43,9 +42,17 @@ public final class ChamberProduction {
                     new Recipe(Items.GUNPOWDER, 600, "screen.yixiangshouronglu.chamber.rate_two_per_minute");
             case "mutantmonsters:mutant_enderman" ->
                     new Recipe(Items.ENDER_PEARL, 2400, "screen.yixiangshouronglu.chamber.rate_two_minutes");
+            case "minecraft:wither" ->
+                    new Recipe(Items.NETHERITE_SCRAP, 1200, "screen.yixiangshouronglu.chamber.rate_one_per_minute");
             case "cataclysm:amethyst_crab" ->
                     new Recipe(Items.AMETHYST_SHARD, 600, "screen.yixiangshouronglu.chamber.rate_two_per_minute");
             case "cataclysm:clawdian" -> cataclysmLacrima();
+            case "cataclysm:scylla" ->
+                    cataclysmFiveMinute("essence_of_the_storm");
+            case "cataclysm:the_leviathan" ->
+                    cataclysmFiveMinute("abyssal_egg");
+            case "cataclysm:ender_guardian" ->
+                    cataclysmFiveMinute("enderite_block");
             case "yixiangshouronglu:tenacious_shield" ->
                     new Recipe(ModItems.TENACIOUS_SHIELD_FRAGMENT.get(), 4800, "screen.yixiangshouronglu.chamber.rate_four_minutes");
             case "mutantmore:mutant_wither_skeleton" ->
@@ -69,5 +76,20 @@ public final class ChamberProduction {
         return item == null
                 ? null
                 : new Recipe(item, 1200, "screen.yixiangshouronglu.chamber.rate_one_per_minute");
+    }
+
+    @Nullable
+    private static Recipe cataclysmFiveMinute(String itemPath) {
+        ResourceLocation id = new ResourceLocation("cataclysm", itemPath);
+
+        if (!ForgeRegistries.ITEMS.containsKey(id)) {
+            return null;
+        }
+
+        Item item = ForgeRegistries.ITEMS.getValue(id);
+
+        return item == null
+                ? null
+                : new Recipe(item, 6000, "screen.yixiangshouronglu.chamber.rate_five_minutes");
     }
 }

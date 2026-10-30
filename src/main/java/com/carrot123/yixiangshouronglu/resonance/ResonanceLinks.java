@@ -20,6 +20,7 @@ import java.util.List;
 
 public final class ResonanceLinks {
     public static final int MAX_LINKS = 64;
+    public static final int MAX_BINDINGS = 10;
     private static final String LINKS_KEY = "BoundChambers";
 
     private ResonanceLinks() {
@@ -57,7 +58,7 @@ public final class ResonanceLinks {
 
     public static boolean add(ItemStack stack, Link link) {
         List<Link> links = list(stack);
-        if (links.contains(link) || links.size() >= MAX_LINKS) {
+        if (links.contains(link) || links.size() >= MAX_BINDINGS) {
             return false;
         }
         links.add(link);

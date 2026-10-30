@@ -54,5 +54,9 @@
   "bonus.yixiangshouronglu.mutantmore_zombie": "生命恢复Ⅱ\n最大生命值 +10\n攻击伤害 +2",
   "bonus.yixiangshouronglu.mutantmore_wither_skeleton": "全伤害 +4%%",
   "bonus.yixiangshouronglu.mutantmore_blaze": "免疫火焰伤害\n对着火目标伤害 +10%%",
-  "screen.yixiangshouronglu.chamber.rate_four_per_minute": "4个/分钟"
+  "screen.yixiangshouronglu.chamber.rate_four_per_minute": "4个/分钟",
+  "bonus.yixiangshouronglu.scylla": "最大生命值 +5\n狙击枪伤害 +10%%\n发射器伤害 +10%%",
+  "bonus.yixiangshouronglu.the_leviathan": "最大生命值 +5\n冲锋枪伤害 +10%%\n霰弹枪伤害 +10%%",
+  "bonus.yixiangshouronglu.ender_guardian": "最大生命值 +5\n步枪伤害 +10%%\n手枪伤害 +10%%",
+  "bonus.yixiangshouronglu.wither": "最大生命值 +5\n全伤害 +6%%"
 }
