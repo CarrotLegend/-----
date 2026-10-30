@@ -32,6 +32,7 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.BLAZE_CAGE.get());
                                 output.accept(ModItems.ENDER_DRAGON_WINGS.get());
                                 output.accept(ModItems.REFINED_DRAGON_MEAL.get());
+                                output.accept(ModItems.SAPHYRA_GEM.get());
                             })
                             .build()
             );

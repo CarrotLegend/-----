@@ -30,6 +30,7 @@ public final class ModItems {
     public static final RegistryObject<Item> BLAZE_CAGE = ITEMS.register("blaze_cage", () -> new BlazeCageItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ENDER_DRAGON_WINGS = ITEMS.register("ender_dragon_wings", () -> new EnderDragonWingsItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> REFINED_DRAGON_MEAL = ITEMS.register("refined_dragon_meal", () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> SAPHYRA_GEM = ITEMS.register("saphyra_gem", () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.EPIC)));
 
     private ModItems() {
     }

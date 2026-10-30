@@ -72,5 +72,10 @@
   "message.yixiangshouronglu.dragon_not_owned": "只有自己驯服的龙才能进行收容",
   "message.yixiangshouronglu.dragon_not_mature": "龙尚未达到最终成长阶段",
   "message.yixiangshouronglu.dragon_not_alive": "无法对已死亡的龙进行收容",
-  "message.yixiangshouronglu.dragon_soul_obtained": "成功收容巨龙！"
+  "message.yixiangshouronglu.dragon_soul_obtained": "成功收容巨龙！",
+  "item.yixiangshouronglu.saphyra_gem": "萨菲拉宝石",
+  "message.yixiangshouronglu.kinora_soul_obtained": "成功收容基诺拉！",
+  "bonus.yixiangshouronglu.kinora": "攻击伤害 +8",
+  "bonus.yixiangshouronglu.blot": "枪械重量 -5%%\n枪械伤害 +5%%",
+  "bonus.yixiangshouronglu.black_charro": "全伤害 +5%%\n移动速度 +10%%"
 }

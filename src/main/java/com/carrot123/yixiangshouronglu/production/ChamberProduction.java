@@ -80,16 +80,28 @@ public final class ChamberProduction {
                     cataclysmLacrima();
 
             case "cataclysm:scylla" ->
-                    externalItem("cataclysm", "essence_of_the_storm", 6000,
-                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
+                    externalItem(
+                            "cataclysm",
+                            "essence_of_the_storm",
+                            6000,
+                            "screen.yixiangshouronglu.chamber.rate_five_minutes"
+                    );
 
             case "cataclysm:the_leviathan" ->
-                    externalItem("cataclysm", "abyssal_egg", 6000,
-                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
+                    externalItem(
+                            "cataclysm",
+                            "abyssal_egg",
+                            6000,
+                            "screen.yixiangshouronglu.chamber.rate_five_minutes"
+                    );
 
             case "cataclysm:ender_guardian" ->
-                    externalItem("cataclysm", "enderite_block", 6000,
-                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
+                    externalItem(
+                            "cataclysm",
+                            "enderite_block",
+                            6000,
+                            "screen.yixiangshouronglu.chamber.rate_five_minutes"
+                    );
 
             case "yixiangshouronglu:tenacious_shield" ->
                     new Recipe(
@@ -120,20 +132,55 @@ public final class ChamberProduction {
                     );
 
             case "iceandfire:fire_dragon" ->
-                    externalItem("iceandfire", "dragonsteel_fire_ingot", 4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
+                    externalItem(
+                            "iceandfire",
+                            "dragonsteel_fire_ingot",
+                            4800,
+                            "screen.yixiangshouronglu.chamber.rate_four_minutes"
+                    );
 
             case "iceandfire:ice_dragon" ->
-                    externalItem("iceandfire", "dragonsteel_ice_ingot", 4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
+                    externalItem(
+                            "iceandfire",
+                            "dragonsteel_ice_ingot",
+                            4800,
+                            "screen.yixiangshouronglu.chamber.rate_four_minutes"
+                    );
 
             case "iceandfire:lightning_dragon" ->
-                    externalItem("iceandfire", "dragonsteel_lightning_ingot", 4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
+                    externalItem(
+                            "iceandfire",
+                            "dragonsteel_lightning_ingot",
+                            4800,
+                            "screen.yixiangshouronglu.chamber.rate_four_minutes"
+                    );
 
             case "yixiangshouronglu:young_ender_dragon" ->
                     new Recipe(
                             Items.DRAGON_EGG,
+                            4800,
+                            "screen.yixiangshouronglu.chamber.rate_four_minutes"
+                    );
+
+            case "mokels_boss_mantyd:boss_mantyd" ->
+                    new Recipe(
+                            Items.DIAMOND,
+                            1200,
+                            "screen.yixiangshouronglu.chamber.rate_one_per_minute"
+                    );
+
+            case "theinkarena:blot" ->
+                    externalItem(
+                            "theinkarena",
+                            "ink_waste",
+                            600,
+                            "screen.yixiangshouronglu.chamber.rate_two_per_minute"
+                    );
+
+            case "mythsandlegends:black_charro" ->
+                    externalItem(
+                            "mythsandlegends",
+                            "tenebrite_shard",
                             4800,
                             "screen.yixiangshouronglu.chamber.rate_four_minutes"
                     );

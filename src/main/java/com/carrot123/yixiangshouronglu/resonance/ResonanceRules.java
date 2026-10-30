@@ -35,6 +35,10 @@ public final class ResonanceRules {
     private static final String ICE_DRAGON = "iceandfire:ice_dragon";
     private static final String LIGHTNING_DRAGON = "iceandfire:lightning_dragon";
 
+    private static final String KINORA = "mokels_boss_mantyd:boss_mantyd";
+    private static final String BLOT = "theinkarena:blot";
+    private static final String BLACK_CHARRO = "mythsandlegends:black_charro";
+
     public record Bonus(
             Attribute attribute,
             AttributeModifier.Operation operation,
@@ -202,6 +206,24 @@ public final class ResonanceRules {
                         10.0D, "bonus.yixiangshouronglu.young_ender_dragon");
                 add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
                         0.05D, "bonus.yixiangshouronglu.young_ender_dragon");
+            }
+
+            case KINORA ->
+                    add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION,
+                            8.0D, "bonus.yixiangshouronglu.kinora");
+
+            case BLOT -> {
+                addTaa(bonuses, "weight", -0.05D,
+                        "bonus.yixiangshouronglu.blot");
+                addTaa(bonuses, "bullet_gundamage", 0.05D,
+                        "bonus.yixiangshouronglu.blot");
+            }
+
+            case BLACK_CHARRO -> {
+                add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.05D, "bonus.yixiangshouronglu.black_charro");
+                add(bonuses, Attributes.MOVEMENT_SPEED, AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.10D, "bonus.yixiangshouronglu.black_charro");
             }
 
             default -> {

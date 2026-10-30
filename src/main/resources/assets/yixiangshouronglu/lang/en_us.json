@@ -72,5 +72,10 @@
   "message.yixiangshouronglu.dragon_not_owned": "Only dragons tamed by you can be converted into souls",
   "message.yixiangshouronglu.dragon_not_mature": "The dragon has not reached its final growth stage",
   "message.yixiangshouronglu.dragon_not_alive": "A dead dragon cannot be converted into a soul",
-  "message.yixiangshouronglu.dragon_soul_obtained": "The dragon has been converted into a soul"
+  "message.yixiangshouronglu.dragon_soul_obtained": "The dragon has been converted into a soul",
+  "item.yixiangshouronglu.saphyra_gem": "Saphyra Gem",
+  "message.yixiangshouronglu.kinora_soul_obtained": "Kinora has been contained!",
+  "bonus.yixiangshouronglu.kinora": "Attack Damage +8",
+  "bonus.yixiangshouronglu.blot": "Gun Weight -5%%\nGun Damage +5%%",
+  "bonus.yixiangshouronglu.black_charro": "All Damage +5%%\nMovement Speed +10%%"
 }

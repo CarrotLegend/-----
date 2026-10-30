@@ -1,3 +1,4 @@
+
 package com.carrot123.yixiangshouronglu.event;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
@@ -29,6 +30,12 @@ public final class SoulDropEvents {
     private static final ResourceLocation WITHER =
             new ResourceLocation("minecraft", "wither");
 
+    private static final ResourceLocation BLOT =
+            new ResourceLocation("theinkarena", "blot");
+
+    private static final ResourceLocation BLACK_CHARRO =
+            new ResourceLocation("mythsandlegends", "black_charro");
+
     private static final Set<ResourceLocation> ALLOWED_ENTITIES = Set.of(
             new ResourceLocation("mutantmonsters", "mutant_zombie"),
             new ResourceLocation("mutantmonsters", "mutant_skeleton"),
@@ -45,6 +52,8 @@ public final class SoulDropEvents {
             new ResourceLocation("mutantmore", "mutant_hoglin"),
             new ResourceLocation("mutantmore", "mutant_wither_skeleton"),
             WITHER,
+            BLOT,
+            BLACK_CHARRO,
             BOSS
     );
 
@@ -66,6 +75,8 @@ public final class SoulDropEvents {
 
         if (!id.equals(BOSS)
                 && !id.equals(WITHER)
+                && !id.equals(BLOT)
+                && !id.equals(BLACK_CHARRO)
                 && !(event.getSource().getEntity() instanceof ServerPlayer)) {
             return;
         }
