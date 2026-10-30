@@ -1,8 +1,6 @@
 package com.carrot123.yixiangshouronglu.client;
 
-import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.entity.TenaciousShieldEntity;
-import com.carrot123.yixiangshouronglu.registry.ModEntities;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,10 +13,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 public final class TenaciousShieldRenderer extends EntityRenderer<TenaciousShieldEntity> {
     private static final ItemStack EYE = new ItemStack(Items.ENDER_EYE);
@@ -104,20 +98,5 @@ public final class TenaciousShieldRenderer extends EntityRenderer<TenaciousShiel
     @Override
     public ResourceLocation getTextureLocation(TenaciousShieldEntity entity) {
         return InventoryMenu.BLOCK_ATLAS;
-    }
-
-    @Mod.EventBusSubscriber(
-            modid = AnomalousContainmentChronicles.MOD_ID,
-            bus = Mod.EventBusSubscriber.Bus.MOD,
-            value = Dist.CLIENT
-    )
-    public static final class Registration {
-        @SubscribeEvent
-        public static void register(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerEntityRenderer(
-                    ModEntities.TENACIOUS_SHIELD.get(),
-                    TenaciousShieldRenderer::new
-            );
-        }
     }
 }

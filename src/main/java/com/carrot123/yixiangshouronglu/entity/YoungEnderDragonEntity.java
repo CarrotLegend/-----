@@ -1,5 +1,6 @@
 package com.carrot123.yixiangshouronglu.entity;
 
+import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.nbt.CompoundTag;
@@ -11,6 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -26,11 +29,14 @@ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.entity.projectile.DragonFireball;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
@@ -174,18 +180,29 @@ public final class YoungEnderDragonEntity extends TamableAnimal {
             Player player,
             InteractionHand hand
     ) {
+        if (!isTame() || !isOwnedBy(player)) {
+            return super.mobInteract(player, hand);
+        }
+
         ItemStack held = player.getItemInHand(hand);
 
-        if (isTame() && held.is(Items.NETHER_STAR)) {
-            if (getOwnerUUID() == null
-                    || !getOwnerUUID().equals(player.getUUID())) {
-                return InteractionResult.FAIL;
-            }
+        if (hand == InteractionHand.MAIN_HAND
+                && !held.is(Items.NETHER_STAR)
+                && player.getOffhandItem().is(Items.NETHER_STAR)) {
+            return InteractionResult.PASS;
+        }
 
+        if (held.is(Items.NETHER_STAR)) {
             if (!level().isClientSide) {
+                var entityId = ForgeRegistries.ENTITY_TYPES.getKey(getType());
+
+                if (entityId == null) {
+                    return InteractionResult.FAIL;
+                }
+
                 ItemStack soul = SoulItem.create(
                         ModItems.SOUL.get(),
-                        ForgeRegistries.ENTITY_TYPES.getKey(getType())
+                        entityId
                 );
 
                 if (!player.getInventory().add(soul)) {
@@ -198,32 +215,29 @@ public final class YoungEnderDragonEntity extends TamableAnimal {
             return InteractionResult.sidedSuccess(level().isClientSide);
         }
 
-        if (isTame()
-                && held.isEmpty()
-                && getOwnerUUID() != null
-                && getOwnerUUID().equals(player.getUUID())) {
-            if (!level().isClientSide) {
-                Mode next = switch (getMode()) {
-                    case ROAM -> Mode.FOLLOW;
-                    case FOLLOW -> Mode.STAY;
-                    case STAY -> Mode.ROAM;
-                };
-
-                setMode(next);
-
-                player.displayClientMessage(
-                        Component.translatable(
-                                "message.yixiangshouronglu.young_ender_dragon."
-                                        + next.name().toLowerCase(Locale.ROOT)
-                        ),
-                        true
-                );
-            }
-
-            return InteractionResult.sidedSuccess(level().isClientSide);
+        if (hand != InteractionHand.MAIN_HAND) {
+            return InteractionResult.PASS;
         }
 
-        return super.mobInteract(player, hand);
+        if (!level().isClientSide) {
+            Mode next = switch (getMode()) {
+                case ROAM -> Mode.FOLLOW;
+                case FOLLOW -> Mode.STAY;
+                case STAY -> Mode.ROAM;
+            };
+
+            setMode(next);
+
+            player.displayClientMessage(
+                    Component.translatable(
+                            "message.yixiangshouronglu.young_ender_dragon."
+                                    + next.name().toLowerCase(Locale.ROOT)
+                    ),
+                    true
+            );
+        }
+
+        return InteractionResult.sidedSuccess(level().isClientSide);
     }
 
     @Override
@@ -267,8 +281,7 @@ public final class YoungEnderDragonEntity extends TamableAnimal {
                     level().getMinBuildHeight() + 1,
                     Math.min(
                             level().getMaxBuildHeight() - 2,
-                            getY()
-                                    + (getRandom().nextDouble() - 0.5D) * 6.0D
+                            getY() + (getRandom().nextDouble() - 0.5D) * 6.0D
                     )
             );
 
@@ -326,7 +339,7 @@ public final class YoungEnderDragonEntity extends TamableAnimal {
                 return;
             }
 
-            SmallFireball fireball = new SmallFireball(
+            DragonFireball fireball = new DragonFireball(
                     level(),
                     YoungEnderDragonEntity.this,
                     direction.x,
@@ -340,8 +353,52 @@ public final class YoungEnderDragonEntity extends TamableAnimal {
                     getZ() + direction.z * 0.6D
             );
 
-            level().addFreshEntity(fireball);
-            cooldown = 60;
+            if (level().addFreshEntity(fireball)) {
+                cooldown = 60;
+            }
+        }
+    }
+
+    @Mod.EventBusSubscriber(
+            modid = AnomalousContainmentChronicles.MOD_ID,
+            bus = Mod.EventBusSubscriber.Bus.FORGE
+    )
+    public static final class FriendlyFireEvents {
+        private FriendlyFireEvents() {
+        }
+
+        @SubscribeEvent
+        public static void onLivingAttack(LivingAttackEvent event) {
+            if (event.getEntity().level().isClientSide) {
+                return;
+            }
+
+            if (!(event.getEntity() instanceof Player)
+                    && !(event.getEntity() instanceof TamableAnimal)) {
+                return;
+            }
+
+            Entity source = event.getSource().getEntity();
+            Entity direct = event.getSource().getDirectEntity();
+
+            boolean fromYoungDragon =
+                    source instanceof YoungEnderDragonEntity;
+
+            if (!fromYoungDragon
+                    && direct instanceof DragonFireball projectile) {
+                fromYoungDragon =
+                        projectile.getOwner() instanceof YoungEnderDragonEntity;
+            }
+
+            if (!fromYoungDragon
+                    && direct instanceof AreaEffectCloud cloud) {
+                fromYoungDragon =
+                        cloud.getOwner() instanceof YoungEnderDragonEntity;
+            }
+
+            if (fromYoungDragon) {
+                event.setCanceled(true);
+            }
         }
     }
 }

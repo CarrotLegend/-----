@@ -16,12 +16,18 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(
+        modid = AnomalousContainmentChronicles.MOD_ID,
+        bus = Mod.EventBusSubscriber.Bus.FORGE
+)
 public final class SoulDropEvents {
     private static final String DROPPED_KEY = "yixiangshouronglu_soul_dropped";
 
     private static final ResourceLocation BOSS =
             new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "tenacious_shield");
+
+    private static final ResourceLocation WITHER =
+            new ResourceLocation("minecraft", "wither");
 
     private static final Set<ResourceLocation> ALLOWED_ENTITIES = Set.of(
             new ResourceLocation("mutantmonsters", "mutant_zombie"),
@@ -37,6 +43,7 @@ public final class SoulDropEvents {
             new ResourceLocation("mutantmore", "mutant_frozen_zombie"),
             new ResourceLocation("mutantmore", "mutant_husk"),
             new ResourceLocation("mutantmore", "mutant_wither_skeleton"),
+            WITHER,
             BOSS
     );
 
@@ -56,7 +63,9 @@ public final class SoulDropEvents {
             return;
         }
 
-        if (!id.equals(BOSS) && !(event.getSource().getEntity() instanceof ServerPlayer)) {
+        if (!id.equals(BOSS)
+                && !id.equals(WITHER)
+                && !(event.getSource().getEntity() instanceof ServerPlayer)) {
             return;
         }
 
