@@ -22,6 +22,7 @@ public final class ResonanceRules {
     private static final String LEVIATHAN = "cataclysm:the_leviathan";
     private static final String ENDER_GUARDIAN = "cataclysm:ender_guardian";
     private static final String TENACIOUS_SHIELD = "yixiangshouronglu:tenacious_shield";
+    private static final String YOUNG_ENDER_DRAGON = "yixiangshouronglu:young_ender_dragon";
 
     private static final String JUNGLE_ZOMBIE = "mutantmore:mutant_jungle_zombie";
     private static final String FROZEN_ZOMBIE = "mutantmore:mutant_frozen_zombie";
@@ -93,10 +94,9 @@ public final class ResonanceRules {
         }
 
         switch (entityId) {
-            case ZOMBIE -> add(
-                    bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
-                    10.0D, "bonus.yixiangshouronglu.mutant_zombie"
-            );
+            case ZOMBIE ->
+                    add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                            10.0D, "bonus.yixiangshouronglu.mutant_zombie");
 
             case SKELETON -> {
                 addTaa(bonuses, "bullet_gundamage", 0.04D,
@@ -135,10 +135,9 @@ public final class ResonanceRules {
                         "bonus.yixiangshouronglu.amethyst_crab");
             }
 
-            case CLAWDIAN -> add(
-                    bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
-                    0.02D, "bonus.yixiangshouronglu.clawdian"
-            );
+            case CLAWDIAN ->
+                    add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                            0.02D, "bonus.yixiangshouronglu.clawdian");
 
             case SCYLLA -> {
                 add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
@@ -174,10 +173,16 @@ public final class ResonanceRules {
                         2.0D, "bonus.yixiangshouronglu.tenacious_shield");
             }
 
-            case WITHER_SKELETON -> add(
-                    bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
-                    0.04D, "bonus.yixiangshouronglu.mutantmore_wither_skeleton"
-            );
+            case WITHER_SKELETON ->
+                    add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                            0.04D, "bonus.yixiangshouronglu.mutantmore_wither_skeleton");
+
+            case YOUNG_ENDER_DRAGON -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        10.0D, "bonus.yixiangshouronglu.young_ender_dragon");
+                add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.05D, "bonus.yixiangshouronglu.young_ender_dragon");
+            }
 
             default -> {
             }
@@ -198,8 +203,13 @@ public final class ResonanceRules {
             Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(id);
 
             if (attribute != null) {
-                add(bonuses, attribute, AttributeModifier.Operation.MULTIPLY_TOTAL,
-                        amount, translationKey);
+                add(
+                        bonuses,
+                        attribute,
+                        AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        amount,
+                        translationKey
+                );
             }
         }
     }
@@ -211,6 +221,11 @@ public final class ResonanceRules {
             double amount,
             String translationKey
     ) {
-        bonuses.add(new Bonus(attribute, operation, amount, translationKey));
+        bonuses.add(new Bonus(
+                attribute,
+                operation,
+                amount,
+                translationKey
+        ));
     }
 }
