@@ -27,8 +27,13 @@ public final class ResonanceRules {
     private static final String JUNGLE_ZOMBIE = "mutantmore:mutant_jungle_zombie";
     private static final String FROZEN_ZOMBIE = "mutantmore:mutant_frozen_zombie";
     private static final String HUSK = "mutantmore:mutant_husk";
+    private static final String HOGLIN = "mutantmore:mutant_hoglin";
     private static final String WITHER_SKELETON = "mutantmore:mutant_wither_skeleton";
     private static final String MUTANT_BLAZE = "mutantmore:mutant_blaze";
+
+    private static final String FIRE_DRAGON = "iceandfire:fire_dragon";
+    private static final String ICE_DRAGON = "iceandfire:ice_dragon";
+    private static final String LIGHTNING_DRAGON = "iceandfire:lightning_dragon";
 
     public record Bonus(
             Attribute attribute,
@@ -56,7 +61,9 @@ public final class ResonanceRules {
     }
 
     public static boolean grantsRegeneration(String entityId) {
-        return ZOMBIE.equals(entityId) || isMutantMoreZombie(entityId);
+        return ZOMBIE.equals(entityId)
+                || isMutantMoreZombie(entityId)
+                || HOGLIN.equals(entityId);
     }
 
     public static boolean grantsResistance(String entityId) {
@@ -85,11 +92,15 @@ public final class ResonanceRules {
             return bonuses;
         }
 
-        if (isMutantMoreZombie(entityId)) {
+        if (isMutantMoreZombie(entityId) || HOGLIN.equals(entityId)) {
+            String key = HOGLIN.equals(entityId)
+                    ? "bonus.yixiangshouronglu.mutant_hoglin"
+                    : "bonus.yixiangshouronglu.mutantmore_zombie";
+
             add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
-                    10.0D, "bonus.yixiangshouronglu.mutantmore_zombie");
+                    10.0D, key);
             add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION,
-                    2.0D, "bonus.yixiangshouronglu.mutantmore_zombie");
+                    2.0D, key);
             return bonuses;
         }
 
@@ -164,6 +175,15 @@ public final class ResonanceRules {
                         "bonus.yixiangshouronglu.ender_guardian");
                 addTaa(bonuses, "bullet_gundamage_pistol", 0.10D,
                         "bonus.yixiangshouronglu.ender_guardian");
+            }
+
+            case FIRE_DRAGON, ICE_DRAGON, LIGHTNING_DRAGON -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        10.0D, "bonus.yixiangshouronglu.iceandfire_dragon");
+                addTaa(bonuses, "bullet_gundamage", 0.02D,
+                        "bonus.yixiangshouronglu.iceandfire_dragon");
+                addTaa(bonuses, "bullet_gundamage_rifle", 0.04D,
+                        "bonus.yixiangshouronglu.iceandfire_dragon");
             }
 
             case TENACIOUS_SHIELD -> {

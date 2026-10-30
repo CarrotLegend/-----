@@ -64,5 +64,13 @@
   "bonus.yixiangshouronglu.wither": "Max Health +5\nAll Damage +6%%",
   "message.yixiangshouronglu.young_ender_dragon.roam": "Ender Dragon: Roam",
   "message.yixiangshouronglu.young_ender_dragon.follow": "Ender Dragon: Follow",
-  "message.yixiangshouronglu.young_ender_dragon.stay": "Ender Dragon: Stay"
+  "message.yixiangshouronglu.young_ender_dragon.stay": "Ender Dragon: Stay",
+  "bonus.yixiangshouronglu.the_harbinger": "Max Health +5\nAttack Damage +10%%\nLMG Damage +10%%",
+  "item.yixiangshouronglu.refined_dragon_meal": "Refined Dragon Meal",
+  "bonus.yixiangshouronglu.mutant_hoglin": "Regeneration II\nMax Health +10\nAttack Damage +2",
+  "bonus.yixiangshouronglu.iceandfire_dragon": "Max Health +10\nGun Damage +2%%\nRifle Damage +4%%",
+  "message.yixiangshouronglu.dragon_not_owned": "Only dragons tamed by you can be converted into souls",
+  "message.yixiangshouronglu.dragon_not_mature": "The dragon has not reached its final growth stage",
+  "message.yixiangshouronglu.dragon_not_alive": "A dead dragon cannot be converted into a soul",
+  "message.yixiangshouronglu.dragon_soul_obtained": "The dragon has been converted into a soul"
 }

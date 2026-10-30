@@ -42,6 +42,7 @@ public final class SoulDropEvents {
             new ResourceLocation("mutantmore", "mutant_jungle_zombie"),
             new ResourceLocation("mutantmore", "mutant_frozen_zombie"),
             new ResourceLocation("mutantmore", "mutant_husk"),
+            new ResourceLocation("mutantmore", "mutant_hoglin"),
             new ResourceLocation("mutantmore", "mutant_wither_skeleton"),
             WITHER,
             BOSS

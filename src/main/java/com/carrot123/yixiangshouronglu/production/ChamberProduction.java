@@ -80,13 +80,16 @@ public final class ChamberProduction {
                     cataclysmLacrima();
 
             case "cataclysm:scylla" ->
-                    cataclysmFiveMinute("essence_of_the_storm");
+                    externalItem("cataclysm", "essence_of_the_storm", 6000,
+                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
 
             case "cataclysm:the_leviathan" ->
-                    cataclysmFiveMinute("abyssal_egg");
+                    externalItem("cataclysm", "abyssal_egg", 6000,
+                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
 
             case "cataclysm:ender_guardian" ->
-                    cataclysmFiveMinute("enderite_block");
+                    externalItem("cataclysm", "enderite_block", 6000,
+                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
 
             case "yixiangshouronglu:tenacious_shield" ->
                     new Recipe(
@@ -109,6 +112,25 @@ public final class ChamberProduction {
                             "screen.yixiangshouronglu.chamber.rate_one_per_minute"
                     );
 
+            case "mutantmore:mutant_hoglin" ->
+                    new Recipe(
+                            Items.COPPER_INGOT,
+                            300,
+                            "screen.yixiangshouronglu.chamber.rate_four_per_minute"
+                    );
+
+            case "iceandfire:fire_dragon" ->
+                    externalItem("iceandfire", "dragonsteel_fire_ingot", 4800,
+                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
+
+            case "iceandfire:ice_dragon" ->
+                    externalItem("iceandfire", "dragonsteel_ice_ingot", 4800,
+                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
+
+            case "iceandfire:lightning_dragon" ->
+                    externalItem("iceandfire", "dragonsteel_lightning_ingot", 4800,
+                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
+
             case "yixiangshouronglu:young_ender_dragon" ->
                     new Recipe(
                             Items.DRAGON_EGG,
@@ -122,26 +144,22 @@ public final class ChamberProduction {
 
     @Nullable
     private static Recipe cataclysmLacrima() {
-        ResourceLocation id = new ResourceLocation("cataclysm", "lacrima");
-
-        if (!ForgeRegistries.ITEMS.containsKey(id)) {
-            return null;
-        }
-
-        Item item = ForgeRegistries.ITEMS.getValue(id);
-
-        return item == null
-                ? null
-                : new Recipe(
-                        item,
-                        1200,
-                        "screen.yixiangshouronglu.chamber.rate_one_per_minute"
-                );
+        return externalItem(
+                "cataclysm",
+                "lacrima",
+                1200,
+                "screen.yixiangshouronglu.chamber.rate_one_per_minute"
+        );
     }
 
     @Nullable
-    private static Recipe cataclysmFiveMinute(String itemPath) {
-        ResourceLocation id = new ResourceLocation("cataclysm", itemPath);
+    private static Recipe externalItem(
+            String namespace,
+            String path,
+            int intervalTicks,
+            String rateKey
+    ) {
+        ResourceLocation id = new ResourceLocation(namespace, path);
 
         if (!ForgeRegistries.ITEMS.containsKey(id)) {
             return null;
@@ -151,10 +169,6 @@ public final class ChamberProduction {
 
         return item == null
                 ? null
-                : new Recipe(
-                        item,
-                        6000,
-                        "screen.yixiangshouronglu.chamber.rate_five_minutes"
-                );
+                : new Recipe(item, intervalTicks, rateKey);
     }
 }

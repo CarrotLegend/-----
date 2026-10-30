@@ -64,5 +64,13 @@
   "bonus.yixiangshouronglu.wither": "最大生命值 +5\n全伤害 +6%%",
   "message.yixiangshouronglu.young_ender_dragon.roam": "末影龙：闲逛",
   "message.yixiangshouronglu.young_ender_dragon.follow": "末影龙：跟随",
-  "message.yixiangshouronglu.young_ender_dragon.stay": "末影龙：停留"
+  "message.yixiangshouronglu.young_ender_dragon.stay": "末影龙：停留",
+  "bonus.yixiangshouronglu.the_harbinger": "最大生命值 +5\n攻击伤害 +10%%\n机枪伤害 +10%%",
+  "item.yixiangshouronglu.refined_dragon_meal": "精致龙食",
+  "bonus.yixiangshouronglu.mutant_hoglin": "生命恢复Ⅱ\n最大生命值 +10\n攻击伤害 +2",
+  "bonus.yixiangshouronglu.iceandfire_dragon": "最大生命值 +10\n枪械伤害 +2%%\n步枪伤害 +4%%",
+  "message.yixiangshouronglu.dragon_not_owned": "只有自己驯服的龙才能进行收容",
+  "message.yixiangshouronglu.dragon_not_mature": "龙尚未达到最终成长阶段",
+  "message.yixiangshouronglu.dragon_not_alive": "无法对已死亡的龙进行收容",
+  "message.yixiangshouronglu.dragon_soul_obtained": "成功收容巨龙！"
 }
