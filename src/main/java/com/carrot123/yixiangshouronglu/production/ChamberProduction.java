@@ -103,6 +103,29 @@ public final class ChamberProduction {
                             "screen.yixiangshouronglu.chamber.rate_five_minutes"
                     );
 
+            case "cataclysm:the_harbinger" ->
+                    externalItem(
+                            "cataclysm",
+                            "witherite_ingot",
+                            2400,
+                            "screen.yixiangshouronglu.chamber.rate_two_minutes"
+                    );
+
+            case "cataclysm:netherite_monstrosity" ->
+                    externalItem(
+                            "cataclysm",
+                            "monstrous_horn",
+                            2400,
+                            "screen.yixiangshouronglu.chamber.rate_two_minutes"
+                    );
+
+            case "cataclysm:ancient_remnant" ->
+                    new Recipe(
+                            Items.NETHERITE_INGOT,
+                            3600,
+                            "screen.yixiangshouronglu.chamber.rate_three_minutes"
+                    );
+
             case "yixiangshouronglu:tenacious_shield" ->
                     new Recipe(
                             ModItems.TENACIOUS_SHIELD_FRAGMENT.get(),

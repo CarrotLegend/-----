@@ -16,11 +16,15 @@ public final class ResonanceRules {
     private static final String CREEPER = "mutantmonsters:mutant_creeper";
     private static final String ENDERMAN = "mutantmonsters:mutant_enderman";
     private static final String WITHER = "minecraft:wither";
+    private static final String WARDEN = "minecraft:warden";
     private static final String CRAB = "cataclysm:amethyst_crab";
     private static final String CLAWDIAN = "cataclysm:clawdian";
     private static final String SCYLLA = "cataclysm:scylla";
     private static final String LEVIATHAN = "cataclysm:the_leviathan";
     private static final String ENDER_GUARDIAN = "cataclysm:ender_guardian";
+    private static final String HARBINGER = "cataclysm:the_harbinger";
+    private static final String NETHERITE_MONSTROSITY = "cataclysm:netherite_monstrosity";
+    private static final String ANCIENT_REMNANT = "cataclysm:ancient_remnant";
     private static final String TENACIOUS_SHIELD = "yixiangshouronglu:tenacious_shield";
     private static final String YOUNG_ENDER_DRAGON = "yixiangshouronglu:young_ender_dragon";
 
@@ -143,6 +147,13 @@ public final class ResonanceRules {
                         0.06D, "bonus.yixiangshouronglu.wither");
             }
 
+            case WARDEN -> {
+                add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION,
+                        6.0D, "bonus.yixiangshouronglu.warden");
+                add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.04D, "bonus.yixiangshouronglu.warden");
+            }
+
             case CRAB -> {
                 add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
                         4.0D, "bonus.yixiangshouronglu.amethyst_crab");
@@ -179,6 +190,33 @@ public final class ResonanceRules {
                         "bonus.yixiangshouronglu.ender_guardian");
                 addTaa(bonuses, "bullet_gundamage_pistol", 0.10D,
                         "bonus.yixiangshouronglu.ender_guardian");
+            }
+
+            case HARBINGER -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        5.0D, "bonus.yixiangshouronglu.the_harbinger");
+                add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.10D, "bonus.yixiangshouronglu.the_harbinger");
+                addTaa(bonuses, "bullet_gundamage_lmg", 0.10D,
+                        "bonus.yixiangshouronglu.the_harbinger");
+            }
+
+            case NETHERITE_MONSTROSITY -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        15.0D, "bonus.yixiangshouronglu.netherite_monstrosity");
+                add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.15D, "bonus.yixiangshouronglu.netherite_monstrosity");
+                add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.05D, "bonus.yixiangshouronglu.netherite_monstrosity");
+            }
+
+            case ANCIENT_REMNANT -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        15.0D, "bonus.yixiangshouronglu.ancient_remnant");
+                addTaa(bonuses, "bullet_gundamage", 0.15D,
+                        "bonus.yixiangshouronglu.ancient_remnant");
+                add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.05D, "bonus.yixiangshouronglu.ancient_remnant");
             }
 
             case FIRE_DRAGON, ICE_DRAGON, LIGHTNING_DRAGON -> {

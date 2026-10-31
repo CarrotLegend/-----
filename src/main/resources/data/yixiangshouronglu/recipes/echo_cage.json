@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ECE",
+    "CWC",
+    "ECE"
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:echo_shard"
+    },
+    "C": {
+      "item": "minecraft:sculk_catalyst"
+    },
+    "W": {
+      "item": "deeperdarker:warden_carapace"
+    }
+  },
+  "result": {
+    "item": "yixiangshouronglu:echo_cage",
+    "count": 1
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "deeperdarker"
+    }
+  ]
+}

@@ -77,5 +77,10 @@
   "message.yixiangshouronglu.kinora_soul_obtained": "成功收容基诺拉！",
   "bonus.yixiangshouronglu.kinora": "攻击伤害 +8",
   "bonus.yixiangshouronglu.blot": "枪械重量 -5%%\n枪械伤害 +5%%",
-  "bonus.yixiangshouronglu.black_charro": "全伤害 +5%%\n移动速度 +10%%"
+  "bonus.yixiangshouronglu.black_charro": "全伤害 +5%%\n移动速度 +10%%",
+  "item.yixiangshouronglu.echo_cage": "回声牢笼",
+  "bonus.yixiangshouronglu.netherite_monstrosity": "最大生命值 +15\n攻击伤害 +15%%\n全伤害 +5%%",
+  "bonus.yixiangshouronglu.ancient_remnant": "最大生命值 +15\n枪械伤害 +15%%\n全伤害 +5%%",
+  "bonus.yixiangshouronglu.warden": "攻击伤害 +6\n全伤害 +4%%",
+  "screen.yixiangshouronglu.chamber.rate_three_minutes": "1个/3分钟"
 }

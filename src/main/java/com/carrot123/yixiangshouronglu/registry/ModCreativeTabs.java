@@ -1,4 +1,3 @@
-
 package com.carrot123.yixiangshouronglu.registry;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
@@ -33,6 +32,7 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.ENDER_DRAGON_WINGS.get());
                                 output.accept(ModItems.REFINED_DRAGON_MEAL.get());
                                 output.accept(ModItems.SAPHYRA_GEM.get());
+                                output.accept(ModItems.ECHO_CAGE.get());
                             })
                             .build()
             );
@@ -40,3 +40,4 @@ public final class ModCreativeTabs {
     private ModCreativeTabs() {
     }
 }
+
