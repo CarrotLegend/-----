@@ -57,7 +57,7 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
 
         container.startOpen(inventory.player);
 
-        addSlot(new Slot(container, 0, 59, 46) {
+        addSlot(new Slot(container, 0, 70, 45) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
@@ -74,7 +74,7 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
             }
         });
 
-        addSlot(new Slot(container, 1, 99, 46) {
+        addSlot(new Slot(container, 1, 88, 45) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
@@ -91,11 +91,10 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
             }
         });
 
-        addSlot(new Slot(container, 2, 59, 46) {
+        addSlot(new Slot(container, 2, 51, 45) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return page == PAGE_EXTRACTION
-                        && container.canPlaceItem(2, stack);
+                return page == PAGE_EXTRACTION && container.canPlaceItem(2, stack);
             }
 
             @Override
@@ -109,7 +108,7 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
             }
         });
 
-        addSlot(new Slot(container, 3, 99, 46) {
+        addSlot(new Slot(container, 3, 111, 45) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
@@ -132,13 +131,13 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
                         inventory,
                         column + row * 9 + 9,
                         8 + column * 18,
-                        84 + row * 18
+                        110 + row * 18
                 ));
             }
         }
 
         for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(inventory, column, 8 + column * 18, 142));
+            addSlot(new Slot(inventory, column, 8 + column * 18, 168));
         }
 
         addDataSlots(data);
@@ -155,6 +154,18 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
 
     public int getPage() {
         return page;
+    }
+
+    public String getEntityId() {
+        return chamber == null ? "" : chamber.getEntityId();
+    }
+
+    public int getProgress() {
+        return data.get(0);
+    }
+
+    public int getInterval() {
+        return data.get(1);
     }
 
     public int getProductionProgress() {

@@ -37,3 +37,17 @@ mandatory=true
 versionRange="[1.0,)"
 ordering="AFTER"
 side="BOTH"
+
+[[dependencies.yixiangshouronglu]]
+modId="particlestorm"
+mandatory=true
+versionRange="[1.4.0,2.0.0)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="geckolib"
+mandatory=true
+versionRange="[4.8,5.0)"
+ordering="AFTER"
+side="BOTH"

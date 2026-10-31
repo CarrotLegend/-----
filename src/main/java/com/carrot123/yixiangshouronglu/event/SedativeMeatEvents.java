@@ -18,13 +18,23 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Set;
+
 @Mod.EventBusSubscriber(
         modid = AnomalousContainmentChronicles.MOD_ID,
         bus = Mod.EventBusSubscriber.Bus.FORGE
 )
 public final class SedativeMeatEvents {
     private static final ResourceLocation SCP_682_SOUL =
-            new ResourceLocation("hardtodestroyreptile", "the_hard_to_destroy_reptile");
+            new ResourceLocation("hardtodestroyreptile", "the_hard_to_destroy_reptile_small");
+
+    private static final Set<ResourceLocation> SCP_682_FORMS = Set.of(
+            SCP_682_SOUL,
+            new ResourceLocation("hardtodestroyreptile", "the_hard_to_destroy_reptile_medium"),
+            new ResourceLocation("hardtodestroyreptile", "the_hard_to_destroy_reptile_big"),
+            new ResourceLocation("hardtodestroyreptile", "the_hard_to_destroy_reptile_huge"),
+            new ResourceLocation("hardtodestroyreptile", "the_hard_to_destroy_reptile_gigantic")
+    );
 
     private SedativeMeatEvents() {
     }
@@ -46,7 +56,7 @@ public final class SedativeMeatEvents {
 
         ItemStack held = event.getItemStack();
 
-        if (!held.is(ModItems.SEDATIVE_MEAT.get()) || held.isEmpty()) {
+        if (held.isEmpty() || !held.is(ModItems.SEDATIVE_MEAT.get())) {
             return;
         }
 
@@ -56,7 +66,7 @@ public final class SedativeMeatEvents {
 
         ResourceLocation entityId = ForgeRegistries.ENTITY_TYPES.getKey(target.getType());
 
-        if (!isScp682(entityId)) {
+        if (entityId == null || !SCP_682_FORMS.contains(entityId)) {
             return;
         }
 
@@ -96,17 +106,5 @@ public final class SedativeMeatEvents {
                 1.0F,
                 0.8F
         );
-    }
-
-    private static boolean isScp682(ResourceLocation id) {
-        if (id == null || !id.getNamespace().equals("hardtodestroyreptile")) {
-            return false;
-        }
-
-        String path = id.getPath();
-
-        return path.contains("reptile")
-                || path.contains("scp682")
-                || path.contains("scp_682");
     }
 }

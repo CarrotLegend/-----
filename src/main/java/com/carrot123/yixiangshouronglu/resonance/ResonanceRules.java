@@ -44,7 +44,7 @@ public final class ResonanceRules {
     private static final String KINORA = "mokels_boss_mantyd:boss_mantyd";
     private static final String BLOT = "theinkarena:blot";
     private static final String BLACK_CHARRO = "mythsandlegends:black_charro";
-    private static final String SCP_682 = "hardtodestroyreptile:the_hard_to_destroy_reptile";
+    private static final String SCP_682 = "hardtodestroyreptile:the_hard_to_destroy_reptile_small";
 
     public record Bonus(
             Attribute attribute,

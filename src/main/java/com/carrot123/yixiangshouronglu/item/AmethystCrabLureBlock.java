@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public final class AmethystCrabLureBlockItem extends BlockItem {
-    public AmethystCrabLureBlockItem(Block block, Properties properties) {
+public final class AmethystCrabLureBlock extends BlockItem {
+    public AmethystCrabLureBlock(Block block, Properties properties) {
         super(block, properties);
     }
 

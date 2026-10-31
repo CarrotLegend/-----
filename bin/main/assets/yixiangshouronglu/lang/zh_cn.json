@@ -88,5 +88,9 @@
   "item.yixiangshouronglu.containment_extract.named": "%s的提取液",
   "screen.yixiangshouronglu.chamber.production_tab": "产出",
   "screen.yixiangshouronglu.chamber.extraction_tab": "提取",
-  "screen.yixiangshouronglu.chamber.extract_amount": "%s / %s mB"
+  "screen.yixiangshouronglu.chamber.extract_amount": "%s / %s mB",
+  "block.yixiangshouronglu.amethyst_crab_lure": "紫水晶巨蟹引诱装置",
+  "tooltip.yixiangshouronglu.amethyst_crab_lure": "在繁茂洞穴中放下吸引紫水晶巨蟹。",
+  "item.yixiangshouronglu.sedative_meat": "镇静肉",
+  "bonus.yixiangshouronglu.scp_682": "生命恢复Ⅳ\n最大生命值 +20\n护甲 +8"
 }

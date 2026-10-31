@@ -1,7 +1,7 @@
 package com.carrot123.yixiangshouronglu.block;
 
+import com.carrot123.yixiangshouronglu.block.entity.AmethystCrabLureBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -11,18 +11,31 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
-public final class AmethystCrabLureBlock extends Block {
+public final class AmethystCrabLureBlock extends BaseEntityBlock {
     private static final int SUMMON_DELAY = 40;
-
     private static final ResourceLocation CRAB_ID =
             new ResourceLocation("cataclysm", "amethyst_crab");
 
     public AmethystCrabLureBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.INVISIBLE;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new AmethystCrabLureBlockEntity(pos, state);
     }
 
     @Override

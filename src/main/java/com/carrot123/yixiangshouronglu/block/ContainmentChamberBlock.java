@@ -1,4 +1,3 @@
-
 package com.carrot123.yixiangshouronglu.block;
 
 import com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity;
@@ -58,7 +57,9 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
+        return state.getValue(HALF) == DoubleBlockHalf.UPPER
+                ? RenderShape.MODEL
+                : RenderShape.INVISIBLE;
     }
 
     @Override
