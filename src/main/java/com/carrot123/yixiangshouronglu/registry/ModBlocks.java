@@ -1,6 +1,7 @@
 package com.carrot123.yixiangshouronglu.registry;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
+import com.carrot123.yixiangshouronglu.block.AmethystCrabLureBlock;
 import com.carrot123.yixiangshouronglu.block.ContainmentChamberBlock;
 import com.carrot123.yixiangshouronglu.block.IncubatingDragonEggBlock;
 
@@ -15,6 +16,7 @@ public final class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, AnomalousContainmentChronicles.MOD_ID);
     public static final RegistryObject<Block> CONTAINMENT_CHAMBER = BLOCKS.register("containment_chamber", () -> new ContainmentChamberBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion()));
     public static final RegistryObject<Block> INCUBATING_DRAGON_EGG = BLOCKS.register("incubating_dragon_egg", () -> new IncubatingDragonEggBlock(BlockBehaviour.Properties.of().strength(3.0F, 9.0F).sound(SoundType.STONE).noOcclusion()));
+    public static final RegistryObject<Block> AMETHYST_CRAB_LURE = BLOCKS.register("amethyst_crab_lure", () -> new AmethystCrabLureBlock(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.AMETHYST)));
 
     private ModBlocks() {
     }

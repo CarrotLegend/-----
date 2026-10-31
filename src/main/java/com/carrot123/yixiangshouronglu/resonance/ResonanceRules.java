@@ -17,6 +17,7 @@ public final class ResonanceRules {
     private static final String ENDERMAN = "mutantmonsters:mutant_enderman";
     private static final String WITHER = "minecraft:wither";
     private static final String WARDEN = "minecraft:warden";
+
     private static final String CRAB = "cataclysm:amethyst_crab";
     private static final String CLAWDIAN = "cataclysm:clawdian";
     private static final String SCYLLA = "cataclysm:scylla";
@@ -25,6 +26,7 @@ public final class ResonanceRules {
     private static final String HARBINGER = "cataclysm:the_harbinger";
     private static final String NETHERITE_MONSTROSITY = "cataclysm:netherite_monstrosity";
     private static final String ANCIENT_REMNANT = "cataclysm:ancient_remnant";
+
     private static final String TENACIOUS_SHIELD = "yixiangshouronglu:tenacious_shield";
     private static final String YOUNG_ENDER_DRAGON = "yixiangshouronglu:young_ender_dragon";
 
@@ -42,6 +44,7 @@ public final class ResonanceRules {
     private static final String KINORA = "mokels_boss_mantyd:boss_mantyd";
     private static final String BLOT = "theinkarena:blot";
     private static final String BLACK_CHARRO = "mythsandlegends:black_charro";
+    private static final String SCP_682 = "hardtodestroyreptile:the_hard_to_destroy_reptile";
 
     public record Bonus(
             Attribute attribute,
@@ -68,10 +71,15 @@ public final class ResonanceRules {
                 || HUSK.equals(entityId);
     }
 
+    public static boolean isScp682Soul(String entityId) {
+        return SCP_682.equals(entityId);
+    }
+
     public static boolean grantsRegeneration(String entityId) {
         return ZOMBIE.equals(entityId)
                 || isMutantMoreZombie(entityId)
-                || HOGLIN.equals(entityId);
+                || HOGLIN.equals(entityId)
+                || isScp682Soul(entityId);
     }
 
     public static boolean grantsResistance(String entityId) {
@@ -105,10 +113,8 @@ public final class ResonanceRules {
                     ? "bonus.yixiangshouronglu.mutant_hoglin"
                     : "bonus.yixiangshouronglu.mutantmore_zombie";
 
-            add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
-                    10.0D, key);
-            add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION,
-                    2.0D, key);
+            add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION, 10.0D, key);
+            add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION, 2.0D, key);
             return bonuses;
         }
 
@@ -264,6 +270,13 @@ public final class ResonanceRules {
                         0.10D, "bonus.yixiangshouronglu.black_charro");
             }
 
+            case SCP_682 -> {
+                add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                        20.0D, "bonus.yixiangshouronglu.scp_682");
+                add(bonuses, Attributes.ARMOR, AttributeModifier.Operation.ADDITION,
+                        8.0D, "bonus.yixiangshouronglu.scp_682");
+            }
+
             default -> {
             }
         }
@@ -283,13 +296,8 @@ public final class ResonanceRules {
             Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(id);
 
             if (attribute != null) {
-                add(
-                        bonuses,
-                        attribute,
-                        AttributeModifier.Operation.MULTIPLY_TOTAL,
-                        amount,
-                        translationKey
-                );
+                add(bonuses, attribute, AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        amount, translationKey);
             }
         }
     }
@@ -301,11 +309,6 @@ public final class ResonanceRules {
             double amount,
             String translationKey
     ) {
-        bonuses.add(new Bonus(
-                attribute,
-                operation,
-                amount,
-                translationKey
-        ));
+        bonuses.add(new Bonus(attribute, operation, amount, translationKey));
     }
 }

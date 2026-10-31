@@ -88,5 +88,9 @@
   "item.yixiangshouronglu.containment_extract.named": "%s Extract",
   "screen.yixiangshouronglu.chamber.production_tab": "Production",
   "screen.yixiangshouronglu.chamber.extraction_tab": "Extraction",
-  "screen.yixiangshouronglu.chamber.extract_amount": "%s / %s mB"
+  "screen.yixiangshouronglu.chamber.extract_amount": "%s / %s mB",
+  "block.yixiangshouronglu.amethyst_crab_lure": "Amethyst Crab Lure",
+  "tooltip.yixiangshouronglu.amethyst_crab_lure": "Place in Lush Caves to attract an Amethyst Crab.",
+  "item.yixiangshouronglu.sedative_meat": "Sedative Meat",
+  "bonus.yixiangshouronglu.scp_682": "Regeneration IV\nMax Health +20\nArmor +8"
 }

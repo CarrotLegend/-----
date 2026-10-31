@@ -1,6 +1,7 @@
 package com.carrot123.yixiangshouronglu.registry;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
+import com.carrot123.yixiangshouronglu.item.AmethystCrabLureBlockItem;
 import com.carrot123.yixiangshouronglu.item.BlazeCageItem;
 import com.carrot123.yixiangshouronglu.item.EnderDragonWingsItem;
 import com.carrot123.yixiangshouronglu.item.ExemptionShieldItem;
@@ -35,6 +36,8 @@ public final class ModItems {
     public static final RegistryObject<Item> ECHO_CAGE = ITEMS.register("echo_cage", () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> EXTRACTOR = ITEMS.register("extractor", () -> new Item(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> CONTAINMENT_EXTRACT = ITEMS.register("containment_extract", () -> new ContainmentExtractItem(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> AMETHYST_CRAB_LURE = ITEMS.register("amethyst_crab_lure", () -> new AmethystCrabLureBlockItem(ModBlocks.AMETHYST_CRAB_LURE.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> SEDATIVE_MEAT = ITEMS.register("sedative_meat", () -> new Item(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
 
     private ModItems() {
     }

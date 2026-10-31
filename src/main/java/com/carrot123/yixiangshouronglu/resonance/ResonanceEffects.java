@@ -72,7 +72,7 @@ public final class ResonanceEffects {
         }
 
         Map<Key, Double> amounts = new HashMap<>();
-        boolean[] regeneration = {false};
+        int[] regenerationAmplifier = {-1};
         boolean[] resistance = {false};
 
         CuriosApi.getCuriosInventory(player).ifPresent(inventory -> {
@@ -99,7 +99,8 @@ public final class ResonanceEffects {
                     }
 
                     if (ResonanceRules.grantsRegeneration(entityId)) {
-                        regeneration[0] = true;
+                        int amplifier = ResonanceRules.isScp682Soul(entityId) ? 3 : 1;
+                        regenerationAmplifier[0] = Math.max(regenerationAmplifier[0], amplifier);
                     }
 
                     if (ResonanceRules.grantsResistance(entityId)) {
@@ -203,19 +204,20 @@ public final class ResonanceEffects {
             }
         }
 
-        if (regeneration[0]) {
+        if (regenerationAmplifier[0] >= 0) {
+            int amplifier = regenerationAmplifier[0];
             MobEffectInstance current =
                     player.getEffect(MobEffects.REGENERATION);
 
             if (current == null
-                    || current.getAmplifier() < 1
-                    || (current.getAmplifier() == 1
+                    || current.getAmplifier() < amplifier
+                    || (current.getAmplifier() == amplifier
                             && current.getDuration() <= 25)) {
                 player.addEffect(
                         new MobEffectInstance(
                                 MobEffects.REGENERATION,
                                 45,
-                                1,
+                                amplifier,
                                 false,
                                 true,
                                 true

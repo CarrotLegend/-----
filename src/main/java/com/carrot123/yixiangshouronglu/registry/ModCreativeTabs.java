@@ -33,6 +33,8 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.REFINED_DRAGON_MEAL.get());
                                 output.accept(ModItems.SAPHYRA_GEM.get());
                                 output.accept(ModItems.ECHO_CAGE.get());
+                                output.accept(ModItems.AMETHYST_CRAB_LURE.get());
+                                output.accept(ModItems.SEDATIVE_MEAT.get());
                             })
                             .build()
             );
@@ -40,4 +42,3 @@ public final class ModCreativeTabs {
     private ModCreativeTabs() {
     }
 }
-
