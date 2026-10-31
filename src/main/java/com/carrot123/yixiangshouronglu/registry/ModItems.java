@@ -8,6 +8,7 @@ import com.carrot123.yixiangshouronglu.item.ResonanceCoreItem;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.item.WendigoEyeItem;
 import com.carrot123.yixiangshouronglu.item.WendigoSightItem;
+import com.carrot123.yixiangshouronglu.item.ContainmentExtractItem;
 
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
@@ -32,6 +33,8 @@ public final class ModItems {
     public static final RegistryObject<Item> REFINED_DRAGON_MEAL = ITEMS.register("refined_dragon_meal", () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SAPHYRA_GEM = ITEMS.register("saphyra_gem", () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> ECHO_CAGE = ITEMS.register("echo_cage", () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.EPIC)));
+    public static final RegistryObject<Item> EXTRACTOR = ITEMS.register("extractor", () -> new Item(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> CONTAINMENT_EXTRACT = ITEMS.register("containment_extract", () -> new ContainmentExtractItem(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
 
     private ModItems() {
     }

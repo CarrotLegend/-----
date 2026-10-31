@@ -82,5 +82,11 @@
   "bonus.yixiangshouronglu.netherite_monstrosity": "Max Health +15\nAttack Damage +15%%\nAll Damage +5%%",
   "bonus.yixiangshouronglu.ancient_remnant": "Max Health +15\nGun Damage +15%%\nAll Damage +5%%",
   "bonus.yixiangshouronglu.warden": "Attack Damage +6\nAll Damage +4%%",
-  "screen.yixiangshouronglu.chamber.rate_three_minutes": "1/3 min"
+  "screen.yixiangshouronglu.chamber.rate_three_minutes": "1/3 min",
+  "item.yixiangshouronglu.extractor": "Extract Collector",
+  "item.yixiangshouronglu.containment_extract": "Containment Extract",
+  "item.yixiangshouronglu.containment_extract.named": "%s Extract",
+  "screen.yixiangshouronglu.chamber.production_tab": "Production",
+  "screen.yixiangshouronglu.chamber.extraction_tab": "Extraction",
+  "screen.yixiangshouronglu.chamber.extract_amount": "%s / %s mB"
 }

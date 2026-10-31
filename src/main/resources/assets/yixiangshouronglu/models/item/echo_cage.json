@@ -2,6 +2,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/echo_cage"
+    "layer0": "yixiangshouronglu:item/echo_cage"
   }
 }

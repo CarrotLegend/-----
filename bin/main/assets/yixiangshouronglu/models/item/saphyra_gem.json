@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/saphyra_gem"
+    "layer0": "yixiangshouronglu:item/saphyra_gem"
   }
 }

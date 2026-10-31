@@ -10,9 +10,23 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public final class ModMenus {
-    public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, AnomalousContainmentChronicles.MOD_ID);
-    public static final RegistryObject<MenuType<ResonanceMenu>> RESONANCE = MENUS.register("resonance", () -> IForgeMenuType.create(ResonanceMenu::new));
-    public static final RegistryObject<MenuType<ContainmentChamberMenu>> CONTAINMENT_CHAMBER = MENUS.register("containment_chamber", () -> IForgeMenuType.create(ContainmentChamberMenu::new));
+    public static final DeferredRegister<MenuType<?>> MENUS =
+            DeferredRegister.create(
+                    ForgeRegistries.MENU_TYPES,
+                    AnomalousContainmentChronicles.MOD_ID
+            );
+
+    public static final RegistryObject<MenuType<ResonanceMenu>> RESONANCE =
+            MENUS.register(
+                    "resonance",
+                    () -> IForgeMenuType.create(ResonanceMenu::new)
+            );
+
+    public static final RegistryObject<MenuType<ContainmentChamberMenu>> CONTAINMENT_CHAMBER =
+            MENUS.register(
+                    "containment_chamber",
+                    () -> IForgeMenuType.create(ContainmentChamberMenu::new)
+            );
 
     private ModMenus() {
     }

@@ -82,5 +82,11 @@
   "bonus.yixiangshouronglu.netherite_monstrosity": "最大生命值 +15\n攻击伤害 +15%%\n全伤害 +5%%",
   "bonus.yixiangshouronglu.ancient_remnant": "最大生命值 +15\n枪械伤害 +15%%\n全伤害 +5%%",
   "bonus.yixiangshouronglu.warden": "攻击伤害 +6\n全伤害 +4%%",
-  "screen.yixiangshouronglu.chamber.rate_three_minutes": "1个/3分钟"
+  "screen.yixiangshouronglu.chamber.rate_three_minutes": "1个/3分钟",
+  "item.yixiangshouronglu.extractor": "提取液提取器",
+  "item.yixiangshouronglu.containment_extract": "收容物提取液",
+  "item.yixiangshouronglu.containment_extract.named": "%s的提取液",
+  "screen.yixiangshouronglu.chamber.production_tab": "产出",
+  "screen.yixiangshouronglu.chamber.extraction_tab": "提取",
+  "screen.yixiangshouronglu.chamber.extract_amount": "%s / %s mB"
 }
