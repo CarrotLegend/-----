@@ -93,5 +93,13 @@
   "tooltip.yixiangshouronglu.amethyst_crab_lure": "Place in Lush Caves to attract an Amethyst Crab.",
   "item.yixiangshouronglu.sedative_meat": "Sedative Meat",
   "bonus.yixiangshouronglu.scp_682": "Regeneration IV\nMax Health +20\nArmor +8",
-  "bonus.yixiangshouronglu.mutant_shulker": "Movement Speed +10%%\nGun Weight -15%%"
+  "bonus.yixiangshouronglu.mutant_shulker": "Movement Speed +10%%\nGun Weight -15%%",
+  "bonus.yixiangshouronglu.spore_calamity": "Gun Damage +10%%\nMax Health +15",
+  "bonus.yixiangshouronglu.cataclysm_supreme": "All Damage +20%%\nArmor +4\nMax Health +25",
+  "entity.yixiangshouronglu.shadow_demon": "Shadow Demon",
+  "item.yixiangshouronglu.shadow_demon_spawn_egg": "Shadow Demon Spawn Egg",
+  "item.yixiangshouronglu.shadow_fragment": "Shadow Fragment",
+  "dimension.yixiangshouronglu.dragon_nest": "Dragon Nest",
+  "dimension.yixiangshouronglu.fungal_world": "Fungal World",
+  "biome.yixiangshouronglu.fungal_plains": "Fungal Plains"
 }

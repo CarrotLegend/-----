@@ -26,6 +26,8 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.WENDIGO_EYE.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_FRAGMENT.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_SPAWN_EGG.get());
+                                output.accept(ModItems.SHADOW_DEMON_SPAWN_EGG.get());
+                                output.accept(ModItems.SHADOW_FRAGMENT.get());
                                 output.accept(ModItems.EXEMPTION_SHIELD.get());
                                 output.accept(ModItems.WENDIGO_SIGHT.get());
                                 output.accept(ModItems.BLAZE_CAGE.get());

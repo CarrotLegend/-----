@@ -51,3 +51,10 @@ mandatory=true
 versionRange="[4.8,5.0)"
 ordering="AFTER"
 side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="cataclysm"
+mandatory=true
+versionRange="[3.16,3.17)"
+ordering="AFTER"
+side="BOTH"

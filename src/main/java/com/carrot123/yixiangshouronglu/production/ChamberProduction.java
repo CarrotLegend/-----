@@ -17,6 +17,10 @@ public final class ChamberProduction {
 
     @Nullable
     public static Recipe forEntity(String entityId) {
+        if (ResonanceRules.isSporeCalamity(entityId)) {
+            return null;
+        }
+
         if (ResonanceRules.isAntlersWendigo(entityId)) {
             return new Recipe(
                     ModItems.WENDIGO_EYE.get(),
@@ -54,6 +58,22 @@ public final class ChamberProduction {
                     new Recipe(Items.SHULKER_SHELL, 1200,
                             "screen.yixiangshouronglu.chamber.rate_one_per_minute");
 
+            case "cataclysm:ignis" ->
+                    externalItem(
+                            "cataclysm",
+                            "ignitium_ingot",
+                            4800,
+                            "screen.yixiangshouronglu.chamber.rate_four_minutes"
+                    );
+
+            case "cataclysm:maledictus" ->
+                    externalItem(
+                            "cataclysm",
+                            "cursium_ingot",
+                            4800,
+                            "screen.yixiangshouronglu.chamber.rate_four_minutes"
+                    );
+
             case "minecraft:wither" ->
                     new Recipe(Items.NETHERITE_SCRAP, 1200,
                             "screen.yixiangshouronglu.chamber.rate_one_per_minute");
@@ -67,7 +87,8 @@ public final class ChamberProduction {
                             "screen.yixiangshouronglu.chamber.rate_two_per_minute");
 
             case "cataclysm:clawdian" ->
-                    cataclysmLacrima();
+                    new Recipe(Items.LAPIS_LAZULI, 1200,
+                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
 
             case "cataclysm:scylla" ->
                     externalItem("cataclysm", "essence_of_the_storm", 6000,
@@ -96,6 +117,10 @@ public final class ChamberProduction {
             case "yixiangshouronglu:tenacious_shield" ->
                     new Recipe(ModItems.TENACIOUS_SHIELD_FRAGMENT.get(), 4800,
                             "screen.yixiangshouronglu.chamber.rate_four_minutes");
+
+            case "yixiangshouronglu:shadow_demon" ->
+                    new Recipe(ModItems.SHADOW_FRAGMENT.get(), 6000,
+                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
 
             case "mutantmore:mutant_wither_skeleton",
                  "mutantmore:mutant_hoglin" ->
@@ -136,12 +161,6 @@ public final class ChamberProduction {
 
             default -> null;
         };
-    }
-
-    @Nullable
-    private static Recipe cataclysmLacrima() {
-        return externalItem("cataclysm", "lacrima", 1200,
-                "screen.yixiangshouronglu.chamber.rate_one_per_minute");
     }
 
     @Nullable

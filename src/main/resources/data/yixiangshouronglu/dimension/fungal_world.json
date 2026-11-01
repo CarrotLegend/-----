@@ -1,0 +1,11 @@
+{
+  "type": "yixiangshouronglu:fungal_world",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "yixiangshouronglu:fungal_world",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "yixiangshouronglu:fungal_plains"
+    }
+  }
+}

@@ -3,6 +3,7 @@ package com.carrot123.yixiangshouronglu.registry;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.entity.TenaciousShieldEntity;
+import com.carrot123.yixiangshouronglu.entity.ShadowDemonEntity;
 import com.carrot123.yixiangshouronglu.entity.YoungEnderDragonEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -35,6 +36,13 @@ public final class ModEntities {
                             .clientTrackingRange(10)
                             .build(AnomalousContainmentChronicles.MOD_ID + ":young_ender_dragon"));
 
+    public static final RegistryObject<EntityType<ShadowDemonEntity>> SHADOW_DEMON =
+            ENTITIES.register("shadow_demon",
+                    () -> EntityType.Builder.of(ShadowDemonEntity::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.8F)
+                            .clientTrackingRange(10)
+                            .build(AnomalousContainmentChronicles.MOD_ID + ":shadow_demon"));
+
     private ModEntities() {
     }
 
@@ -42,5 +50,6 @@ public final class ModEntities {
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(TENACIOUS_SHIELD.get(), TenaciousShieldEntity.createAttributes().build());
         event.put(YOUNG_ENDER_DRAGON.get(), YoungEnderDragonEntity.createAttributes().build());
+        event.put(SHADOW_DEMON.get(), ShadowDemonEntity.createAttributes().build());
     }
 }

@@ -72,6 +72,7 @@ public final class ResonanceEffects {
         }
 
         Map<Key, Double> amounts = new HashMap<>();
+        Set<ResonanceLinks.Link> shadowChambers = new HashSet<>();
         int[] regenerationAmplifier = {-1};
         boolean[] resistance = {false};
 
@@ -95,6 +96,10 @@ public final class ResonanceEffects {
                             ResonanceLinks.containedEntity(player.server, link);
 
                     if (entityId.isEmpty()) {
+                        continue;
+                    }
+
+                    if (ResonanceRules.isShadowDemonSoul(entityId) && !shadowChambers.add(link)) {
                         continue;
                     }
 
@@ -209,14 +214,15 @@ public final class ResonanceEffects {
             MobEffectInstance current =
                     player.getEffect(MobEffects.REGENERATION);
 
-            if (current == null
-                    || current.getAmplifier() < amplifier
-                    || (current.getAmplifier() == amplifier
-                            && current.getDuration() <= 25)) {
+            int duration = RegenerationRefresh.nextDuration(amplifier,
+                    current == null ? -1 : current.getAmplifier(),
+                    current == null ? 0 : current.getDuration());
+
+            if (duration > 0) {
                 player.addEffect(
                         new MobEffectInstance(
                                 MobEffects.REGENERATION,
-                                45,
+                                duration,
                                 amplifier,
                                 false,
                                 true,

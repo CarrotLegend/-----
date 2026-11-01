@@ -6,9 +6,11 @@ import com.carrot123.yixiangshouronglu.registry.ModItems;
 import com.carrot123.yixiangshouronglu.resonance.ResonanceRules;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -46,6 +48,7 @@ public final class SoulDropEvents {
     );
 
     private static final Set<ResourceLocation> OTHER_ALLOWED_ENTITIES = Set.of(
+            new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "shadow_demon"),
             new ResourceLocation("minecraft", "wither"),
             new ResourceLocation("theinkarena", "blot"),
             new ResourceLocation("mythsandlegends", "black_charro"),
@@ -58,7 +61,51 @@ public final class SoulDropEvents {
             HARBINGER
     );
 
+    private static final Set<ResourceLocation> NEW_BOSSES = Set.of(
+            new ResourceLocation("cataclysm", "ignis"),
+            new ResourceLocation("cataclysm", "maledictus")
+    );
+
     private SoulDropEvents() {
+    }
+
+    @SubscribeEvent
+    public static void onLivingDeath(LivingDeathEvent event) {
+        LivingEntity entity = event.getEntity();
+
+        if (entity.level().isClientSide) {
+            return;
+        }
+
+        ResourceLocation entityId =
+                ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
+
+        if (entityId == null) {
+            return;
+        }
+
+        if (!NEW_BOSSES.contains(entityId)
+                && !ResonanceRules.isSporeCalamity(entityId.toString())) {
+            return;
+        }
+
+        if (entity.getPersistentData().getBoolean(DROPPED_KEY)) {
+            return;
+        }
+
+        entity.getPersistentData().putBoolean(DROPPED_KEY, true);
+
+        ItemStack soul = SoulItem.create(ModItems.SOUL.get(), entityId);
+
+        ItemEntity soulEntity = new ItemEntity(
+                entity.level(),
+                entity.getX(),
+                entity.getY() + 0.3D,
+                entity.getZ(),
+                soul
+        );
+
+        entity.level().addFreshEntity(soulEntity);
     }
 
     @SubscribeEvent

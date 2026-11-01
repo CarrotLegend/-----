@@ -36,6 +36,11 @@ public final class ClientScreens {
                 ModEntities.YOUNG_ENDER_DRAGON.get(),
                 YoungEnderDragonRenderer::new
         );
+
+        event.registerEntityRenderer(
+                ModEntities.SHADOW_DEMON.get(),
+                ShadowDemonRenderer::new
+        );
     }
 
     @SubscribeEvent

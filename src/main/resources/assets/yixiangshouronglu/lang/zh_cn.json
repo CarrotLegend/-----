@@ -93,5 +93,13 @@
   "tooltip.yixiangshouronglu.amethyst_crab_lure": "在繁茂洞穴中放下吸引紫水晶巨蟹。",
   "item.yixiangshouronglu.sedative_meat": "镇静肉",
   "bonus.yixiangshouronglu.scp_682": "生命恢复Ⅳ\n最大生命值 +20\n护甲 +8",
-  "bonus.yixiangshouronglu.mutant_shulker": "移动速度 +10%%\n枪械重量 -15%%"
+  "bonus.yixiangshouronglu.mutant_shulker": "移动速度 +10%%\n枪械重量 -15%%",
+  "bonus.yixiangshouronglu.spore_calamity": "枪械伤害 +10%%\n最大生命值 +15",
+  "bonus.yixiangshouronglu.cataclysm_supreme": "全伤害 +20%%\n护甲 +4\n最大生命值 +25",
+  "entity.yixiangshouronglu.shadow_demon": "影魔",
+  "item.yixiangshouronglu.shadow_demon_spawn_egg": "影魔刷怪蛋",
+  "item.yixiangshouronglu.shadow_fragment": "暗影碎片",
+  "dimension.yixiangshouronglu.dragon_nest": "龙巢",
+  "dimension.yixiangshouronglu.fungal_world": "真菌世界",
+  "biome.yixiangshouronglu.fungal_plains": "真菌平原"
 }

@@ -98,14 +98,17 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
     }
 
     private void renderExtraction(GuiGraphics graphics, int x, int y) {
-        int progress = Math.max(0, Math.min(20, menu.getExtractionProgress()));
+        int progress = Math.max(0, Math.min(
+                ContainmentChamberBlockEntity.EXTRACT_TIME,
+                menu.getExtractionProgress()
+        ));
 
-        graphics.fill(x + 75, y + 51, x + 104, y + 55, 0xFF353C48);
-        graphics.fill(x + 99, y + 48, x + 106, y + 58, 0xFF353C48);
+        graphics.fill(x + 75, y + 49, x + 106, y + 57, 0xFFBDA474);
+        graphics.fill(x + 76, y + 50, x + 105, y + 56, 0xFF353C48);
 
         if (progress > 0) {
-            int width = progress * 29 / 20;
-            graphics.fill(x + 75, y + 51, x + 75 + width, y + 55, 0xFFC6A363);
+            int width = progress * 29 / ContainmentChamberBlockEntity.EXTRACT_TIME;
+            graphics.fill(x + 76, y + 50, x + 76 + width, y + 56, 0xFFC6A363);
         }
 
         Component amount = Component.translatable(

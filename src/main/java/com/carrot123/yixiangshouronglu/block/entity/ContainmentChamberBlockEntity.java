@@ -182,14 +182,22 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
         boolean usingExtractor = extractionInput.is(ModItems.EXTRACTOR.get());
         ItemStack result = ItemStack.EMPTY;
+        int inputCount = 1;
 
         if (usingExtractor) {
             if (extractStoredMb >= EXTRACT_COST_MB) {
                 result = ContainmentExtractItem.create(entityId);
             }
-        } else if (extractionInput.is(ModItems.CONTAINMENT_EXTRACT.get())
-                && entityId.equals(ContainmentExtractItem.getEntityId(extractionInput))) {
-            result = ChamberSpecialProducts.forEntity(entityId);
+        } else if (extractionInput.is(ModItems.CONTAINMENT_EXTRACT.get())) {
+            ChamberSpecialProducts.Recipe recipe = ChamberSpecialProducts.forInput(
+                    entityId,
+                    ContainmentExtractItem.getEntityId(extractionInput)
+            );
+
+            if (recipe != null && extractionInput.getCount() >= recipe.inputCount()) {
+                result = recipe.result();
+                inputCount = recipe.inputCount();
+            }
         }
 
         if (result.isEmpty() || !canStoreExtraction(result)) {
@@ -211,7 +219,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
             extractStoredMb -= EXTRACT_COST_MB;
         }
-        extractionInput.shrink(1);
+        extractionInput.shrink(inputCount);
 
         if (extractionInput.isEmpty()) {
             extractionInput = ItemStack.EMPTY;
@@ -485,7 +493,10 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
         }
 
         return stack.is(ModItems.CONTAINMENT_EXTRACT.get())
-                && getEntityId().equals(ContainmentExtractItem.getEntityId(stack));
+                && ChamberSpecialProducts.forInput(
+                        getEntityId(),
+                        ContainmentExtractItem.getEntityId(stack)
+                ) != null;
     }
 
     @Override

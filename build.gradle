@@ -36,6 +36,11 @@ repositories {
     mavenCentral()
 
     maven {
+        name = 'CurseMaven'
+        url = 'https://cursemaven.com'
+    }
+
+    maven {
         name = "Curios"
         url = uri("https://maven.theillusivec4.top/")
     }
@@ -59,6 +64,7 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.14.1+1.20.1")
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-1.20.1:4.8.4")
     implementation fg.deobf("org.mesdag:ParticleStorm-forge-1.20.1:1.4.3.1")
+    implementation fg.deobf("curse.maven:lendercataclysm-551586:6906993")
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

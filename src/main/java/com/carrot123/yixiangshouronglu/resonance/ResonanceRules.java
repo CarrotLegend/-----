@@ -9,6 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public final class ResonanceRules {
     private static final String ZOMBIE = "mutantmonsters:mutant_zombie";
@@ -26,8 +27,11 @@ public final class ResonanceRules {
     private static final String HARBINGER = "cataclysm:the_harbinger";
     private static final String NETHERITE_MONSTROSITY = "cataclysm:netherite_monstrosity";
     private static final String ANCIENT_REMNANT = "cataclysm:ancient_remnant";
+    private static final String IGNIS = "cataclysm:ignis";
+    private static final String MALEDICTUS = "cataclysm:maledictus";
 
     private static final String TENACIOUS_SHIELD = "yixiangshouronglu:tenacious_shield";
+    private static final String SHADOW_DEMON = "yixiangshouronglu:shadow_demon";
     private static final String YOUNG_ENDER_DRAGON = "yixiangshouronglu:young_ender_dragon";
 
     private static final String JUNGLE_ZOMBIE = "mutantmore:mutant_jungle_zombie";
@@ -47,6 +51,18 @@ public final class ResonanceRules {
     private static final String BLACK_CHARRO = "mythsandlegends:black_charro";
     private static final String SCP_682 = "hardtodestroyreptile:the_hard_to_destroy_reptile_small";
 
+    private static final Set<String> SPORE_CALAMITIES = Set.of(
+            "spore:sieger",
+            "spore:howitzer",
+            "spore:stahl",
+            "spore:hohlfresser",
+            "spore:gazenbreacher",
+            "spore:kraken",
+            "spore:leviathan",
+            "spore:hindenburg",
+            "spore:verfall"
+    );
+
     public record Bonus(
             Attribute attribute,
             AttributeModifier.Operation operation,
@@ -56,6 +72,10 @@ public final class ResonanceRules {
     }
 
     private ResonanceRules() {
+    }
+
+    public static boolean isSporeCalamity(String entityId) {
+        return SPORE_CALAMITIES.contains(entityId);
     }
 
     public static boolean isAntlersWendigo(String entityId) {
@@ -74,6 +94,10 @@ public final class ResonanceRules {
 
     public static boolean isScp682Soul(String entityId) {
         return SCP_682.equals(entityId);
+    }
+
+    public static boolean isShadowDemonSoul(String entityId) {
+        return SHADOW_DEMON.equals(entityId);
     }
 
     public static boolean grantsRegeneration(String entityId) {
@@ -99,6 +123,15 @@ public final class ResonanceRules {
     public static List<Bonus> allBonusesForEntity(String entityId) {
         List<Bonus> bonuses = new ArrayList<>();
 
+        if (isSporeCalamity(entityId)) {
+            addTaa(bonuses, "bullet_gundamage", 0.10D,
+                    "bonus.yixiangshouronglu.spore_calamity");
+            add(bonuses, Attributes.MAX_HEALTH,
+                    AttributeModifier.Operation.ADDITION, 15.0D,
+                    "bonus.yixiangshouronglu.spore_calamity");
+            return bonuses;
+        }
+
         if (isAntlersWendigo(entityId)) {
             add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
                     10.0D, "bonus.yixiangshouronglu.wendigo");
@@ -114,8 +147,10 @@ public final class ResonanceRules {
                     ? "bonus.yixiangshouronglu.mutant_hoglin"
                     : "bonus.yixiangshouronglu.mutantmore_zombie";
 
-            add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION, 10.0D, key);
-            add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION, 2.0D, key);
+            add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
+                    10.0D, key);
+            add(bonuses, Attributes.ATTACK_DAMAGE, AttributeModifier.Operation.ADDITION,
+                    2.0D, key);
             return bonuses;
         }
 
@@ -226,6 +261,18 @@ public final class ResonanceRules {
                         0.05D, "bonus.yixiangshouronglu.ancient_remnant");
             }
 
+            case IGNIS, MALEDICTUS, SHADOW_DEMON -> {
+                add(bonuses, ModAttributes.ALL_DAMAGE.get(),
+                        AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.20D, "bonus.yixiangshouronglu.cataclysm_supreme");
+                add(bonuses, Attributes.ARMOR,
+                        AttributeModifier.Operation.ADDITION,
+                        4.0D, "bonus.yixiangshouronglu.cataclysm_supreme");
+                add(bonuses, Attributes.MAX_HEALTH,
+                        AttributeModifier.Operation.ADDITION,
+                        25.0D, "bonus.yixiangshouronglu.cataclysm_supreme");
+            }
+
             case FIRE_DRAGON, ICE_DRAGON, LIGHTNING_DRAGON -> {
                 add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
                         10.0D, "bonus.yixiangshouronglu.iceandfire_dragon");
@@ -245,6 +292,14 @@ public final class ResonanceRules {
             case WITHER_SKELETON ->
                     add(bonuses, ModAttributes.ALL_DAMAGE.get(), AttributeModifier.Operation.MULTIPLY_TOTAL,
                             0.04D, "bonus.yixiangshouronglu.mutantmore_wither_skeleton");
+
+            case MUTANT_SHULKER -> {
+                add(bonuses, Attributes.MOVEMENT_SPEED,
+                        AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.10D, "bonus.yixiangshouronglu.mutant_shulker");
+                addTaa(bonuses, "weight",
+                        -0.15D, "bonus.yixiangshouronglu.mutant_shulker");
+            }
 
             case YOUNG_ENDER_DRAGON -> {
                 add(bonuses, Attributes.MAX_HEALTH, AttributeModifier.Operation.ADDITION,
@@ -276,17 +331,6 @@ public final class ResonanceRules {
                         20.0D, "bonus.yixiangshouronglu.scp_682");
                 add(bonuses, Attributes.ARMOR, AttributeModifier.Operation.ADDITION,
                         8.0D, "bonus.yixiangshouronglu.scp_682");
-            }
-
-            case MUTANT_SHULKER -> {
-                add(bonuses, Attributes.MOVEMENT_SPEED,
-                        AttributeModifier.Operation.MULTIPLY_TOTAL,
-                        0.10D,
-                        "bonus.yixiangshouronglu.mutant_shulker");
-
-                addTaa(bonuses, "weight",
-                        -0.15D,
-                        "bonus.yixiangshouronglu.mutant_shulker");
             }
 
             default -> {
