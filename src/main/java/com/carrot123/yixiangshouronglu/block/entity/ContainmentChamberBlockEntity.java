@@ -210,12 +210,11 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
             }
 
             extractStoredMb -= EXTRACT_COST_MB;
-        } else {
-            extractionInput.shrink(1);
+        }
+        extractionInput.shrink(1);
 
-            if (extractionInput.isEmpty()) {
-                extractionInput = ItemStack.EMPTY;
-            }
+        if (extractionInput.isEmpty()) {
+            extractionInput = ItemStack.EMPTY;
         }
 
         storeExtraction(result);

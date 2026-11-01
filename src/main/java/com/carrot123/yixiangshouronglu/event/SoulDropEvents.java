@@ -16,10 +16,14 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(
+        modid = AnomalousContainmentChronicles.MOD_ID,
+        bus = Mod.EventBusSubscriber.Bus.FORGE
+)
 public final class SoulDropEvents {
     private static final String DROPPED_KEY = "yixiangshouronglu_soul_dropped";
-    private static final ResourceLocation HARBINGER = new ResourceLocation("cataclysm", "the_harbinger");
+    private static final ResourceLocation HARBINGER =
+            new ResourceLocation("cataclysm", "the_harbinger");
 
     private static final Set<ResourceLocation> PLAYER_KILL_ENTITIES = Set.of(
             new ResourceLocation("mutantmonsters", "mutant_zombie"),
@@ -32,6 +36,7 @@ public final class SoulDropEvents {
             new ResourceLocation("mutantmore", "mutant_husk"),
             new ResourceLocation("mutantmore", "mutant_hoglin"),
             new ResourceLocation("mutantmore", "mutant_wither_skeleton"),
+            new ResourceLocation("mutantmore", "mutant_shulker"),
 
             new ResourceLocation("cataclysm", "amethyst_crab"),
             new ResourceLocation("cataclysm", "clawdian"),
@@ -46,7 +51,10 @@ public final class SoulDropEvents {
             new ResourceLocation("mythsandlegends", "black_charro"),
             new ResourceLocation("cataclysm", "netherite_monstrosity"),
             new ResourceLocation("cataclysm", "ancient_remnant"),
-            new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "tenacious_shield"),
+            new ResourceLocation(
+                    AnomalousContainmentChronicles.MOD_ID,
+                    "tenacious_shield"
+            ),
             HARBINGER
     );
 
@@ -59,7 +67,9 @@ public final class SoulDropEvents {
             return;
         }
 
-        ResourceLocation entityId = ForgeRegistries.ENTITY_TYPES.getKey(mob.getType());
+        ResourceLocation entityId =
+                ForgeRegistries.ENTITY_TYPES.getKey(mob.getType());
+
         if (entityId == null) {
             return;
         }
@@ -72,7 +82,8 @@ public final class SoulDropEvents {
             return;
         }
 
-        if (!otherAllowed && !(event.getSource().getEntity() instanceof ServerPlayer)) {
+        if (!otherAllowed
+                && !(event.getSource().getEntity() instanceof ServerPlayer)) {
             return;
         }
 
@@ -83,6 +94,7 @@ public final class SoulDropEvents {
         mob.getPersistentData().putBoolean(DROPPED_KEY, true);
 
         ItemStack soul = SoulItem.create(ModItems.SOUL.get(), entityId);
+
         ItemEntity soulEntity = new ItemEntity(
                 mob.level(),
                 mob.getX(),

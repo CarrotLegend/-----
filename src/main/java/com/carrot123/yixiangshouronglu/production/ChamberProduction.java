@@ -50,6 +50,10 @@ public final class ChamberProduction {
                     new Recipe(Items.ENDER_PEARL, 2400,
                             "screen.yixiangshouronglu.chamber.rate_two_minutes");
 
+            case "mutantmore:mutant_shulker" ->
+                    new Recipe(Items.SHULKER_SHELL, 1200,
+                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
+
             case "minecraft:wither" ->
                     new Recipe(Items.NETHERITE_SCRAP, 1200,
                             "screen.yixiangshouronglu.chamber.rate_one_per_minute");
@@ -155,6 +159,8 @@ public final class ChamberProduction {
 
         Item item = ForgeRegistries.ITEMS.getValue(id);
 
-        return item == null ? null : new Recipe(item, intervalTicks, rateKey);
+        return item == null
+                ? null
+                : new Recipe(item, intervalTicks, rateKey);
     }
 }

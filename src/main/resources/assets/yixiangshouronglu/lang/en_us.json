@@ -92,5 +92,6 @@
   "block.yixiangshouronglu.amethyst_crab_lure": "Amethyst Crab Lure",
   "tooltip.yixiangshouronglu.amethyst_crab_lure": "Place in Lush Caves to attract an Amethyst Crab.",
   "item.yixiangshouronglu.sedative_meat": "Sedative Meat",
-  "bonus.yixiangshouronglu.scp_682": "Regeneration IV\nMax Health +20\nArmor +8"
+  "bonus.yixiangshouronglu.scp_682": "Regeneration IV\nMax Health +20\nArmor +8",
+  "bonus.yixiangshouronglu.mutant_shulker": "Movement Speed +10%%\nGun Weight -15%%"
 }

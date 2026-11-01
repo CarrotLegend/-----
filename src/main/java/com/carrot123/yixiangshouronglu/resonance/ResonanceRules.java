@@ -36,6 +36,7 @@ public final class ResonanceRules {
     private static final String HOGLIN = "mutantmore:mutant_hoglin";
     private static final String WITHER_SKELETON = "mutantmore:mutant_wither_skeleton";
     private static final String MUTANT_BLAZE = "mutantmore:mutant_blaze";
+    private static final String MUTANT_SHULKER = "mutantmore:mutant_shulker";
 
     private static final String FIRE_DRAGON = "iceandfire:fire_dragon";
     private static final String ICE_DRAGON = "iceandfire:ice_dragon";
@@ -275,6 +276,17 @@ public final class ResonanceRules {
                         20.0D, "bonus.yixiangshouronglu.scp_682");
                 add(bonuses, Attributes.ARMOR, AttributeModifier.Operation.ADDITION,
                         8.0D, "bonus.yixiangshouronglu.scp_682");
+            }
+
+            case MUTANT_SHULKER -> {
+                add(bonuses, Attributes.MOVEMENT_SPEED,
+                        AttributeModifier.Operation.MULTIPLY_TOTAL,
+                        0.10D,
+                        "bonus.yixiangshouronglu.mutant_shulker");
+
+                addTaa(bonuses, "weight",
+                        -0.15D,
+                        "bonus.yixiangshouronglu.mutant_shulker");
             }
 
             default -> {

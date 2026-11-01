@@ -35,6 +35,7 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.ECHO_CAGE.get());
                                 output.accept(ModItems.AMETHYST_CRAB_LURE.get());
                                 output.accept(ModItems.SEDATIVE_MEAT.get());
+                                output.accept(ModItems.EXTRACTOR.get());
                             })
                             .build()
             );

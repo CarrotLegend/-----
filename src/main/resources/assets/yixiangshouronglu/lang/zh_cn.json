@@ -92,5 +92,6 @@
   "block.yixiangshouronglu.amethyst_crab_lure": "紫水晶巨蟹引诱装置",
   "tooltip.yixiangshouronglu.amethyst_crab_lure": "在繁茂洞穴中放下吸引紫水晶巨蟹。",
   "item.yixiangshouronglu.sedative_meat": "镇静肉",
-  "bonus.yixiangshouronglu.scp_682": "生命恢复Ⅳ\n最大生命值 +20\n护甲 +8"
+  "bonus.yixiangshouronglu.scp_682": "生命恢复Ⅳ\n最大生命值 +20\n护甲 +8",
+  "bonus.yixiangshouronglu.mutant_shulker": "移动速度 +10%%\n枪械重量 -15%%"
 }
