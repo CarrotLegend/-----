@@ -1,0 +1,48 @@
+{
+  "type": "yixiangshouronglu:gene_synthesis",
+  "mode": "SYNTHESIS",
+  "shapeless": true,
+  "time": 200,
+  "inputs": [
+    {
+      "slot": 0,
+      "ingredient": {
+        "type": "forge:partial_nbt",
+        "item": "yixiangshouronglu:containment_extract",
+        "nbt": {
+          "EntityId": "mutantmonsters:mutant_skeleton"
+        }
+      },
+      "count": 4
+    },
+    {
+      "slot": 1,
+      "ingredient": {
+        "item": "minecraft:bone"
+      },
+      "count": 6
+    },
+    {
+      "slot": 2,
+      "ingredient": {
+        "item": "yixiangshouronglu:wendigo_eye"
+      },
+      "count": 1
+    },
+    {
+      "slot": 3,
+      "ingredient": {
+        "type": "forge:partial_nbt",
+        "item": "yixiangshouronglu:containment_extract",
+        "nbt": {
+          "EntityId": "antlers:wendigo"
+        }
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "gene": "yixiangshouronglu:skeletal_retina",
+    "quality": "ALPHA"
+  }
+}

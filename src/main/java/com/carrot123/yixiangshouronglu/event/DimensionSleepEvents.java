@@ -14,8 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 public final class DimensionSleepEvents {
     private static final ResourceKey<Level> DRAGON_NEST = ResourceKey.create(Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(AnomalousContainmentChronicles.MOD_ID, "dragon_nest"));
-    private static final ResourceKey<Level> FUNGAL_WORLD = ResourceKey.create(Registries.DIMENSION,
-            ResourceLocation.fromNamespaceAndPath(AnomalousContainmentChronicles.MOD_ID, "fungal_world"));
 
     private DimensionSleepEvents() {
     }
@@ -23,7 +21,7 @@ public final class DimensionSleepEvents {
     @SubscribeEvent
     public static void onSleepInBed(PlayerSleepInBedEvent event) {
         ResourceKey<Level> dimension = event.getEntity().level().dimension();
-        if (dimension.equals(DRAGON_NEST) || dimension.equals(FUNGAL_WORLD)) {
+        if (dimension.equals(DRAGON_NEST)) {
             event.setResult(Player.BedSleepingProblem.NOT_POSSIBLE_HERE);
         }
     }

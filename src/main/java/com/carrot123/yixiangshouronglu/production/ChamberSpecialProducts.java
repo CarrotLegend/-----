@@ -10,7 +10,10 @@ public final class ChamberSpecialProducts {
     public record Recipe(int inputCount, ItemStack result) {
     }
 
-    record RecipeDefinition(int inputCount, String itemId) {
+    record RecipeDefinition(int inputCount, String itemId, int outputCount) {
+        RecipeDefinition(int inputCount, String itemId) {
+            this(inputCount, itemId, 1);
+        }
     }
 
     private ChamberSpecialProducts() {
@@ -29,7 +32,7 @@ public final class ChamberSpecialProducts {
         }
 
         Item item = ForgeRegistries.ITEMS.getValue(id);
-        return item == null ? null : new Recipe(definition.inputCount(), new ItemStack(item));
+        return item == null ? null : new Recipe(definition.inputCount(), new ItemStack(item, definition.outputCount()));
     }
 
     @Nullable
@@ -52,6 +55,10 @@ public final class ChamberSpecialProducts {
                     ? new RecipeDefinition(1, "iceandfire:lightning_dragon_blood") : null;
             case "minecraft:wither" -> "minecraft:wither".equals(inputEntityId)
                     ? new RecipeDefinition(4, "minecraft:nether_star") : null;
+            case "mutantmore:mutant_hoglin" -> "mutantmore:mutant_jungle_zombie".equals(inputEntityId)
+                    ? new RecipeDefinition(1, "minecraft:porkchop", 64) : null;
+            case "mutantmonsters:mutant_skeleton" -> "mutantmonsters:mutant_skeleton".equals(inputEntityId)
+                    ? new RecipeDefinition(1, "minecraft:bone", 2) : null;
             default -> null;
         };
     }

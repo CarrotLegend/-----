@@ -1,5 +1,6 @@
 package com.carrot123.yixiangshouronglu.registry;
 
+import com.carrot123.yixiangshouronglu.block.entity.GeneSynthesizerBlockEntity;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.block.entity.AmethystCrabLureBlockEntity;
 import com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity;
@@ -16,6 +17,8 @@ public final class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<IncubatingDragonEggBlockEntity>> INCUBATING_DRAGON_EGG = BLOCK_ENTITIES.register("incubating_dragon_egg", () -> BlockEntityType.Builder.of(IncubatingDragonEggBlockEntity::new, ModBlocks.INCUBATING_DRAGON_EGG.get()).build(null));
     public static final RegistryObject<BlockEntityType<AmethystCrabLureBlockEntity>> AMETHYST_CRAB_LURE = BLOCK_ENTITIES.register("amethyst_crab_lure", () -> BlockEntityType.Builder.of(AmethystCrabLureBlockEntity::new, ModBlocks.AMETHYST_CRAB_LURE.get()).build(null));
 
+
+    public static final RegistryObject<BlockEntityType<GeneSynthesizerBlockEntity>> GENE_SYNTHESIZER = BLOCK_ENTITIES.register("gene_synthesizer", () -> BlockEntityType.Builder.of(GeneSynthesizerBlockEntity::new, ModBlocks.GENE_SYNTHESIZER.get()).build(null));
 
     private ModBlockEntities() {
     }

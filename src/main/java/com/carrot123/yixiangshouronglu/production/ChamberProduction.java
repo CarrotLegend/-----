@@ -1,7 +1,7 @@
 package com.carrot123.yixiangshouronglu.production;
 
 import com.carrot123.yixiangshouronglu.registry.ModItems;
-import com.carrot123.yixiangshouronglu.resonance.ResonanceRules;
+import com.carrot123.yixiangshouronglu.util.SoulEntityUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -17,11 +17,7 @@ public final class ChamberProduction {
 
     @Nullable
     public static Recipe forEntity(String entityId) {
-        if (ResonanceRules.isSporeCalamity(entityId)) {
-            return null;
-        }
-
-        if (ResonanceRules.isAntlersWendigo(entityId)) {
+        if (SoulEntityUtil.isAntlersWendigo(entityId)) {
             return new Recipe(
                     ModItems.WENDIGO_EYE.get(),
                     6000,
@@ -29,7 +25,7 @@ public final class ChamberProduction {
             );
         }
 
-        if (ResonanceRules.isMutantMoreZombie(entityId)) {
+        if (SoulEntityUtil.isMutantMoreZombie(entityId)) {
             return new Recipe(
                     Items.DIAMOND,
                     1200,

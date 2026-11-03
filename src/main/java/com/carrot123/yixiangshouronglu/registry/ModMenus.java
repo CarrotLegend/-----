@@ -1,8 +1,9 @@
 package com.carrot123.yixiangshouronglu.registry;
 
+import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
+import com.carrot123.yixiangshouronglu.menu.GeneSynthesizerMenu;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.menu.ContainmentChamberMenu;
-import com.carrot123.yixiangshouronglu.menu.ResonanceMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -16,17 +17,14 @@ public final class ModMenus {
                     AnomalousContainmentChronicles.MOD_ID
             );
 
-    public static final RegistryObject<MenuType<ResonanceMenu>> RESONANCE =
-            MENUS.register(
-                    "resonance",
-                    () -> IForgeMenuType.create(ResonanceMenu::new)
-            );
-
     public static final RegistryObject<MenuType<ContainmentChamberMenu>> CONTAINMENT_CHAMBER =
             MENUS.register(
                     "containment_chamber",
                     () -> IForgeMenuType.create(ContainmentChamberMenu::new)
             );
+
+    public static final RegistryObject<MenuType<GeneSynthesizerMenu>> GENE_SYNTHESIZER = MENUS.register("gene_synthesizer", () -> IForgeMenuType.create(GeneSynthesizerMenu::new));
+    public static final RegistryObject<MenuType<GeneModificationMenu>> GENE_MODIFICATION_CHAMBER = MENUS.register("gene_modification_chamber", () -> IForgeMenuType.create(GeneModificationMenu::new));
 
     private ModMenus() {
     }

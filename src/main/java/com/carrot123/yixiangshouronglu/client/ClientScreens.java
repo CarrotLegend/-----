@@ -46,11 +46,8 @@ public final class ClientScreens {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            MenuScreens.register(
-                    ModMenus.RESONANCE.get(),
-                    ResonanceScreen::new
-            );
-
+            MenuScreens.register(ModMenus.GENE_SYNTHESIZER.get(), GeneSynthesizerScreen::new);
+            MenuScreens.register(ModMenus.GENE_MODIFICATION_CHAMBER.get(), GeneModificationScreen::new);
             MenuScreens.register(
                     ModMenus.CONTAINMENT_CHAMBER.get(),
                     ContainmentChamberScreen::new

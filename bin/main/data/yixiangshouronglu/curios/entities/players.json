@@ -3,7 +3,6 @@
     "minecraft:player"
   ],
   "slots": [
-    "resonance_core",
     "head",
     "back"
   ]

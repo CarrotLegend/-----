@@ -1,7 +1,6 @@
 package com.carrot123.yixiangshouronglu.block;
 
 import com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity;
-import com.carrot123.yixiangshouronglu.item.ResonanceCoreItem;
 import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -161,18 +160,6 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
         }
 
         ItemStack held = player.getItemInHand(hand);
-
-        if (held.is(ModItems.RESONANCE_CORE.get())) {
-            if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-                ResonanceCoreItem.bindOrUnbind(
-                        held,
-                        serverPlayer,
-                        lowerPos
-                );
-            }
-
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        }
 
         if (player.isShiftKeyDown()) {
             if (!level.isClientSide) {

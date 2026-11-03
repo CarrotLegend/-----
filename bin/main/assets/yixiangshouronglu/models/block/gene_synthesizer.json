@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "body": "yixiangshouronglu:block/gene_machine_dark",
+    "panel": "yixiangshouronglu:block/gene_machine_panel",
+    "indicator": "yixiangshouronglu:block/gene_machine_indicator",
+    "particle": "yixiangshouronglu:block/gene_machine_dark"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        5,
+        -0.02
+      ],
+      "to": [
+        13,
+        12,
+        0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#panel"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        3,
+        -0.03
+      ],
+      "to": [
+        12,
+        4,
+        0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#indicator"
+        }
+      }
+    }
+  ]
+}

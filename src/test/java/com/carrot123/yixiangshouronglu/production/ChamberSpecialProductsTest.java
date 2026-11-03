@@ -34,10 +34,29 @@ class ChamberSpecialProductsTest {
         assertNull(ChamberSpecialProducts.definitionForInput("iceandfire:lightning_dragon", "iceandfire:ice_dragon"));
     }
 
+    @Test
+    void matchesBulkOutputsWithOneInput() {
+        assertEquals(new ChamberSpecialProducts.RecipeDefinition(1, "minecraft:porkchop", 64),
+                ChamberSpecialProducts.definitionForInput("mutantmore:mutant_hoglin", "mutantmore:mutant_jungle_zombie"));
+        assertEquals(new ChamberSpecialProducts.RecipeDefinition(1, "minecraft:bone", 2),
+                ChamberSpecialProducts.definitionForInput("mutantmonsters:mutant_skeleton", "mutantmonsters:mutant_skeleton"));
+    }
+
+    @Test
+    void rejectsWrongChambersAndSimilarMutantEntities() {
+        assertNull(ChamberSpecialProducts.definitionForInput("mutantmore:mutant_jungle_zombie", "mutantmore:mutant_jungle_zombie"));
+        assertNull(ChamberSpecialProducts.definitionForInput("mutantmore:mutant_hoglin", "mutantmore:mutant_hoglin"));
+        assertNull(ChamberSpecialProducts.definitionForInput("mutantmore:mutant_hoglin", "mutantmore:mutant_frozen_zombie"));
+        assertNull(ChamberSpecialProducts.definitionForInput("minecraft:skeleton", "mutantmonsters:mutant_skeleton"));
+        assertNull(ChamberSpecialProducts.definitionForInput("mutantmore:mutant_wither_skeleton", "mutantmonsters:mutant_skeleton"));
+        assertNull(ChamberSpecialProducts.definitionForInput("mutantmonsters:mutant_skeleton", "minecraft:skeleton"));
+        assertNull(ChamberSpecialProducts.definitionForInput("mutantmonsters:mutant_skeleton", "mutantmore:mutant_wither_skeleton"));
+    }
+
     private static void assertRecipe(String chamberEntityId, String inputEntityId,
                                      int inputCount, String itemId) {
         ChamberSpecialProducts.RecipeDefinition definition =
                 ChamberSpecialProducts.definitionForInput(chamberEntityId, inputEntityId);
-        assertEquals(new ChamberSpecialProducts.RecipeDefinition(inputCount, itemId), definition);
+        assertEquals(new ChamberSpecialProducts.RecipeDefinition(inputCount, itemId, 1), definition);
     }
 }

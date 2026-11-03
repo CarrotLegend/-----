@@ -19,10 +19,9 @@ public final class ModCreativeTabs {
             CREATIVE_TABS.register("main",
                     () -> CreativeModeTab.builder()
                             .title(Component.translatable("itemGroup.yixiangshouronglu.main"))
-                            .icon(() -> new ItemStack(ModItems.RESONANCE_CORE.get()))
+                            .icon(() -> new ItemStack(ModItems.CONTAINMENT_CHAMBER.get()))
                             .displayItems((parameters, output) -> {
                                 output.accept(ModItems.SOUL.get());
-                                output.accept(ModItems.RESONANCE_CORE.get());
                                 output.accept(ModItems.WENDIGO_EYE.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_FRAGMENT.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_SPAWN_EGG.get());
@@ -38,6 +37,9 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.AMETHYST_CRAB_LURE.get());
                                 output.accept(ModItems.SEDATIVE_MEAT.get());
                                 output.accept(ModItems.EXTRACTOR.get());
+                                output.accept(ModItems.GENE_MODULE.get());
+                                output.accept(ModItems.GENE_SYNTHESIZER.get());
+                                output.accept(ModItems.GENE_MODIFICATION_CHAMBER.get());
                             })
                             .build()
             );

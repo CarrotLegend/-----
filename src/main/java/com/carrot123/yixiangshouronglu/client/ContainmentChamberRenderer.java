@@ -1,5 +1,6 @@
 package com.carrot123.yixiangshouronglu.client;
 
+import com.carrot123.yixiangshouronglu.util.SoulEntityUtil;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.block.ContainmentChamberBlock;
 import com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity;
@@ -130,7 +131,7 @@ public final class ContainmentChamberRenderer implements BlockEntityRenderer<Con
         float height = Math.max(0.2F, preview.entity.getBbHeight());
         float scale = Math.min(2.5F, Math.min(0.82F / width, 0.86F / height));
 
-        if (com.carrot123.yixiangshouronglu.resonance.ResonanceRules.isAntlersWendigo(id)) {
+        if (SoulEntityUtil.isAntlersWendigo(id)) {
             scale = Math.min(scale, 0.14F);
         }
 

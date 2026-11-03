@@ -3,7 +3,7 @@ package com.carrot123.yixiangshouronglu.event;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
-import com.carrot123.yixiangshouronglu.resonance.ResonanceRules;
+import com.carrot123.yixiangshouronglu.util.SoulEntityUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -84,8 +84,7 @@ public final class SoulDropEvents {
             return;
         }
 
-        if (!NEW_BOSSES.contains(entityId)
-                && !ResonanceRules.isSporeCalamity(entityId.toString())) {
+        if (!NEW_BOSSES.contains(entityId)) {
             return;
         }
 
@@ -123,7 +122,7 @@ public final class SoulDropEvents {
 
         boolean otherAllowed = OTHER_ALLOWED_ENTITIES.contains(entityId);
         boolean playerKillAllowed = PLAYER_KILL_ENTITIES.contains(entityId)
-                || ResonanceRules.isAntlersWendigo(entityId.toString());
+                || SoulEntityUtil.isAntlersWendigo(entityId.toString());
 
         if (!otherAllowed && !playerKillAllowed) {
             return;

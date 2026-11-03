@@ -1,11 +1,12 @@
 package com.carrot123.yixiangshouronglu.registry;
 
+import net.minecraft.world.item.BlockItem;
+import com.carrot123.yixiangshouronglu.item.GeneModuleItem;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.item.AmethystCrabLureBlock;
 import com.carrot123.yixiangshouronglu.item.BlazeCageItem;
 import com.carrot123.yixiangshouronglu.item.EnderDragonWingsItem;
 import com.carrot123.yixiangshouronglu.item.ExemptionShieldItem;
-import com.carrot123.yixiangshouronglu.item.ResonanceCoreItem;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.item.WendigoEyeItem;
 import com.carrot123.yixiangshouronglu.item.WendigoSightItem;
@@ -23,7 +24,6 @@ public final class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AnomalousContainmentChronicles.MOD_ID);
     public static final RegistryObject<Item> CONTAINMENT_CHAMBER = ITEMS.register("containment_chamber", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> SOUL = ITEMS.register("soul", () -> new SoulItem(new Item.Properties().stacksTo(16)));
-    public static final RegistryObject<Item> RESONANCE_CORE = ITEMS.register("resonance_core", () -> new ResonanceCoreItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> WENDIGO_EYE = ITEMS.register("wendigo_eye", () -> new WendigoEyeItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2F).alwaysEat().build())));
     public static final RegistryObject<Item> TENACIOUS_SHIELD_FRAGMENT = ITEMS.register("tenacious_shield_fragment", () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SHADOW_FRAGMENT = ITEMS.register("shadow_fragment", () -> new Item(new Item.Properties().stacksTo(64)));
@@ -40,6 +40,10 @@ public final class ModItems {
     public static final RegistryObject<Item> CONTAINMENT_EXTRACT = ITEMS.register("containment_extract", () -> new ContainmentExtractItem(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<Item> AMETHYST_CRAB_LURE = ITEMS.register("amethyst_crab_lure", () -> new AmethystCrabLureBlock(ModBlocks.AMETHYST_CRAB_LURE.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SEDATIVE_MEAT = ITEMS.register("sedative_meat", () -> new Item(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
+
+    public static final RegistryObject<Item> GENE_MODULE = ITEMS.register("gene_module", () -> new GeneModuleItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> GENE_SYNTHESIZER = ITEMS.register("gene_synthesizer", () -> new BlockItem(ModBlocks.GENE_SYNTHESIZER.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GENE_MODIFICATION_CHAMBER = ITEMS.register("gene_modification_chamber", () -> new BlockItem(ModBlocks.GENE_MODIFICATION_CHAMBER.get(), new Item.Properties()));
 
     private ModItems() {
     }

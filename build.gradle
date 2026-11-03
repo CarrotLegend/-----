@@ -34,6 +34,7 @@ minecraft {
 
 repositories {
     mavenCentral()
+    maven { url = "https://maven.blamejared.com"; content { includeGroup "mezz.jei" } }
 
     maven {
         name = 'CurseMaven'
@@ -65,6 +66,9 @@ dependencies {
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-1.20.1:4.8.4")
     implementation fg.deobf("org.mesdag:ParticleStorm-forge-1.20.1:1.4.3.1")
     implementation fg.deobf("curse.maven:lendercataclysm-551586:6906993")
+
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.59.0.212")
+    compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.59.0.212")
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

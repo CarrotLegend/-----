@@ -1,0 +1,44 @@
+{
+  "type": "yixiangshouronglu:gene_synthesis",
+  "mode": "SYNTHESIS",
+  "shapeless": true,
+  "time": 200,
+  "inputs": [
+    {
+      "slot": 0,
+      "ingredient": {
+        "type": "forge:partial_nbt",
+        "item": "yixiangshouronglu:containment_extract",
+        "nbt": {
+          "EntityId": "mutantmonsters:mutant_creeper"
+        }
+      },
+      "count": 4
+    },
+    {
+      "slot": 1,
+      "ingredient": {
+        "item": "minecraft:gunpowder"
+      },
+      "count": 8
+    },
+    {
+      "slot": 2,
+      "ingredient": {
+        "item": "minecraft:blaze_powder"
+      },
+      "count": 2
+    },
+    {
+      "slot": 3,
+      "ingredient": {
+        "item": "minecraft:leather"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "gene": "yixiangshouronglu:blast_skeleton",
+    "quality": "ALPHA"
+  }
+}
