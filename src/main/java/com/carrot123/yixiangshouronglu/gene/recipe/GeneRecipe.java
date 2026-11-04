@@ -2,6 +2,7 @@ package com.carrot123.yixiangshouronglu.gene.recipe;
 
 import com.carrot123.yixiangshouronglu.gene.*;
 import com.carrot123.yixiangshouronglu.item.GeneModuleItem;
+import com.carrot123.yixiangshouronglu.item.ContainmentExtractItem;
 import com.carrot123.yixiangshouronglu.registry.ModGeneRecipes;
 import com.google.gson.*;
 import net.minecraft.core.NonNullList;
@@ -18,7 +19,7 @@ import java.util.*;
 public final class GeneRecipe implements Recipe<Container> {
     public record Input(int slot, Ingredient ingredient, int count, ResourceLocation geneId, GeneTypes.Quality quality) {
         boolean matches(ItemStack stack) {
-            if (stack.getCount() < count || !ingredient.test(stack)) { return false; }
+            if (stack.getCount() < count || !ingredient.test(ContainmentExtractItem.normalizedCopy(stack))) { return false; }
             if ((geneId != null || quality != null) && GeneModuleItem.definition(stack) == null) { return false; }
             var data = GeneModuleItem.read(stack);
             return (geneId == null || data != null && data.id().equals(geneId)) && (quality == null || data != null && data.quality() == quality);

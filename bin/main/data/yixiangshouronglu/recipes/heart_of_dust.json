@@ -1,0 +1,50 @@
+{
+  "type": "yixiangshouronglu:gene_synthesis",
+  "mode": "SYNTHESIS",
+  "shapeless": true,
+  "time": 600,
+  "inputs": [
+    {
+      "slot": 0,
+      "ingredient": {
+        "type": "forge:partial_nbt",
+        "item": "yixiangshouronglu:containment_extract",
+        "nbt": {
+          "EntityId": "mutantmore:mutant_husk"
+        }
+      },
+      "count": 1
+    },
+    {
+      "slot": 1,
+      "ingredient": {
+        "item": "mutantmore:mutant_husk_vocal_cords"
+      },
+      "count": 1
+    },
+    {
+      "slot": 2,
+      "ingredient": {
+        "item": "minecraft:sand"
+      },
+      "count": 4
+    },
+    {
+      "slot": 3,
+      "ingredient": {
+        "item": "minecraft:gravel"
+      },
+      "count": 5
+    }
+  ],
+  "result": {
+    "gene": "yixiangshouronglu:heart_of_dust",
+    "quality": "ALPHA"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mutantmore"
+    }
+  ]
+}

@@ -54,7 +54,7 @@ Capability ID：`yixiangshouronglu:genes`。`PlayerGenes`包含五个独立容�
 
 服务端管理接口：
 
-- `GeneService.upgradeCapacity(ServerPlayer)`：逐级提升I–V并刷新同步。
+- `GeneService.upgradeCapacity(ServerPlayer, long revision)`：校验改造舱会话、修订号和三种背包材料后逐级提升I–V并刷新同步。
 - `GeneService.unlockExtreme(ServerPlayer)`：解锁标记并刷新同步。
 - GUI开关通过事务action4处理，只允许V级且解锁；仍超正常容量或存在未知成本时不能关闭。
 - `GeneCapability.get(player)`供服务端读取；扩展Runtime变动后调用`GeneService.refresh(player)`同步。不要绕过事务直接修改安装槽。
@@ -63,7 +63,7 @@ Capability ID：`yixiangshouronglu:genes`。`PlayerGenes`包含五个独立容�
 
 ## 网络
 
-通道：`yixiangshouronglu:genes`，协议2。改造C2S仅发送菜单ID、能力修订号、操作、背包槽与身体索引；主动技能C2S仅发送技能ID。安装基因ID、容量、目标坐标、冷却和操作结果不从客户端接受。S2C只向所属玩家发送服务端快照与翻译状态码。登录、重生、换维度、打开设备和修改后同步，不每tick广播。
+通道：`yixiangshouronglu:genes`，协议3。改造C2S仅发送菜单ID、能力修订号、操作、背包槽与身体索引；动作5为容量升级，其背包槽与身体索引字段不参与结算。主动技能C2S仅发送技能ID。安装基因ID、容量、目标坐标、冷却和操作结果不从客户端接受。S2C只向所属玩家发送服务端快照、下一阶段容量升级材料及注册状态、翻译状态码。登录、重生、换维度、打开设备和修改后同步，不每tick广播。
 
 合成台使用原版菜单槽位与DataSlot同步库存和32位进度；隐藏的预览槽不允许点击、转移或取出。模式为设备共享状态。改造舱身体槽不是普通Slot，选择后通过安装/卸载/替换按钮进行原子移动。
 
@@ -85,7 +85,7 @@ Capability ID：`yixiangshouronglu:genes`。`PlayerGenes`包含五个独立容�
 
 正式基因ID为 `yixiangshouronglu:regenerative_cells`，ZAYIN、心肺、容量4。分类ID为 `yixiangshouronglu:mutant` 和 `yixiangshouronglu:undead`。GeneDefinition新增categories集合，旧构造函数默认空分类。
 
-注册分类通过GeneCategories.register。有效安装定义的分类集合做并集，奖励不按模块数量或品质重复叠加。Gene.Categories物品数据只是快照，实际效果及Tooltip以定义为准。
+注册分类通过GeneCategories.register。全身有效安装定义按基因ID去重后分别统计各分类，至少4个同分类基因才激活一次奖励；双分类同时为两个分类各计1，品质不增加计数。GeneCategories.counts及active共用ACTIVATION_COUNT=4；不足4时基因自己的效果仍生效。Gene.Categories物品数据只是快照，实际效果及Tooltip以定义为准。
 
 品质数值：α每40tick治疗1、过量治疗+0.05；β每30tick治疗1、+0.10；γ每20tick治疗1、+0.15。本次只有α配方。突变固定+20生命/+4攻击，亡灵固定+5生命/生命恢复II。
 
@@ -95,6 +95,37 @@ GeneEffects在安装变更、登录、重生和换维度时核对稳定UUID修�
 
 GeneRegeneration保留25tick相位：初始45，剩余不超过20时加25。跟踪自有实例和保存快照，外部添加事件会交出所有权。较弱有限外部药水保存在原版HiddenEffect中，卸载时恢复剩余状态；同级有限效果接近到期时，使用不改变相位的自有延长期包裹，原效果保留在隐藏链中。更强、无限和来源不明效果不删除。外部合并后的实例按原版规则自然结束，不强行清空。
 
-GeneDescriptions.effects为所有基因生成独立的本地化Component，统一GOLD和ITALIC。具体效果实现Effect.descriptions(quality)，分类追加自身说明；改造舱与合成台预览悬停复用这些行。每项一行，不在翻译内嵌换行堆叠效果。
+GeneDescriptions.effects为所有基因生成独立的本地化Component，统一GOLD和ITALIC。具体效果实现Effect.descriptions(quality)，分类追加自身说明和四基因门槛；改造舱与合成台预览悬停复用这些行。每项一行，不在翻译内嵌换行堆叠效果。
 
 配方可选shapeless:true，缺省仍为固定槽。无序时slot表示展示位置，完整回溯分配实际槽位后按映射扣料。UPGRADE仍要求主槽，不允许无序强化。再生细胞配方200tick，消耗4僵尸突变体提取液(EntityId=mutantmonsters:mutant_zombie)、8腐肉、8 #yixiangshouronglu:raw_meats、1金苹果。partial_nbt允许无关附加NBT，拒绝其他实体。生肉标签初始仅有牛、猪、鸡、羊、兔，不含鱼、熟肉和腐肉。
+
+## 巨钳外骨骼与 TETH 基因
+
+`ExtendedGenes`注册`clawdian_exoskeleton`（ZAYIN/骨骼/容量2）、`heart_of_dust`（TETH/心肺/5）、`vine_muscles`（TETH/肌肉/4）和`frozen_bone_marrow`（TETH/骨骼/6）。巨钳外骨骼无分类，后三者同时计入突变与亡灵；同类至少4个有效且不同ID的已安装基因才激活分类奖励。
+
+三品质数值依次为：外骨骼护甲2/4/6；沙尘之心生命5/15/25并免疫原版饥饿、中毒；藤蔓肌束基础移速百分比5/10/15、近战缓慢概率10/20/30（缓慢I，80tick）；冰封骨髓护甲3/5/7、近战额外FREEZE伤害4/8/12，无冰冻减伤。
+
+属性通过现有稳定UUID刷新和移除。沙尘之心在刷新时清除已有指定状态，并在MobEffectEvent.Applicable拒绝新状态。GeneMeleeEvents仅收集有效玩家直接近战的LivingDamageEvent，于服务端tick末在主伤害完成后处理；再次检查取消、存活、维度及已安装基因。额外FREEZE来源仅绕过受伤冷却，保留其他原版类型规则，不属于PLAYER_ATTACK，不递归触发近战效果。队列在tick末和服务器停止时清理。
+
+四条初始配方为四槽无序配方，外骨骼200tick，其余600tick。提取液保留EntityId部分NBT；藤蔓肌束使用现有meats标签。Mutant More配方具有mod_loaded条件。JEI从RecipeManager自动读取；没有新增正式强化配方，三品质效果及现有模块升级接口均可用。
+
+分类描述统一拼接为每类一行，保留本地化分隔符、分类名与4基因门槛提示；GeneDescriptions继续统一应用金色斜体。模块NBT版本及已有ID未改变。当前源码原先没有藤蔓肌束或冰封骨髓定义和旧配方，本次按指定ID加入，不需要删除旧配方。
+
+## 改造舱容量升级
+
+GeneCapacityUpgrades集中维护四阶段材料，均按物品注册ID匹配，各消耗1个，忽略耐久和其他NBT差异。仅扫描背包与快捷栏0–35槽。可选物品未注册时保持阶段不可用，不使用空气或替代品。
+
+| 阶段 | 容量 | 三种材料，各1个 |
+|---|---|---|
+| I→II | 20→25 | cataclysm:amethyst_crab_shell、yixiangshouronglu:wendigo_eye、mutantmonsters:hulk_hammer |
+| II→III | 25→30 | minecraft:nether_star、minecraft:dragon_egg、mutantmore:mutant_wither_skeleton_skull |
+| III→IV | 30→35 | cataclysm:abyssal_egg、mythsandlegends:tenebrite_shard、theinkarena:soul_core |
+| IV→V | 35→40 | deeperdarker:warden_carapace、cataclysm:witherite_ingot、iceandfire:fire_dragon_heart |
+
+改造舱按钮位于(108,237)，164×14。材料与注册可用状态由服务器快照提供，拥有数量取现有菜单同步的主背包与快捷栏；悬停显示当前及下一容量、三项拥有/需求数量，缺料或缺失物品标红。V级禁用，升级结果同时写入菜单状态和客户端动作栏。
+
+动作5复用原有Action消息。NetworkEvent.Context.enqueueWork将请求放到服务端主线程，网络入口校验菜单ID，菜单与服务再次校验有效会话、归属、方块、距离、空鼠标、基因能力及revision。先验证完整材料表和数量，再统一扣除；升级返回失败或抛出异常时恢复涉及物品栈快照。成功使用原PlayerGenes.upgradeCapacity递增等级和revision，刷新库存、属性及所属玩家快照。旧revision重复请求拒绝，且不能跳级。
+
+继续使用原Capacity及Revision NBT字段与已有Clone、登录、跨维度恢复流程，没有新增持久化字段。网络协议3要求客户端和服务器安装相同新版ACC。极限改造与容量上限不变。
+
+普通JUnit可验证材料表、扣料计划、背包索引边界、旧revision、最高级、事务回滚及预览编解码。真实ItemStack、玩家NBT恢复、菜单距离与方块校验、界面缩放及多人交互仍须在Forge游戏环境中验证；普通JUnit未进行Forge事件类转换，不能用vanilla Bootstrap替代真实加载器启动。

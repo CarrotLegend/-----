@@ -16,6 +16,7 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
     private int selectedSlot = -1;
     private ItemStack selected = ItemStack.EMPTY;
     public String status = "ok";
+    public GeneCapacityUpgrades.Preview capacityUpgrade;
     public GeneModificationMenu(int id, Inventory inventory, FriendlyByteBuf buffer) { this(id, inventory, buffer.readBlockPos()); }
     public GeneModificationMenu(int id, Inventory inventory, BlockPos pos) {
         super(ModMenus.GENE_MODIFICATION_CHAMBER.get(), id); this.pos = pos; this.inventory = inventory;
@@ -25,7 +26,14 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
     public PlayerGenes genes() { return GeneCapability.get(inventory.player); }
     public void act(ServerPlayer player, GeneNetwork.Action message) {
         if (inventory.player != player || !stillValid(player) || !getCarried().isEmpty()) { GeneNetwork.sync(player, "cursor_not_empty"); return; }
-        if (message.revision() != genes().revision()) { GeneNetwork.sync(player, "stale"); return; }
+        if (!player.getCapability(GeneCapability.TYPE).isPresent()) { GeneNetwork.sync(player, "capacity_upgrade_failed"); return; }
+        if (message.revision() != genes().revision()) { GeneNetwork.sync(player, message.action() == 5 ? "capacity_upgrade_stale" : "stale"); return; }
+        if (message.action() == 5) {
+            String result = GeneService.upgradeCapacity(player, message.revision());
+            if (!result.equals("capacity_upgrade_success")) { GeneNetwork.sync(player, result); }
+            broadcastChanges();
+            return;
+        }
         if (message.action() == 0) {
             selectedSlot = message.inventorySlot();
             selected = selectedSlot >= 0 && selectedSlot < 36 ? inventory.getItem(selectedSlot).copy() : ItemStack.EMPTY;

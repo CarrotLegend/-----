@@ -14,8 +14,29 @@ public final class GeneCategories {
             List<Component> result = new ArrayList<>();
             for (Bonus bonus : bonuses) { result.add(Component.translatable(bonus.descriptionKey(), (int) bonus.amount())); }
             if (regeneration) { result.add(Component.translatable("gene.yixiangshouronglu.undead.regeneration")); }
-            return result;
+            if (result.isEmpty()) { return List.of(); }
+            var combined = Component.empty();
+            for (Component line : result) {
+                if (!combined.getSiblings().isEmpty()) { combined.append(Component.translatable("gene.yixiangshouronglu.effect.separator")); }
+                combined.append(line);
+            }
+            return List.of(Component.translatable("gene.yixiangshouronglu.category_requirement",
+                    Component.translatable("gene.yixiangshouronglu.category_effects", Component.translatable(nameKey), combined), ACTIVATION_COUNT));
         }
+    }
+    public static final int ACTIVATION_COUNT = 4;
+    public static Map<ResourceLocation, Integer> counts(Iterable<GeneDefinition> definitions) {
+        Map<ResourceLocation, Integer> result = new HashMap<>(); Set<ResourceLocation> seen = new HashSet<>();
+        for (GeneDefinition definition : definitions) {
+            if (definition == null || !seen.add(definition.id())) { continue; }
+            for (ResourceLocation category : definition.categories()) { result.merge(category, 1, Integer::sum); }
+        }
+        return Map.copyOf(result);
+    }
+    public static Set<ResourceLocation> active(Map<ResourceLocation, Integer> counts) {
+        Set<ResourceLocation> result = new HashSet<>();
+        counts.forEach((id, count) -> { if (count >= ACTIVATION_COUNT) { result.add(id); } });
+        return Set.copyOf(result);
     }
     private static final Map<ResourceLocation, Category> CATEGORIES = new LinkedHashMap<>();
     public static final ResourceLocation MUTANT = new ResourceLocation("yixiangshouronglu", "mutant");

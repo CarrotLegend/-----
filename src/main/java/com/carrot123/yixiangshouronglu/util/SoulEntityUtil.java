@@ -6,6 +6,11 @@ public final class SoulEntityUtil {
     private SoulEntityUtil() {
     }
 
+    public static String normalizeExtractEntityId(String entityId) {
+        return "antlers:wendigo".equals(entityId) || "antlers:wendigomad".equals(entityId) || "antlers:wendigo_flute".equals(entityId)
+                ? "antlers:wendigo" : entityId;
+    }
+
     public static boolean isAntlersWendigo(String entityId) {
         ResourceLocation id = ResourceLocation.tryParse(entityId);
         return id != null

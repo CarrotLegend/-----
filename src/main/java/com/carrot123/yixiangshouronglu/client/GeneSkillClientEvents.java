@@ -16,17 +16,18 @@ import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, value = Dist.CLIENT)
 public final class GeneSkillClientEvents {
-    private static final KeyMapping ACTIVATE = new KeyMapping("key.yixiangshouronglu.gene_skill", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, "key.categories.yixiangshouronglu.genes");
+    private static final KeyMapping ACTIVATE = new KeyMapping("key.yixiangshouronglu.gene_skill", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.yixiangshouronglu.genes");
+    private static final GeneSkillKeyLatch LATCH = new GeneSkillKeyLatch();
     private GeneSkillClientEvents() {}
     @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) { return; }
         Minecraft client = Minecraft.getInstance();
-        while (ACTIVATE.consumeClick()) {
-            if (client.player == null || client.screen != null) { continue; }
-            var skills = GeneSkills.available(GeneCapability.get(client.player));
-            if (skills.size() == 1) { GeneNetwork.CHANNEL.sendToServer(new GeneNetwork.SkillRequest(skills.get(0).id())); }
-            else if (skills.size() > 1) { client.setScreen(new GeneSkillSelectionScreen(skills)); }
-        }
+        boolean clicked = false;
+        while (ACTIVATE.consumeClick()) { clicked = true; }
+        if (!LATCH.press(clicked, ACTIVATE.isDown(), client.player != null && client.screen == null && client.isWindowActive())) { return; }
+        var skills = GeneSkills.available(GeneCapability.get(client.player));
+        if (skills.size() == 1) { GeneNetwork.CHANNEL.sendToServer(new GeneNetwork.SkillRequest(skills.get(0).id())); }
+        else if (skills.size() > 1) { client.setScreen(new GeneSkillSelectionScreen(skills)); }
     }
     @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static final class Registration {

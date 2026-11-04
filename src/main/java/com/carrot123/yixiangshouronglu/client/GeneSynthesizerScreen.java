@@ -35,7 +35,7 @@ public final class GeneSynthesizerScreen extends GeneScreen<GeneSynthesizerMenu>
             var data = GeneModuleItem.read(menu.preview());
             if (data != null) { graphics.drawString(font, Component.translatable(data.strength().key()), 171, 69, 0xE5BD68, false); graphics.drawString(font, Component.translatable(data.quality().key()), 171, 82, 0xE5BD68, false); }
         }
-        graphics.drawString(font, Component.translatable("gene.yixiangshouronglu.progress", GeneTime.seconds(menu.progress()), GeneTime.seconds(menu.duration())), 77, 84, 0xAAB9C8, false);
+        graphics.drawString(font, Component.translatable("gene.yixiangshouronglu.progress", GeneTime.seconds(menu.progress()), GeneTime.totalSeconds(menu.duration())), 77, 84, 0xAAB9C8, false);
     }
     @Override protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
         super.renderTooltip(graphics, mouseX, mouseY);

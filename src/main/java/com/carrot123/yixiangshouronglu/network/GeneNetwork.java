@@ -2,6 +2,8 @@ package com.carrot123.yixiangshouronglu.network;
 
 import com.carrot123.yixiangshouronglu.gene.GeneCapability;
 import com.carrot123.yixiangshouronglu.gene.GeneSkills;
+import com.carrot123.yixiangshouronglu.gene.GeneCapacityUpgrades;
+import net.minecraft.network.chat.Component;
 import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,7 +17,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class GeneNetwork {
-    private static final String VERSION = "2";
+    private static final String VERSION = "3";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("yixiangshouronglu", "genes"), () -> VERSION, VERSION::equals, VERSION::equals);
     private GeneNetwork() {}
     public static void register() {
@@ -41,10 +43,14 @@ public final class GeneNetwork {
             context.get().setPacketHandled(true);
         }
     }
-    public static void sync(ServerPlayer player, String status) { CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new Snapshot(GeneCapability.get(player).save(), status)); }
-    public record Snapshot(CompoundTag data, String status) {
-        static void encode(Snapshot message, FriendlyByteBuf buffer) { buffer.writeNbt(message.data); buffer.writeUtf(message.status, 64); }
-        static Snapshot decode(FriendlyByteBuf buffer) { CompoundTag tag = buffer.readNbt(); return new Snapshot(tag == null ? new CompoundTag() : tag, buffer.readUtf(64)); }
+    public static void sync(ServerPlayer player, String status) {
+        var genes = player.getCapability(GeneCapability.TYPE).orElse(null);
+        if (genes == null) { player.displayClientMessage(Component.translatable("gene.yixiangshouronglu.capacity_upgrade_failed"), true); return; }
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new Snapshot(genes.save(), status, GeneCapacityUpgrades.preview(genes.capacity())));
+    }
+    public record Snapshot(CompoundTag data, String status, GeneCapacityUpgrades.Preview capacityUpgrade) {
+        static void encode(Snapshot message, FriendlyByteBuf buffer) { buffer.writeNbt(message.data); buffer.writeUtf(message.status, 64); message.capacityUpgrade.encode(buffer); }
+        static Snapshot decode(FriendlyByteBuf buffer) { CompoundTag tag = buffer.readNbt(); return new Snapshot(tag == null ? new CompoundTag() : tag, buffer.readUtf(64), GeneCapacityUpgrades.Preview.decode(buffer)); }
         static void handle(Snapshot message, Supplier<NetworkEvent.Context> context) {
             context.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> com.carrot123.yixiangshouronglu.client.GeneClientPackets.apply(message)));
             context.get().setPacketHandled(true);
@@ -56,7 +62,10 @@ public final class GeneNetwork {
         static void handle(Action message, Supplier<NetworkEvent.Context> context) {
             context.get().enqueueWork(() -> {
                 ServerPlayer player = context.get().getSender();
-                if (player != null && player.containerMenu instanceof GeneModificationMenu menu && menu.containerId == message.window && menu.stillValid(player)) { menu.act(player, message); }
+                if (player != null) {
+                    if (player.containerMenu instanceof GeneModificationMenu menu && menu.containerId == message.window && menu.stillValid(player)) { menu.act(player, message); }
+                    else if (message.action == 5) { sync(player, "capacity_upgrade_invalid_menu"); }
+                }
             }); context.get().setPacketHandled(true);
         }
     }

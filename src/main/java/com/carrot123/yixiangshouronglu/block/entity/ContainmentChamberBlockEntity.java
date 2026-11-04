@@ -145,6 +145,10 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
             return;
         }
 
+        boolean normalizedInput = ContainmentExtractItem.normalize(chamber.extractionInput);
+        boolean normalizedOutput = ContainmentExtractItem.normalize(chamber.extractionOutput);
+        if (normalizedInput || normalizedOutput) { chamber.setChanged(); }
+
         String entityId = chamber.getEntityId();
 
         if (entityId.isEmpty()) {

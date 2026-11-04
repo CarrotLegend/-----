@@ -26,8 +26,7 @@ public final class GeneEffects {
         return result;
     }
     public static Set<ResourceLocation> categories(Map<ResourceLocation, ItemStack> installed) {
-        Set<ResourceLocation> result = new HashSet<>();
-        installed.keySet().forEach(id -> result.addAll(GeneDefinitions.get(id).categories())); return result;
+        return GeneCategories.active(GeneCategories.counts(installed.keySet().stream().map(GeneDefinitions::get).toList()));
     }
     public static void refresh(ServerPlayer player) {
         Map<ResourceLocation, ItemStack> installed = installed(player); Set<ResourceLocation> active = categories(installed);
@@ -39,6 +38,7 @@ public final class GeneEffects {
         reconcile(player, RegenerativeCells.OVERHEAL, definition.effectId("overheal"), cells == null ? 0 : RegenerativeCells.overheal(GeneModuleItem.read(cells).quality()));
         if (cells == null) { GeneCapability.get(player).effectRuntime().remove("RegenerativeCells"); }
         AdditionalGenes.refresh(player, installed);
+        ExtendedGenes.refresh(player, installed);
         if (player.getHealth() > player.getMaxHealth()) { player.setHealth(player.getMaxHealth()); }
         GeneRegeneration.maintain(player, providesRegeneration(active));
     }

@@ -1,8 +1,7 @@
 package com.carrot123.yixiangshouronglu.gene;
 
-import java.math.BigDecimal;
-
 public final class GeneTime {
     private GeneTime() {}
-    public static String seconds(int ticks) { return BigDecimal.valueOf(Math.max(0, ticks)).divide(BigDecimal.valueOf(20)).stripTrailingZeros().toPlainString(); }
+    public static String seconds(int ticks) { return Integer.toString(Math.max(0, ticks) / 20); }
+    public static String totalSeconds(int ticks) { return Long.toString((Math.max(0L, ticks) + 19) / 20); }
 }

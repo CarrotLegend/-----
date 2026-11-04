@@ -6,6 +6,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import com.carrot123.yixiangshouronglu.registry.ModGeneRecipes;
 import com.carrot123.yixiangshouronglu.gene.RegenerativeCells;
 import com.carrot123.yixiangshouronglu.gene.AdditionalGenes;
+import com.carrot123.yixiangshouronglu.gene.ExtendedGenes;
 import com.carrot123.yixiangshouronglu.gene.GeneSkillConfig;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
@@ -38,6 +39,7 @@ public final class AnomalousContainmentChronicles {
         GeneNetwork.register();
         RegenerativeCells.register();
         AdditionalGenes.register();
+        ExtendedGenes.register();
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, GeneSkillConfig.SPEC);
     }
 }

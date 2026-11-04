@@ -2,6 +2,7 @@ package com.carrot123.yixiangshouronglu.gene;
 
 import com.carrot123.yixiangshouronglu.item.GeneModuleItem;
 import com.carrot123.yixiangshouronglu.network.GeneNetwork;
+import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
@@ -63,7 +64,10 @@ public final class GeneService {
         if (definition != null && definition.effect() != null) { definition.effect().removed(player, module.copy()); }
     }
     public static void refresh(ServerPlayer player) {
-        visit(player, false); GeneEffects.refresh(player); player.getInventory().setChanged(); player.containerMenu.broadcastChanges(); GeneNetwork.sync(player, "ok");
+        refresh(player, "ok");
+    }
+    private static void refresh(ServerPlayer player, String status) {
+        visit(player, false); GeneEffects.refresh(player); player.getInventory().setChanged(); player.containerMenu.broadcastChanges(); GeneNetwork.sync(player, status);
     }
     public static void restore(ServerPlayer player) { visit(player, true); GeneEffects.refresh(player); }
     private static void visit(ServerPlayer player, boolean restore) {
@@ -77,9 +81,17 @@ public final class GeneService {
             }
         }
     }
-    public static boolean upgradeCapacity(ServerPlayer player) {
-        if (!GeneCapability.get(player).upgradeCapacity()) { return false; }
-        refresh(player); return true;
+    public static String upgradeCapacity(ServerPlayer player, long revision) {
+        if (!(player.containerMenu instanceof GeneModificationMenu menu) || !menu.stillValid(player)) { return "capacity_upgrade_invalid_menu"; }
+        if (!menu.getCarried().isEmpty()) { return "cursor_not_empty"; }
+        PlayerGenes genes = player.getCapability(GeneCapability.TYPE).orElse(null);
+        if (genes == null) { return "capacity_upgrade_failed"; }
+        var inventory = player.getInventory();
+        var plan = GeneCapacityUpgrades.plan(genes.capacity(), revision, genes.revision(), GeneCapacityUpgrades.slots(inventory));
+        if (!plan.status().equals("ok")) { return plan.status(); }
+        if (!GeneCapacityUpgrades.apply(plan, inventory, genes::upgradeCapacity)) { return "capacity_upgrade_failed"; }
+        refresh(player, "capacity_upgrade_success");
+        return "capacity_upgrade_success";
     }
     public static void unlockExtreme(ServerPlayer player) { GeneCapability.get(player).unlockExtreme(); refresh(player); }
 }

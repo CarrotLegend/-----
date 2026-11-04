@@ -10,6 +10,8 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.ChatFormatting;
+import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +20,9 @@ public final class GeneModificationScreen extends GeneScreen<GeneModificationMen
     private int selectedBody;
     private int scroll;
     private float rotation;
+    private Button capacityUpgradeButton;
     public GeneModificationScreen(GeneModificationMenu menu, Inventory inventory, Component title) { super(menu, inventory, title, 398, 286); }
-    private void send(int action) { GeneNetwork.CHANNEL.sendToServer(new GeneNetwork.Action(menu.containerId, menu.genes().revision(), action, selectedInventory, selectedBody)); }
+    private void send(int action) { GeneNetwork.CHANNEL.sendToServer(new GeneNetwork.Action(menu.containerId, menu.genes().revision(), action, action == 5 ? -1 : selectedInventory, action == 5 ? -1 : selectedBody)); }
     @Override protected void widgets() {
         String[] actions = {"install", "uninstall", "replace"};
         for (int index = 0; index < 3; index++) {
@@ -27,10 +30,14 @@ public final class GeneModificationScreen extends GeneScreen<GeneModificationMen
             addRenderableWidget(Button.builder(Component.translatable("gene.yixiangshouronglu." + actions[index]), button -> send(action)).bounds(leftPos + 8, topPos + 158 + index * 23, 90, 20).build());
         }
         addRenderableWidget(Button.builder(Component.translatable("gene.yixiangshouronglu.extreme"), button -> send(4)).bounds(leftPos + 8, topPos + 227, 90, 20).build());
+        capacityUpgradeButton = addRenderableWidget(Button.builder(Component.translatable("gene.yixiangshouronglu.capacity_upgrade"), button -> send(5))
+                .bounds(leftPos + 108, topPos + 237, 164, 14).build());
+        capacityUpgradeButton.active = false;
     }
     private ItemStack installed() { return menu.genes().get(GeneService.region(selectedBody), GeneService.localSlot(selectedBody)); }
     private ItemStack candidate() { return selectedInventory >= 0 ? minecraft.player.getInventory().getItem(selectedInventory) : ItemStack.EMPTY; }
     @Override protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
+        updateCapacityUpgrade();
         panel(graphics);
         graphics.fill(leftPos + 8, topPos + 25, leftPos + 98, topPos + 150, 0xFF0A121A);
         InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, leftPos + 52, topPos + 143, 48, rotation, 0, minecraft.player);
@@ -50,6 +57,45 @@ public final class GeneModificationScreen extends GeneScreen<GeneModificationMen
         int extra = (int) Math.min(26, Math.max(0, genes.used() - genes.capacity().limit) * 26 / 4);
         graphics.fill(leftPos + 10, topPos + 270, leftPos + 10 + normal, topPos + 277, 0xFF4C9DD5);
         graphics.fill(leftPos + 362, topPos + 270, leftPos + 362 + extra, topPos + 277, genes.rejection() == GeneTypes.Rejection.SEVERE ? 0xFFE66565 : 0xFFE7C35D);
+    }
+    private void updateCapacityUpgrade() {
+        boolean maximum = menu.genes().capacity() == GeneTypes.Capacity.V;
+        capacityUpgradeButton.setMessage(Component.translatable(maximum ? "gene.yixiangshouronglu.capacity_upgrade_max" : "gene.yixiangshouronglu.capacity_upgrade"));
+        var preview = menu.capacityUpgrade;
+        var slots = GeneCapacityUpgrades.slots(minecraft.player.getInventory());
+        capacityUpgradeButton.active = !maximum && preview != null && preview.capacity() == menu.genes().capacity()
+                && preview.materials().size() == 3 && menu.getCarried().isEmpty()
+                && preview.materials().stream().allMatch(material -> material.available() && GeneCapacityUpgrades.count(slots, material.item()) >= material.count());
+    }
+    @Override protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY) {
+        super.renderTooltip(graphics, mouseX, mouseY);
+        if (!isHovering(108, 237, 164, 14, mouseX, mouseY)) { return; }
+        List<Component> lines = new ArrayList<>();
+        var capacity = menu.genes().capacity();
+        lines.add(Component.translatable("gene.yixiangshouronglu.capacity_upgrade_current", capacity.name(), capacity.limit));
+        if (capacity == GeneTypes.Capacity.V) {
+            lines.add(Component.translatable("gene.yixiangshouronglu.capacity_upgrade_max"));
+        } else if (menu.capacityUpgrade == null || menu.capacityUpgrade.capacity() != capacity) {
+            lines.add(Component.translatable("gene.yixiangshouronglu.capacity_upgrade_wait"));
+        } else {
+            var next = GeneTypes.Capacity.values()[capacity.ordinal() + 1];
+            lines.add(Component.translatable("gene.yixiangshouronglu.capacity_upgrade_next", next.name(), next.limit));
+            lines.add(Component.translatable("gene.yixiangshouronglu.capacity_upgrade_requirements"));
+            var slots = GeneCapacityUpgrades.slots(minecraft.player.getInventory());
+            for (var material : menu.capacityUpgrade.materials()) {
+                var item = ForgeRegistries.ITEMS.getValue(material.item());
+                if (!material.available() || item == null || !ForgeRegistries.ITEMS.containsKey(material.item())) {
+                    lines.add(Component.translatable("gene.yixiangshouronglu.capacity_upgrade_missing", material.item().toString(), material.count()).withStyle(ChatFormatting.RED));
+                    continue;
+                }
+                int count = GeneCapacityUpgrades.count(slots, material.item());
+                lines.add(Component.translatable("gene.yixiangshouronglu.capacity_upgrade_material", item.getDescription(), count, material.count())
+                        .withStyle(count < material.count() ? ChatFormatting.RED : ChatFormatting.GRAY));
+            }
+            if (!capacityUpgradeButton.active) { lines.add(Component.translatable(menu.getCarried().isEmpty()
+                    ? "gene.yixiangshouronglu.capacity_upgrade_materials" : "gene.yixiangshouronglu.cursor_not_empty").withStyle(ChatFormatting.RED)); }
+        }
+        graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
     }
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, 8, 8, 0xE4F1FA, false);

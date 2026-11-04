@@ -12,7 +12,7 @@ AdditionalGenes.register 集中注册 skeletal_retina、blast_skeleton、ender_s
 | blast_skeleton | SKELETAL / 3 | mutant | IS_EXPLOSION 伤害剩余 0.75 / 0.50 / 0.25 |
 | ender_synapse | NERVOUS / 5 | mutant | attributeslib:dodge_chance ADDITION 0.02 / 0.04 / 0.06 |
 
-属性修饰器使用 GeneDefinition.effectId(attribute ID) 稳定 UUID。GeneEffects.refresh 核对数值和操作类型，仅更改对应 UUID；分类使用原有并集去重。箭矢伤害由神化属性自身的实体生成监听处理，ACC 不重复乘伤。
+属性修饰器使用 GeneDefinition.effectId(attribute ID) 稳定 UUID。GeneEffects.refresh 核对数值和操作类型，仅更改对应 UUID；分类按全身有效基因ID去重计数，同一分类达到4个时激活一次，少于4个不提供奖励；基因自身效果独立生效。箭矢伤害由神化属性自身的实体生成监听处理，ACC 不重复乘伤。
 
 GeneDefinition.Effect.explosionReduction 为可选扩展入口，默认0。GeneDamageEvents 在服务端 LivingHurtEvent LOWEST 中仅处理真实 IS_EXPLOSION 标签，各基因按剩余伤害乘法组合，原版护甲、抗性、吸收生命仍在之后执行。
 
@@ -26,13 +26,13 @@ GeneDefinition.Effect.explosionReduction 为可选扩展入口，默认0。GeneD
 
 提取液 Ingredient 使用 forge:partial_nbt，EntityId 位于物品根 NBT，额外 NBT 不影响匹配。meats 引用现有 raw_meats，并添加五种熟肉及原版生熟鱼；不含鱼桶、腐肉和加工食品。无新增强化材料配方，GeneModuleItem.upgrade 仍支持 α→β→γ。
 
-GeneTime.seconds 将 tick 除以20后移除末尾零，合成台和 JEI 共用；内部保存和制作时间仍为 tick。空配方右侧不绘制提示。
+GeneTime.seconds 将已过tick除以20向下取整，totalSeconds将总tick向上取整，两者只显示整数秒；合成、强化及JEI共用；内部保存和制作时间仍为 tick。空配方右侧不绘制提示。
 
 ## 主动技能接口
 
 GeneSkills.register(Skill) 注册 ID、提供基因、名称翻译键和服务端执行入口。执行返回本地化状态后缀，成功为 ok，只有成功才写入冷却。未来技能需提供自身执行逻辑；公共验证、请求节流、技能选择和保存可复用。
 
-当前 ender_teleport 由有效安装的 ender_synapse 提供。单一可重绑按键默认 G；一个可用技能直接请求，多个时打开统一分页选择界面。客户端不提交位置、容量、冷却或结果。
+当前 ender_teleport 由有效安装的 ender_synapse 提供。单一可重绑按键默认 R，名称“使用基因主动技能”；一个可用技能直接请求，多个时打开统一分页选择界面。按下沿和长按锁存保证每次按下最多一次请求，GUI打开或窗口失焦时消费按键但不施法。保留玩家自定义键位，旧设置如仍绑定G，需在控制设置中改为R或重置默认。客户端不提交位置、容量、冷却或结果。
 
 GeneNetwork 协议版本2：原 Snapshot/Action 保留，新增 C2S SkillRequest（仅技能 ID）及 S2C SkillResult。服务端通过连接取得玩家，所有操作在服务器线程执行；仅向本人同步。登录、重生、换维度复用 Capability 快照，不按 tick 广播。
 
@@ -58,4 +58,12 @@ teleportCooldownTicks = 100
 
 所有基因效果行由 GeneDescriptions 统一本地化并应用金色斜体，不新增模型或注册物品，不恢复共鸣或 TAA。
 
-实际测试、构建与未验证项见 build/ender-validation/report.md。
+## 温迪戈提取液兼容
+
+实际 Antlers 1.0.0 的 antlers:wendigo、antlers:wendigomad、antlers:wendigo_flute 在提取液层统一为 antlers:wendigo。SoulEntityUtil.normalizeExtractEntityId只处理这三个ID，不更改灵魂识别或掉落。
+
+新物品根NBT统一为 EntityId:"antlers:wendigo"。ContainmentExtractItem.getEntityId返回归一化识别值；normalize只在服务端相关背包和收容室提取槽入口改写旧EntityId，不移除其他NBT。GeneRecipe通过归一化副本匹配Ingredient，实际槽位和扣除数量不变；不因此重置制作进度。骸骨视网膜JSON原本已使用统一ID，无需更换材料或配方时间。
+
+正式基因仍只有两个亡灵分类来源，因此当前正式内容无法凑齐亡灵分类四件奖励；测试使用隔离定义验证门槛和生命恢复，不增加正式基因。
+
+最新修复测试、构建与未验证项见 build/gene-fixes-validation/report.md；上一轮功能引入记录保留于 build/ender-validation/report.md。

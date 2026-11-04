@@ -16,7 +16,13 @@ public final class GeneClientPackets {
         var player = Minecraft.getInstance().player;
         if (player != null) {
             GeneCapability.get(player).load(snapshot.data());
-            if (player.containerMenu instanceof GeneModificationMenu menu) { menu.status = snapshot.status(); }
+            if (player.containerMenu instanceof GeneModificationMenu menu) {
+                menu.status = snapshot.status();
+                menu.capacityUpgrade = snapshot.capacityUpgrade();
+            }
+            if (snapshot.status().startsWith("capacity_upgrade_")) {
+                player.displayClientMessage(Component.translatable("gene.yixiangshouronglu." + snapshot.status()), true);
+            }
         }
     }
 }
