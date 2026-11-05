@@ -22,6 +22,7 @@ public final class ModCreativeTabs {
                             .icon(() -> new ItemStack(ModItems.CONTAINMENT_CHAMBER.get()))
                             .displayItems((parameters, output) -> {
                                 output.accept(ModItems.SOUL.get());
+                                output.accept(ModItems.LEGENDARY_CARROT_KING_SPAWN_EGG.get());
                                 output.accept(ModItems.WENDIGO_EYE.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_FRAGMENT.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_SPAWN_EGG.get());

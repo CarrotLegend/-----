@@ -24,6 +24,7 @@ public final class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AnomalousContainmentChronicles.MOD_ID);
     public static final RegistryObject<Item> CONTAINMENT_CHAMBER = ITEMS.register("containment_chamber", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> SOUL = ITEMS.register("soul", () -> new SoulItem(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> LEGENDARY_CARROT_KING_SPAWN_EGG = ITEMS.register("legendary_carrot_king_spawn_egg", () -> new ForgeSpawnEggItem(ModEntities.LEGENDARY_CARROT_KING, 0xE9943F, 0x79B56C, new Item.Properties()));
     public static final RegistryObject<Item> WENDIGO_EYE = ITEMS.register("wendigo_eye", () -> new WendigoEyeItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2F).alwaysEat().build())));
     public static final RegistryObject<Item> TENACIOUS_SHIELD_FRAGMENT = ITEMS.register("tenacious_shield_fragment", () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SHADOW_FRAGMENT = ITEMS.register("shadow_fragment", () -> new Item(new Item.Properties().stacksTo(64)));

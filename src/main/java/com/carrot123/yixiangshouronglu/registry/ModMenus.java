@@ -1,6 +1,7 @@
 package com.carrot123.yixiangshouronglu.registry;
 
 import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
+import com.carrot123.yixiangshouronglu.menu.CarrotKingShopMenu;
 import com.carrot123.yixiangshouronglu.menu.GeneSynthesizerMenu;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.menu.ContainmentChamberMenu;
@@ -28,4 +29,5 @@ public final class ModMenus {
 
     private ModMenus() {
     }
+    public static final RegistryObject<MenuType<CarrotKingShopMenu>> CARROT_KING_SHOP = MENUS.register("carrot_king_shop", () -> IForgeMenuType.create(CarrotKingShopMenu::new));
 }

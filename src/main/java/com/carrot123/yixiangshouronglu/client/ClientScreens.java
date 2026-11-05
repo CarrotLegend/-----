@@ -22,6 +22,7 @@ public final class ClientScreens {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.LEGENDARY_CARROT_KING.get(), LegendaryCarrotKingRenderer::new);
         event.registerBlockEntityRenderer(
                 ModBlockEntities.CONTAINMENT_CHAMBER.get(),
                 ContainmentChamberRenderer::new
@@ -46,6 +47,7 @@ public final class ClientScreens {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            MenuScreens.register(ModMenus.CARROT_KING_SHOP.get(), CarrotKingShopScreen::new);
             MenuScreens.register(ModMenus.GENE_SYNTHESIZER.get(), GeneSynthesizerScreen::new);
             MenuScreens.register(ModMenus.GENE_MODIFICATION_CHAMBER.get(), GeneModificationScreen::new);
             MenuScreens.register(

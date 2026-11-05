@@ -1,6 +1,8 @@
 package com.carrot123.yixiangshouronglu;
 
 import com.carrot123.yixiangshouronglu.network.GeneNetwork;
+import com.carrot123.yixiangshouronglu.network.ShopNetwork;
+import com.carrot123.yixiangshouronglu.shop.PlayerShopData;
 import com.carrot123.yixiangshouronglu.gene.PlayerGenes;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import com.carrot123.yixiangshouronglu.registry.ModGeneRecipes;
@@ -36,6 +38,8 @@ public final class AnomalousContainmentChronicles {
         ModGeneRecipes.TYPES.register(modBus);
         ModGeneRecipes.SERIALIZERS.register(modBus);
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerGenes.class));
+        modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerShopData.class));
+        ShopNetwork.register();
         GeneNetwork.register();
         RegenerativeCells.register();
         AdditionalGenes.register();

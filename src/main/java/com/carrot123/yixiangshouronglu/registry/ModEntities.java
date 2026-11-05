@@ -5,6 +5,7 @@ import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.entity.TenaciousShieldEntity;
 import com.carrot123.yixiangshouronglu.entity.ShadowDemonEntity;
 import com.carrot123.yixiangshouronglu.entity.YoungEnderDragonEntity;
+import com.carrot123.yixiangshouronglu.entity.LegendaryCarrotKingEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -43,11 +44,16 @@ public final class ModEntities {
                             .clientTrackingRange(10)
                             .build(AnomalousContainmentChronicles.MOD_ID + ":shadow_demon"));
 
+    public static final RegistryObject<EntityType<LegendaryCarrotKingEntity>> LEGENDARY_CARROT_KING = ENTITIES.register("legendary_carrot_king",
+            () -> EntityType.Builder.of(LegendaryCarrotKingEntity::new, MobCategory.CREATURE).sized(0.6F, 1.8F)
+                    .clientTrackingRange(10).build(AnomalousContainmentChronicles.MOD_ID + ":legendary_carrot_king"));
+
     private ModEntities() {
     }
 
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
+        event.put(LEGENDARY_CARROT_KING.get(), LegendaryCarrotKingEntity.createAttributes().build());
         event.put(TENACIOUS_SHIELD.get(), TenaciousShieldEntity.createAttributes().build());
         event.put(YOUNG_ENDER_DRAGON.get(), YoungEnderDragonEntity.createAttributes().build());
         event.put(SHADOW_DEMON.get(), ShadowDemonEntity.createAttributes().build());
