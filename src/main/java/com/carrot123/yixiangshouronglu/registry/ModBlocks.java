@@ -5,6 +5,7 @@ import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.block.AmethystCrabLureBlock;
 import com.carrot123.yixiangshouronglu.block.ContainmentChamberBlock;
 import com.carrot123.yixiangshouronglu.block.IncubatingDragonEggBlock;
+import com.carrot123.yixiangshouronglu.block.GeneModificationChamberBlock;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;

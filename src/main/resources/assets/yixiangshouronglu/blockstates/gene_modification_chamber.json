@@ -2,35 +2,35 @@
   "variants": {
     "facing=north,half=lower": {
       "model": "yixiangshouronglu:block/gene_modification_chamber",
-      "y": 0
+      "y": 180
     },
     "facing=east,half=lower": {
       "model": "yixiangshouronglu:block/gene_modification_chamber",
-      "y": 90
+      "y": 270
     },
     "facing=south,half=lower": {
       "model": "yixiangshouronglu:block/gene_modification_chamber",
-      "y": 180
+      "y": 0
     },
     "facing=west,half=lower": {
       "model": "yixiangshouronglu:block/gene_modification_chamber",
-      "y": 270
+      "y": 90
     },
     "facing=north,half=upper": {
       "model": "yixiangshouronglu:block/gene_modification_chamber_upper",
-      "y": 0
+      "y": 180
     },
     "facing=east,half=upper": {
       "model": "yixiangshouronglu:block/gene_modification_chamber_upper",
-      "y": 90
+      "y": 270
     },
     "facing=south,half=upper": {
       "model": "yixiangshouronglu:block/gene_modification_chamber_upper",
-      "y": 180
+      "y": 0
     },
     "facing=west,half=upper": {
       "model": "yixiangshouronglu:block/gene_modification_chamber_upper",
-      "y": 270
+      "y": 90
     }
   }
 }

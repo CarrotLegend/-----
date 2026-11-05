@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
   "textures": {
     "texture": "yixiangshouronglu:block/gene_modification_chamber",
     "particle": "yixiangshouronglu:block/gene_modification_chamber"
@@ -476,13 +477,13 @@
         8
       ],
       "rotation": {
-        "angle": 45,
-        "axis": "y",
         "origin": [
           8,
           -15,
           8
-        ]
+        ],
+        "axis": "y",
+        "angle": 45
       },
       "faces": {
         "north": {

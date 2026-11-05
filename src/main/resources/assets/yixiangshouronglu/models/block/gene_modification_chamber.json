@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
   "textures": {
     "texture": "yixiangshouronglu:block/gene_modification_chamber",
     "particle": "yixiangshouronglu:block/gene_modification_chamber"
@@ -476,13 +477,13 @@
         9.85355
       ],
       "rotation": {
-        "angle": -45,
-        "axis": "y",
         "origin": [
           8,
           8.50781,
           7.5
-        ]
+        ],
+        "axis": "y",
+        "angle": -45
       },
       "faces": {
         "north": {
@@ -553,13 +554,13 @@
         1.36827
       ],
       "rotation": {
-        "angle": -45,
-        "axis": "y",
         "origin": [
           8,
           8.50781,
           7.5
-        ]
+        ],
+        "axis": "y",
+        "angle": -45
       },
       "faces": {
         "north": {
@@ -902,13 +903,13 @@
         9.85355
       ],
       "rotation": {
-        "angle": 45,
-        "axis": "y",
         "origin": [
           8,
           8.50781,
           7.5
-        ]
+        ],
+        "axis": "y",
+        "angle": 45
       },
       "faces": {
         "north": {
@@ -979,13 +980,13 @@
         1.36827
       ],
       "rotation": {
-        "angle": 45,
-        "axis": "y",
         "origin": [
           8,
           8.50781,
           7.5
-        ]
+        ],
+        "axis": "y",
+        "angle": 45
       },
       "faces": {
         "north": {
@@ -1124,13 +1125,13 @@
         7.85355
       ],
       "rotation": {
-        "angle": 45,
-        "axis": "y",
         "origin": [
           8,
           8.50781,
           7.5
-        ]
+        ],
+        "axis": "y",
+        "angle": 45
       },
       "faces": {
         "north": {
