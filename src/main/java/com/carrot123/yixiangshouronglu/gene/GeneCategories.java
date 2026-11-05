@@ -7,13 +7,15 @@ import java.util.*;
 
 public final class GeneCategories {
     public record Bonus(ResourceLocation attribute, double amount, String descriptionKey) {}
-    public record Category(ResourceLocation id, String nameKey, List<Bonus> bonuses, boolean regeneration) {
-        public Category { bonuses = List.copyOf(bonuses); }
+    public record Category(ResourceLocation id, String nameKey, List<Bonus> bonuses, boolean regeneration, List<String> extraDescriptions) {
+        public Category { bonuses = List.copyOf(bonuses); extraDescriptions = List.copyOf(extraDescriptions); }
+        public Category(ResourceLocation id, String nameKey, List<Bonus> bonuses, boolean regeneration) { this(id, nameKey, bonuses, regeneration, List.of()); }
         public UUID modifierId(ResourceLocation attribute) { return UUID.nameUUIDFromBytes(("yixiangshouronglu:gene_category:" + id + ":" + attribute).getBytes(StandardCharsets.UTF_8)); }
         public List<Component> descriptions() {
             List<Component> result = new ArrayList<>();
             for (Bonus bonus : bonuses) { result.add(Component.translatable(bonus.descriptionKey(), (int) bonus.amount())); }
             if (regeneration) { result.add(Component.translatable("gene.yixiangshouronglu.undead.regeneration")); }
+            extraDescriptions.forEach(key -> result.add(Component.translatable(key)));
             if (result.isEmpty()) { return List.of(); }
             var combined = Component.empty();
             for (Component line : result) {
@@ -40,6 +42,7 @@ public final class GeneCategories {
     }
     private static final Map<ResourceLocation, Category> CATEGORIES = new LinkedHashMap<>();
     public static final ResourceLocation MUTANT = new ResourceLocation("yixiangshouronglu", "mutant");
+    public static final ResourceLocation ELEMENTAL = new ResourceLocation("yixiangshouronglu", "elemental");
     public static final ResourceLocation UNDEAD = new ResourceLocation("yixiangshouronglu", "undead");
     private GeneCategories() {}
     public static void register(Category category) { if (CATEGORIES.putIfAbsent(category.id(), category) != null) { throw new IllegalArgumentException("Duplicate gene category " + category.id()); } }

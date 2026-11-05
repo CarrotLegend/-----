@@ -17,14 +17,24 @@ import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.*;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public final class GeneWorkstationBlock extends Block implements EntityBlock {
+    private static final VoxelShape SYNTHESIZER_SHAPE = Shapes.or(
+            Block.box(1, 0, 1, 15, 3, 15),
+            Block.box(2, 3, 2, 14, 11, 14),
+            Block.box(4, 11, 4, 12, 24, 12)
+    );
+
     private final boolean synthesizer;
     public GeneWorkstationBlock(Properties properties, boolean synthesizer) { super(properties); this.synthesizer = synthesizer; registerDefaultState(stateDefinition.any().setValue(BlockStateProperties.HORIZONTAL_FACING, net.minecraft.core.Direction.NORTH)); }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(BlockStateProperties.HORIZONTAL_FACING); }
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite()); }
+    @Override public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) { return synthesizer ? SYNTHESIZER_SHAPE : super.getShape(state, level, pos, context); }
     @Nullable @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return synthesizer ? new GeneSynthesizerBlockEntity(pos, state) : null; }
     @Nullable @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return !level.isClientSide && synthesizer && type == ModBlockEntities.GENE_SYNTHESIZER.get() ? (world, pos, blockState, entity) -> GeneSynthesizerBlockEntity.tick(world, pos, blockState, (GeneSynthesizerBlockEntity) entity) : null;

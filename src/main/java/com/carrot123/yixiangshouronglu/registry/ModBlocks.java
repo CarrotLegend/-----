@@ -19,7 +19,7 @@ public final class ModBlocks {
     public static final RegistryObject<Block> INCUBATING_DRAGON_EGG = BLOCKS.register("incubating_dragon_egg", () -> new IncubatingDragonEggBlock(BlockBehaviour.Properties.of().strength(3.0F, 9.0F).sound(SoundType.STONE).noOcclusion()));
     public static final RegistryObject<Block> AMETHYST_CRAB_LURE = BLOCKS.register("amethyst_crab_lure", () -> new AmethystCrabLureBlock(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.AMETHYST).noOcclusion()));
 
-    public static final RegistryObject<Block> GENE_SYNTHESIZER = BLOCKS.register("gene_synthesizer", () -> new GeneWorkstationBlock(BlockBehaviour.Properties.of().strength(4.0F).sound(SoundType.METAL).requiresCorrectToolForDrops(), true));
+    public static final RegistryObject<Block> GENE_SYNTHESIZER = BLOCKS.register("gene_synthesizer", () -> new GeneWorkstationBlock(BlockBehaviour.Properties.of().strength(4.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion(), true));
     public static final RegistryObject<Block> GENE_MODIFICATION_CHAMBER = BLOCKS.register("gene_modification_chamber", () -> new GeneWorkstationBlock(BlockBehaviour.Properties.of().strength(4.0F).sound(SoundType.METAL).requiresCorrectToolForDrops(), false));
 
     private ModBlocks() {

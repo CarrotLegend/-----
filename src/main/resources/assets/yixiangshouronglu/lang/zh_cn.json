@@ -200,5 +200,16 @@
   "shop.yixiangshouronglu.owned": "拥有：%s",
   "shop.yixiangshouronglu.sell_one": "点击出售 1 个",
   "shop.yixiangshouronglu.sell_all": "Shift+点击批量出售",
-  "shop.yixiangshouronglu.status.no_item": "背包中没有该物品"
+  "shop.yixiangshouronglu.status.no_item": "背包中没有该物品",
+  "gene.yixiangshouronglu.blazing_nerves": "炽焰神经",
+  "gene.yixiangshouronglu.withered_ribs": "凋亡肋骨",
+  "gene.yixiangshouronglu.elemental.name": "元素生物类",
+  "gene.yixiangshouronglu.elemental.magic": "受到的魔法伤害 -85%%",
+  "gene.yixiangshouronglu.skill.blazing_domain": "烈焰领域",
+  "gene.yixiangshouronglu.blazing_nerves.description": "主动技能：烈焰领域，持续30秒，冷却120秒，领域内其他生物每秒受到8点火焰伤害",
+  "gene.yixiangshouronglu.withered_ribs.description": "近战攻击有%s%%概率施加凋零Ⅰ，持续3秒",
+  "gene.yixiangshouronglu.skill.result.heat_unavailable": "Mutant More 的灼烧粒子不可用，无法展开烈焰领域",
+  "gene.yixiangshouronglu.skill.result.already_active": "烈焰领域已展开",
+  "death.attack.yixiangshouronglu.blazing_domain": "%s 被 %s 的烈焰领域吞噬",
+  "death.attack.yixiangshouronglu.blazing_domain.player": "%s 被 %s 的烈焰领域吞噬"
 }

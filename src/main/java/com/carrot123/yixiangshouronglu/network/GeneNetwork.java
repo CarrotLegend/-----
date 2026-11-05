@@ -14,17 +14,33 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.*;
 import net.minecraftforge.network.simple.SimpleChannel;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public final class GeneNetwork {
-    private static final String VERSION = "3";
+    private static final String VERSION = "4";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("yixiangshouronglu", "genes"), () -> VERSION, VERSION::equals, VERSION::equals);
     private GeneNetwork() {}
     public static void register() {
+        CHANNEL.registerMessage(4, DomainState.class, DomainState::encode, DomainState::decode, DomainState::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(0, Snapshot.class, Snapshot::encode, Snapshot::decode, Snapshot::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(1, Action.class, Action::encode, Action::decode, Action::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(2, SkillRequest.class, SkillRequest::encode, SkillRequest::decode, SkillRequest::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(3, SkillResult.class, SkillResult::encode, SkillResult::decode, SkillResult::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+    }
+    public record DomainState(UUID owner, int entity, ResourceLocation dimension, long session, int remaining) {
+        public static void encode(DomainState message, FriendlyByteBuf buffer) {
+            buffer.writeUUID(message.owner); buffer.writeVarInt(message.entity); buffer.writeResourceLocation(message.dimension); buffer.writeLong(message.session); buffer.writeVarInt(message.remaining);
+        }
+        public static DomainState decode(FriendlyByteBuf buffer) {
+            var result = new DomainState(buffer.readUUID(), buffer.readVarInt(), buffer.readResourceLocation(), buffer.readLong(), buffer.readVarInt());
+            if (result.remaining < 0 || result.remaining > 600) { throw new IllegalArgumentException("Invalid domain duration"); }
+            return result;
+        }
+        static void handle(DomainState message, Supplier<NetworkEvent.Context> context) {
+            context.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> com.carrot123.yixiangshouronglu.client.BlazingDomainVisuals.apply(message)));
+            context.get().setPacketHandled(true);
+        }
     }
     public static void skillResult(ServerPlayer player, GeneSkills.Result result) { CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SkillResult(result.skill(), result.status(), result.readyAt())); }
     public record SkillRequest(ResourceLocation skill) {

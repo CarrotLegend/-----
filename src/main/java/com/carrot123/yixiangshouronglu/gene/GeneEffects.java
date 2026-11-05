@@ -39,6 +39,7 @@ public final class GeneEffects {
         if (cells == null) { GeneCapability.get(player).effectRuntime().remove("RegenerativeCells"); }
         AdditionalGenes.refresh(player, installed);
         ExtendedGenes.refresh(player, installed);
+        ElementalGenes.refresh(player, installed);
         if (player.getHealth() > player.getMaxHealth()) { player.setHealth(player.getMaxHealth()); }
         GeneRegeneration.maintain(player, providesRegeneration(active));
     }

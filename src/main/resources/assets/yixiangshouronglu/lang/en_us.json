@@ -200,5 +200,16 @@
   "shop.yixiangshouronglu.owned": "Owned: %s",
   "shop.yixiangshouronglu.sell_one": "Click to sell 1",
   "shop.yixiangshouronglu.sell_all": "Shift+Click to sell all",
-  "shop.yixiangshouronglu.status.no_item": "You don't have this item"
+  "shop.yixiangshouronglu.status.no_item": "You don't have this item",
+  "gene.yixiangshouronglu.blazing_nerves": "Blazing Nerves",
+  "gene.yixiangshouronglu.withered_ribs": "Withered Ribs",
+  "gene.yixiangshouronglu.elemental.name": "Elemental",
+  "gene.yixiangshouronglu.elemental.magic": "Magic damage taken -85%%",
+  "gene.yixiangshouronglu.skill.blazing_domain": "Blazing Domain",
+  "gene.yixiangshouronglu.blazing_nerves.description": "Active skill: Blazing Domain, lasts 30 seconds, cooldown 120 seconds; other creatures in the domain take 8 fire damage per second",
+  "gene.yixiangshouronglu.withered_ribs.description": "Melee attacks have a %s%% chance to inflict Wither I for 3 seconds",
+  "gene.yixiangshouronglu.skill.result.heat_unavailable": "Mutant More heat particles are unavailable; cannot activate Blazing Domain",
+  "gene.yixiangshouronglu.skill.result.already_active": "Blazing Domain is already active",
+  "death.attack.yixiangshouronglu.blazing_domain": "%s was consumed by %s’s Blazing Domain",
+  "death.attack.yixiangshouronglu.blazing_domain.player": "%s was consumed by %s’s Blazing Domain"
 }

@@ -51,7 +51,6 @@ public final class GeneModuleItem extends Item {
         if (data == null || definition(original) == null || data.quality().next() != target) { return ItemStack.EMPTY; }
         ItemStack result = original.copyWithCount(1);
         result.getOrCreateTagElement("Gene").putString("Quality", target.name());
-        writeCategories(result, definition(original));
         return result;
     }
     private static void writeCategories(ItemStack module, GeneDefinition definition) {
@@ -70,7 +69,6 @@ public final class GeneModuleItem extends Item {
         GeneDefinition definition = definition(stack);
         if (data != null) {
             tooltip.add(Component.translatable(data.strength().key()).append(" / ").append(Component.translatable(data.quality().key())));
-            tooltip.add(Component.literal(data.id().toString()));
         }
         if (definition != null) {
             tooltip.add(Component.translatable(definition.region().key()));

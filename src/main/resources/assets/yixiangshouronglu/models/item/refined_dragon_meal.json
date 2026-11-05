@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/refined_dragon_meal"
+    "layer0": "yixiangshouronglu:item/refined_dragon_meal"
   }
 }

@@ -38,7 +38,7 @@ public final class GeneMeleeEvents {
                 || !(source.getEntity() instanceof ServerPlayer player) || source.getDirectEntity() != player
                 || event.getEntity() == player) { return; }
         var installed = GeneEffects.installed(player);
-        if (installed.containsKey(ExtendedGenes.VINE_MUSCLES) || installed.containsKey(ExtendedGenes.FROZEN_BONE_MARROW)) {
+        if (installed.containsKey(ExtendedGenes.VINE_MUSCLES) || installed.containsKey(ExtendedGenes.FROZEN_BONE_MARROW) || installed.containsKey(ElementalGenes.WITHERED_RIBS)) {
             HITS.add(new Hit(player, event.getEntity(), event));
         }
     }
@@ -55,6 +55,10 @@ public final class GeneMeleeEvents {
             var vine = installed.get(ExtendedGenes.VINE_MUSCLES);
             if (vine != null && player.getRandom().nextDouble() < ExtendedGenes.vineChance(GeneModuleItem.read(vine).quality())) {
                 target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 0), player);
+            }
+            var ribs = installed.get(ElementalGenes.WITHERED_RIBS);
+            if (ribs != null && player.getRandom().nextDouble() < ElementalGenes.witherChance(GeneModuleItem.read(ribs).quality())) {
+                target.addEffect(new MobEffectInstance(MobEffects.WITHER, 60, 0), player);
             }
             var marrow = installed.get(ExtendedGenes.FROZEN_BONE_MARROW);
             if (marrow != null) {

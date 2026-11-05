@@ -53,6 +53,8 @@ public final class ChamberSpecialProducts {
                     ? new RecipeDefinition(1, "iceandfire:ice_dragon_blood") : null;
             case "iceandfire:lightning_dragon" -> "iceandfire:lightning_dragon".equals(inputEntityId)
                     ? new RecipeDefinition(1, "iceandfire:lightning_dragon_blood") : null;
+            case "yixiangshouronglu:young_ender_dragon" -> "yixiangshouronglu:young_ender_dragon".equals(inputEntityId)
+                    ? new RecipeDefinition(1, "minecraft:dragon_breath") : null;
             case "minecraft:wither" -> "minecraft:wither".equals(inputEntityId)
                     ? new RecipeDefinition(4, "minecraft:nether_star") : null;
             case "mutantmore:mutant_hoglin" -> "mutantmore:mutant_jungle_zombie".equals(inputEntityId)
