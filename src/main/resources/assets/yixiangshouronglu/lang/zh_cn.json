@@ -211,5 +211,22 @@
   "gene.yixiangshouronglu.skill.result.heat_unavailable": "Mutant More 的灼烧粒子不可用，无法展开烈焰领域",
   "gene.yixiangshouronglu.skill.result.already_active": "烈焰领域已展开",
   "death.attack.yixiangshouronglu.blazing_domain": "%s 被 %s 的烈焰领域吞噬",
-  "death.attack.yixiangshouronglu.blazing_domain.player": "%s 被 %s 的烈焰领域吞噬"
+  "death.attack.yixiangshouronglu.blazing_domain.player": "%s 被 %s 的烈焰领域吞噬",
+  "gene.yixiangshouronglu.wither_core": "凋灵心核",
+  "gene.yixiangshouronglu.wither_core.description": "凋灵心核强化攻击、生命偷取和过量治疗",
+  "gene.yixiangshouronglu.wither_core.life_steal": "生命偷取 +%s%%",
+  "gene.yixiangshouronglu.wither_core.overheal": "过量治疗 +%s%%",
+  "gene.yixiangshouronglu.ender_dragon_brain": "终末龙脑",
+  "gene.yixiangshouronglu.ender_dragon_brain.description": "主动技能：龙息弹。直击伤害 20，龙息区域每秒伤害 8",
+  "gene.yixiangshouronglu.berserker_tendons": "狂暴肌腱",
+  "gene.yixiangshouronglu.berserker_tendons.description": "有效受伤时有 %s%% 概率获得力量Ⅱ",
+  "gene.yixiangshouronglu.void_carapace": "虚空甲壳",
+  "gene.yixiangshouronglu.void_carapace.description": "免疫漂浮",
+  "gene.yixiangshouronglu.dragon.name": "龙类",
+  "gene.yixiangshouronglu.effect.attack": "攻击伤害 +%s",
+  "gene.yixiangshouronglu.category_active": "%s已激活（%s/%s）",
+  "gene.yixiangshouronglu.category_inactive": "%s未激活（%s/%s）",
+  "gene.yixiangshouronglu.skill.dragon_breath": "龙息弹",
+  "gene.yixiangshouronglu.skill.activated": "已发动%s",
+  "gene.yixiangshouronglu.skill.result.spawn_failed": "龙息弹生成失败"
 }

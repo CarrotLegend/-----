@@ -1,7 +1,9 @@
+
 plugins {
     id 'eclipse'
     id 'idea'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 version = mod_version
@@ -35,7 +37,12 @@ minecraft {
 
 repositories {
     mavenCentral()
-    maven { url = "https://maven.blamejared.com"; content { includeGroup "mezz.jei" } }
+    maven {
+        url = "https://maven.blamejared.com"
+        content {
+            includeGroup "mezz.jei"
+        }
+    }
 
     maven {
         name = 'CurseMaven'
@@ -46,16 +53,18 @@ repositories {
         name = "Curios"
         url = uri("https://maven.theillusivec4.top/")
     }
+
     maven {
         name = "magicTeam MavenReleases"
         url = "https://maven.confluence.ink/releases"
     }
+
     maven {
         name = 'GeckoLib'
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
         content {
             includeGroup('software.bernie.geckolib')
-        }   
+        }
     }
 }
 
@@ -64,6 +73,7 @@ dependencies {
 
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.14.1+1.20.1:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.14.1+1.20.1")
+
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-1.20.1:4.8.4")
     implementation fg.deobf("org.mesdag:ParticleStorm-forge-1.20.1:1.4.3.1")
     implementation fg.deobf("curse.maven:lendercataclysm-551586:6906993")
@@ -71,8 +81,15 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-1.20.1-common-api:15.59.0.212")
     compileOnly fg.deobf("mezz.jei:jei-1.20.1-forge-api:15.59.0.212")
 
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+mixin {
+    add sourceSets.main, 'yixiangshouronglu.refmap.json'
+    config 'yixiangshouronglu.mixins.json'
 }
 
 tasks.named('test', Test) {
@@ -91,7 +108,9 @@ tasks.named('processResources', ProcessResources) {
         mod_license: mod_license,
         mod_description: mod_description
     ]
+
     inputs.properties properties
+
     filesMatching('META-INF/mods.toml') {
         expand properties
     }
@@ -99,6 +118,8 @@ tasks.named('processResources', ProcessResources) {
 
 tasks.named('jar', Jar).configure {
     manifest {
-        attributes('MixinConfigs': 'yixiangshouronglu.mixins.json')
+        attributes(
+                'MixinConfigs': 'yixiangshouronglu.mixins.json'
+        )
     }
 }

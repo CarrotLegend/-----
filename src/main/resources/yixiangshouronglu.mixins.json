@@ -1,10 +1,14 @@
+
 {
   "required": true,
   "minVersion": "0.8.5",
   "package": "com.carrot123.yixiangshouronglu.compat.mixin",
   "compatibilityLevel": "JAVA_17",
+  "refmap": "yixiangshouronglu.refmap.json",
   "mixins": [
-    "DungeonsLibsSpiderTargetGoalMixin"
+    "NearestAttackableTargetGoalAccess",
+    "TargetingConditionsAccess",
+    "DungeonsLibsAbilityHelperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

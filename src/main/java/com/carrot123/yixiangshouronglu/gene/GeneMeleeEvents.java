@@ -3,6 +3,7 @@ package com.carrot123.yixiangshouronglu.gene;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.item.GeneModuleItem;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
@@ -28,6 +29,13 @@ import java.util.Queue;
 public final class GeneMeleeEvents {
     private record Hit(ServerPlayer player, LivingEntity target, LivingDamageEvent event) {}
     private static final Queue<Hit> HITS = new ArrayDeque<>();
+
+    static final class BonusFreezeDamage extends DamageSource {
+        BonusFreezeDamage(Holder<DamageType> type, ServerPlayer player) { super(type, player); }
+        @Override public boolean is(TagKey<DamageType> tag) {
+            return tag == DamageTypeTags.BYPASSES_COOLDOWN || super.is(tag);
+        }
+    }
 
     private GeneMeleeEvents() {}
 
@@ -62,11 +70,7 @@ public final class GeneMeleeEvents {
             }
             var marrow = installed.get(ExtendedGenes.FROZEN_BONE_MARROW);
             if (marrow != null) {
-                DamageSource freeze = new DamageSource(player.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.FREEZE), player) {
-                    @Override public boolean is(TagKey<DamageType> tag) {
-                        return tag == DamageTypeTags.BYPASSES_COOLDOWN || super.is(tag);
-                    }
-                };
+                DamageSource freeze = new BonusFreezeDamage(player.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.FREEZE), player);
                 target.hurt(freeze, ExtendedGenes.freezeDamage(GeneModuleItem.read(marrow).quality()));
             }
         }
@@ -76,6 +80,9 @@ public final class GeneMeleeEvents {
     public static void applicable(MobEffectEvent.Applicable event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) { return; }
         var effect = event.getEffectInstance().getEffect();
+        if (effect == MobEffects.LEVITATION && GeneEffects.installed(player).containsKey(DragonGenes.VOID_CARAPACE)) {
+            event.setResult(Event.Result.DENY);
+        }
         if ((effect == MobEffects.HUNGER || effect == MobEffects.POISON)
                 && GeneEffects.installed(player).containsKey(ExtendedGenes.HEART_OF_DUST)) {
             event.setResult(Event.Result.DENY);

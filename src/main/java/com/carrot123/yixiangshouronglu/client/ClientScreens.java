@@ -5,6 +5,8 @@ import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import com.carrot123.yixiangshouronglu.registry.ModEntities;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.entity.DragonFireballRenderer;
+import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,6 +24,8 @@ public final class ClientScreens {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.GENE_DRAGON_FIREBALL.get(), DragonFireballRenderer::new);
+        event.registerEntityRenderer(ModEntities.GENE_DRAGON_BREATH_CLOUD.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.LEGENDARY_CARROT_KING.get(), LegendaryCarrotKingRenderer::new);
         event.registerBlockEntityRenderer(
                 ModBlockEntities.CONTAINMENT_CHAMBER.get(),

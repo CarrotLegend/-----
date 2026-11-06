@@ -52,7 +52,7 @@ public final class GeneUpgradeRuntimeTests {
     @GameTest(template="shop_empty", timeoutTicks=100)
     public static void everyGeneUpgradesWithExactCountsAndNbt(GameTestHelper helper) {
         var recipes = upgrades(helper);
-        helper.assertTrue(definitions().size() == 10 && recipes.size() == 20, "Ten genes and twenty upgrades required");
+        helper.assertTrue(definitions().size() == 14 && recipes.size() == 28, "Fourteen genes and twenty-eight upgrades required");
         for (var definition : definitions()) {
             for (var quality : new GeneTypes.Quality[]{GeneTypes.Quality.ALPHA, GeneTypes.Quality.BETA}) {
                 var matches = recipes.stream().filter(recipe -> recipe.inputs().get(0).geneId().equals(definition.id())

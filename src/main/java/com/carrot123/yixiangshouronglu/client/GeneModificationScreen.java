@@ -112,7 +112,18 @@ public final class GeneModificationScreen extends GeneScreen<GeneModificationMen
             if (data != null) { lines.add(Component.translatable(data.strength().key()).append(" / ").append(Component.translatable(data.quality().key()))); }
             if (definition != null) { lines.add(Component.translatable("gene.yixiangshouronglu.module_region", Component.translatable(definition.region().key()))); lines.add(Component.translatable("gene.yixiangshouronglu.cost", definition.cost())); lines.add(GeneDescriptions.categories(definition)); }
             else { lines.add(Component.translatable("gene.yixiangshouronglu.invalid")); }
-            if (definition != null) { lines.addAll(GeneDescriptions.effects(stack, genes.runtime())); }
+            if (definition != null) {
+                lines.addAll(GeneDescriptions.effects(stack, genes.runtime()));
+                var counts = GeneCategories.counts(GeneEffects.installed(genes).keySet().stream().map(GeneDefinitions::get).toList());
+                for (var id : definition.categories().stream().sorted().toList()) {
+                    var category = GeneCategories.get(id);
+                    if (category == null) { continue; }
+                    int count = counts.getOrDefault(id, 0);
+                    lines.add(Component.translatable(count >= category.threshold()
+                                    ? "gene.yixiangshouronglu.category_active" : "gene.yixiangshouronglu.category_inactive",
+                            Component.translatable(category.nameKey()), count, category.threshold()));
+                }
+            }
 
         } else { lines.add(Component.translatable("gene.yixiangshouronglu.empty_rule")); }
         if (!candidate().isEmpty()) { lines.add(Component.translatable("gene.yixiangshouronglu." + GeneService.check(genes, candidate(), selectedBody, !installed().isEmpty()))); }

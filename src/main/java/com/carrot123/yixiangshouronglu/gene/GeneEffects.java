@@ -18,7 +18,10 @@ import java.util.*;
 public final class GeneEffects {
     private GeneEffects() {}
     public static Map<ResourceLocation, ItemStack> installed(ServerPlayer player) {
-        Map<ResourceLocation, ItemStack> result = new LinkedHashMap<>(); PlayerGenes genes = GeneCapability.get(player);
+        return installed(GeneCapability.get(player));
+    }
+    public static Map<ResourceLocation, ItemStack> installed(PlayerGenes genes) {
+        Map<ResourceLocation, ItemStack> result = new LinkedHashMap<>();
         for (var region : GeneTypes.Region.values()) { for (int slot = 0; slot < region.slots; slot++) {
             ItemStack module = genes.get(region, slot); var definition = GeneModuleItem.definition(module);
             if (definition != null && definition.region() == region && module.getCount() == 1) { result.putIfAbsent(definition.id(), module); }
@@ -40,6 +43,7 @@ public final class GeneEffects {
         AdditionalGenes.refresh(player, installed);
         ExtendedGenes.refresh(player, installed);
         ElementalGenes.refresh(player, installed);
+        DragonGenes.refresh(player, installed);
         if (player.getHealth() > player.getMaxHealth()) { player.setHealth(player.getMaxHealth()); }
         GeneRegeneration.maintain(player, providesRegeneration(active));
     }
