@@ -21,6 +21,7 @@ minecraft {
         configureEach {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'info'
+            arg '-mixin.config=yixiangshouronglu.mixins.json'
             mods {
                 "${mod_id}" {
                     source sourceSets.main
@@ -93,5 +94,11 @@ tasks.named('processResources', ProcessResources) {
     inputs.properties properties
     filesMatching('META-INF/mods.toml') {
         expand properties
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes('MixinConfigs': 'yixiangshouronglu.mixins.json')
     }
 }

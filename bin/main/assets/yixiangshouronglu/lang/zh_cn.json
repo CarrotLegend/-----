@@ -129,7 +129,7 @@
   "gene.yixiangshouronglu.ender_synapse.teleport": "主动技能：瞬移至视线位置",
   "gene.yixiangshouronglu.skill.ender_teleport": "末影瞬移",
   "gene.yixiangshouronglu.skill.select": "选择基因主动技能",
-  "gene.yixiangshouronglu.skill.result.ok": "末影瞬移已发动",
+  "gene.yixiangshouronglu.skill.result.ok": "主动技能已发动",
   "gene.yixiangshouronglu.skill.result.cooldown": "主动技能冷却中",
   "gene.yixiangshouronglu.skill.result.not_installed": "未安装该主动技能所需基因",
   "gene.yixiangshouronglu.skill.result.invalid_state": "当前状态不能使用主动技能",
