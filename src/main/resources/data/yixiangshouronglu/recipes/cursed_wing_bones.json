@@ -1,0 +1,54 @@
+{
+  "type": "yixiangshouronglu:gene_synthesis",
+  "mode": "SYNTHESIS",
+  "shapeless": true,
+  "time": 600,
+  "inputs": [
+    {
+      "slot": 0,
+      "ingredient": {
+        "type": "forge:partial_nbt",
+        "item": "yixiangshouronglu:containment_extract",
+        "nbt": {
+          "EntityId": "cataclysm:maledictus"
+        }
+      },
+      "count": 4
+    },
+    {
+      "slot": 1,
+      "ingredient": {
+        "item": "minecraft:bone"
+      },
+      "count": 4
+    },
+    {
+      "slot": 2,
+      "ingredient": {
+        "item": "cataclysm:cursium_ingot"
+      },
+      "count": 4
+    },
+    {
+      "slot": 3,
+      "ingredient": {
+        "item": "iceandfire:ice_dragon_flesh"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "gene": "yixiangshouronglu:cursed_wing_bones",
+    "quality": "ALPHA"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "iceandfire"
+    }
+  ]
+}

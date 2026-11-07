@@ -9,24 +9,95 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.*;
 import net.minecraftforge.network.simple.SimpleChannel;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public final class GeneNetwork {
-    private static final String VERSION = "4";
+    private static final String VERSION = "5";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("yixiangshouronglu", "genes"), () -> VERSION, VERSION::equals, VERSION::equals);
     private GeneNetwork() {}
     public static void register() {
+        CHANNEL.registerMessage(5, PhantomStatus.class, PhantomStatus::encode, PhantomStatus::decode, PhantomStatus::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(6, PhantomEcho.class, PhantomEcho::encode, PhantomEcho::decode, PhantomEcho::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(4, DomainState.class, DomainState::encode, DomainState::decode, DomainState::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(0, Snapshot.class, Snapshot::encode, Snapshot::decode, Snapshot::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(1, Action.class, Action::encode, Action::decode, Action::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(2, SkillRequest.class, SkillRequest::encode, SkillRequest::decode, SkillRequest::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
         CHANNEL.registerMessage(3, SkillResult.class, SkillResult::encode, SkillResult::decode, SkillResult::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+    }
+
+    public static void phantomState(ServerPlayer player, long session, int remaining) {
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new PhantomStatus(player.getUUID(), player.level().dimension().location(), session, remaining));
+    }
+
+    public static void phantomEcho(ServerPlayer player, PhantomEcho echo) {
+        CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), echo);
+    }
+
+    public record PhantomStatus(UUID owner, ResourceLocation dimension, long session, int remaining) {
+        static void encode(PhantomStatus message, FriendlyByteBuf buffer) {
+            buffer.writeUUID(message.owner); buffer.writeResourceLocation(message.dimension); buffer.writeLong(message.session); buffer.writeVarInt(message.remaining);
+        }
+        static PhantomStatus decode(FriendlyByteBuf buffer) {
+            var result = new PhantomStatus(buffer.readUUID(), buffer.readResourceLocation(), buffer.readLong(), buffer.readVarInt());
+            if (result.remaining < 0 || result.remaining > 600) { throw new IllegalArgumentException("Invalid phantom duration"); }
+            return result;
+        }
+        static void handle(PhantomStatus message, Supplier<NetworkEvent.Context> context) {
+            context.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> com.carrot123.yixiangshouronglu.client.PhantomVisuals.apply(message)));
+            context.get().setPacketHandled(true);
+        }
+    }
+
+    public record PhantomEcho(UUID owner, String name, ResourceLocation dimension, double x, double y, double z,
+                              float yaw, float bodyYaw, float headYaw, float pitch, float attack,
+                              Pose pose, HumanoidArm arm, int modelParts, List<ItemStack> equipment) {
+        public PhantomEcho { equipment = equipment.stream().map(ItemStack::copy).toList(); }
+        public static PhantomEcho capture(ServerPlayer player) {
+            List<ItemStack> equipment = new ArrayList<>();
+            for (var slot : EquipmentSlot.values()) { equipment.add(player.getItemBySlot(slot).copy()); }
+            int parts = 0;
+            for (var part : PlayerModelPart.values()) { if (player.isModelPartShown(part)) { parts |= part.getMask(); } }
+            return new PhantomEcho(player.getUUID(), player.getGameProfile().getName(), player.level().dimension().location(),
+                    player.getX(), player.getY(), player.getZ(), player.getYRot(), player.yBodyRot, player.yHeadRot, player.getXRot(),
+                    player.getAttackAnim(1), player.getPose(), player.getMainArm(), parts, equipment);
+        }
+        static void encode(PhantomEcho message, FriendlyByteBuf buffer) {
+            buffer.writeUUID(message.owner); buffer.writeUtf(message.name, 64); buffer.writeResourceLocation(message.dimension);
+            buffer.writeDouble(message.x); buffer.writeDouble(message.y); buffer.writeDouble(message.z);
+            buffer.writeFloat(message.yaw); buffer.writeFloat(message.bodyYaw); buffer.writeFloat(message.headYaw); buffer.writeFloat(message.pitch); buffer.writeFloat(message.attack);
+            buffer.writeEnum(message.pose); buffer.writeEnum(message.arm); buffer.writeVarInt(message.modelParts);
+            for (var stack : message.equipment) { buffer.writeItem(stack); }
+        }
+        static PhantomEcho decode(FriendlyByteBuf buffer) {
+            UUID owner = buffer.readUUID(); String name = buffer.readUtf(64); ResourceLocation dimension = buffer.readResourceLocation();
+            double x = buffer.readDouble(), y = buffer.readDouble(), z = buffer.readDouble();
+            float yaw = buffer.readFloat(), body = buffer.readFloat(), head = buffer.readFloat(), pitch = buffer.readFloat(), attack = buffer.readFloat();
+            Pose pose = buffer.readEnum(Pose.class); HumanoidArm arm = buffer.readEnum(HumanoidArm.class); int parts = buffer.readVarInt();
+            List<ItemStack> equipment = new ArrayList<>();
+            for (var slot : EquipmentSlot.values()) { equipment.add(buffer.readItem()); }
+            if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z) || !Float.isFinite(yaw)
+                    || !Float.isFinite(body) || !Float.isFinite(head) || !Float.isFinite(pitch) || !Float.isFinite(attack)) {
+                throw new IllegalArgumentException("Invalid phantom pose");
+            }
+            return new PhantomEcho(owner, name, dimension, x, y, z, yaw, body, head, pitch, attack, pose, arm, parts, equipment);
+        }
+        static void handle(PhantomEcho message, Supplier<NetworkEvent.Context> context) {
+            context.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> com.carrot123.yixiangshouronglu.client.PhantomVisuals.echo(message)));
+            context.get().setPacketHandled(true);
+        }
     }
     public record DomainState(UUID owner, int entity, ResourceLocation dimension, long session, int remaining) {
         public static void encode(DomainState message, FriendlyByteBuf buffer) {

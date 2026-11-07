@@ -7,7 +7,11 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,9 +23,11 @@ public final class GeneDamageEvents {
     private GeneDamageEvents() {}
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void hurt(LivingHurtEvent event) {
+        if (PhantomState.isFollowUp(event.getSource())) { return; }
         if (event.isCanceled() || event.getAmount() <= 0 || event.getEntity().level().isClientSide) { return; }
         ServerPlayer attacker = BossGenes.attacker(event.getSource());
-        if (attacker != null) { event.setAmount((float) (event.getAmount() * BossGenes.outgoingMultiplier(attacker))); }
+        if (attacker != null) { event.setAmount((float) (event.getAmount() * BossGenes.outgoingMultiplier(attacker)
+                * AscendantGenes.outgoingMultiplier(event, attacker))); }
         if (!(event.getEntity() instanceof ServerPlayer player)) { return; }
         double remaining = BossGenes.incomingMultiplier(player);
         if (event.getSource().is(DamageTypeTags.IS_EXPLOSION)) {
@@ -32,5 +38,23 @@ public final class GeneDamageEvents {
         }
         if (event.getSource().is(MAGIC) && GeneEffects.categories(GeneEffects.installed(player)).contains(GeneCategories.ELEMENTAL)) { remaining *= 0.15; }
         event.setAmount((float) (event.getAmount() * remaining));
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void rangedDamage(LivingDamageEvent event) {
+        if (PhantomState.isFollowUp(event.getSource())) { return; }
+        if (event.isCanceled() || event.getAmount() <= 0 || event.getEntity().level().isClientSide) { return; }
+        var source = event.getSource();
+        ServerPlayer attacker = BossGenes.attacker(source);
+        if (attacker != null && isRanged(source)) {
+            int tier = BossGenes.tier(GeneEffects.installed(attacker), HighTierBossGenes.WITHERED_MECHANICAL_BRAIN);
+            if (tier > 0) { event.setAmount((float) (event.getAmount() * (1 + 0.15 * tier))); }
+        }
+        AscendantGenes.finalDamage(event);
+    }
+
+    static boolean isRanged(DamageSource source) {
+        return !source.is(DamageTypes.PLAYER_ATTACK)
+                && (source.getDirectEntity() instanceof Projectile || source.is(DamageTypeTags.IS_PROJECTILE));
     }
 }

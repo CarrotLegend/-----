@@ -46,6 +46,7 @@ public final class GeneEffects {
         DragonGenes.refresh(player, installed);
         BossGenes.refresh(player, installed);
         HighTierBossGenes.refresh(player, installed);
+        AscendantGenes.refresh(player, installed);
         if (player.getHealth() > player.getMaxHealth()) { player.setHealth(player.getMaxHealth()); }
         GeneRegeneration.maintain(player, providesRegeneration(active));
     }

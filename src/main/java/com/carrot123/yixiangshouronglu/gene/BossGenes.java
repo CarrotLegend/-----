@@ -131,6 +131,7 @@ public final class BossGenes {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void damaged(LivingDamageEvent event) {
+        if (PhantomState.isFollowUp(event.getSource())) { return; }
         if (event.isCanceled() || event.getAmount() <= 0 || event.getEntity().level().isClientSide) { return; }
         ServerPlayer attacker = attacker(event.getSource());
         boolean resistance = event.getEntity() instanceof ServerPlayer victim && GeneEffects.installed(victim).containsKey(VOID_SPINE);

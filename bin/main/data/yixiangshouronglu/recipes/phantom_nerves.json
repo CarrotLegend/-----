@@ -1,0 +1,44 @@
+{
+  "type": "yixiangshouronglu:gene_synthesis",
+  "mode": "SYNTHESIS",
+  "shapeless": true,
+  "time": 600,
+  "inputs": [
+    {
+      "slot": 0,
+      "ingredient": {
+        "type": "forge:partial_nbt",
+        "item": "yixiangshouronglu:containment_extract",
+        "nbt": {
+          "EntityId": "yixiangshouronglu:shadow_demon"
+        }
+      },
+      "count": 4
+    },
+    {
+      "slot": 1,
+      "ingredient": {
+        "item": "minecraft:sculk"
+      },
+      "count": 16
+    },
+    {
+      "slot": 2,
+      "ingredient": {
+        "item": "yixiangshouronglu:shadow_fragment"
+      },
+      "count": 4
+    },
+    {
+      "slot": 3,
+      "ingredient": {
+        "tag": "yixiangshouronglu:meats"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "gene": "yixiangshouronglu:phantom_nerves",
+    "quality": "ALPHA"
+  }
+}

@@ -41,6 +41,7 @@ public final class GeneMeleeEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void damaged(LivingDamageEvent event) {
+        if (PhantomState.isFollowUp(event.getSource())) { return; }
         DamageSource source = event.getSource();
         if (event.getAmount() <= 0 || !source.is(DamageTypes.PLAYER_ATTACK)
                 || !(source.getEntity() instanceof ServerPlayer player) || source.getDirectEntity() != player

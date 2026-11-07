@@ -56,6 +56,7 @@ public final class HighTierBossGenes {
     public static final ResourceLocation SONIC_SHRIEK = id("sonic_shriek");
     private static final ResourceLocation ATTACK = new ResourceLocation("minecraft", "generic.attack_damage");
     private static final ResourceLocation ARMOR_SHRED = new ResourceLocation("attributeslib", "armor_shred");
+    private static final ResourceLocation DRAW_SPEED = new ResourceLocation("attributeslib", "draw_speed");
     private static final List<RegenHit> REGEN_HITS = new ArrayList<>();
 
     private record RegenHit(LivingDamageEvent event, ServerPlayer player, Level level) {}
@@ -85,7 +86,8 @@ public final class HighTierBossGenes {
         register(DESERT_MARROW, GeneTypes.Strength.WAW, GeneTypes.Region.SKELETAL, Set.of(GeneCategories.UNDEAD), quality ->
                 List.of(Component.translatable("gene.yixiangshouronglu.desert_marrow.description", 10 + 8 * quality.ordinal())));
         register(WITHERED_MECHANICAL_BRAIN, GeneTypes.Strength.ALEPH, GeneTypes.Region.NERVOUS, Set.of(GeneCategories.UNDEAD), quality ->
-                List.of(Component.translatable("gene.yixiangshouronglu.withered_mechanical_brain.description")));
+                List.of(Component.translatable("gene.yixiangshouronglu.withered_mechanical_brain.description", 15 * (quality.ordinal() + 1)),
+                        Component.translatable("gene.yixiangshouronglu.withered_mechanical_brain.draw_speed", 10 * (quality.ordinal() + 1))));
         register(SCULK_VOCAL_CORDS, GeneTypes.Strength.WAW, GeneTypes.Region.NERVOUS, Set.of(), quality -> List.of(
                 Component.translatable("gene.yixiangshouronglu.sculk_vocal_cords.description", 12 + 6 * quality.ordinal()),
                 Component.translatable("gene.yixiangshouronglu.sculk_vocal_cords.cooldown", 45)));
@@ -119,8 +121,10 @@ public final class HighTierBossGenes {
         int core = BossGenes.tier(installed, INFERNAL_CORE);
         int marrow = BossGenes.tier(installed, DESERT_MARROW);
         int cells = BossGenes.tier(installed, UNDYING_ADAPTIVE_CELLS);
+        int brain = BossGenes.tier(installed, WITHERED_MECHANICAL_BRAIN);
         apply(player, INFERNAL_CORE, ATTACK, 4 * core);
         apply(player, DESERT_MARROW, ARMOR_SHRED, marrow == 0 ? 0 : (2 + 8 * marrow) / 100.0);
+        apply(player, WITHERED_MECHANICAL_BRAIN, DRAW_SPEED, 0.10 * brain);
         apply(player, UNDYING_ADAPTIVE_CELLS, DragonGenes.LIFE_STEAL, 0.10 * cells);
         apply(player, UNDYING_ADAPTIVE_CELLS, RegenerativeCells.OVERHEAL,
                 cells == 0 ? 0 : overheal(GeneModuleItem.read(installed.get(UNDYING_ADAPTIVE_CELLS)).quality()));
@@ -195,6 +199,7 @@ public final class HighTierBossGenes {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void damaged(LivingDamageEvent event) {
+        if (PhantomState.isFollowUp(event.getSource())) { return; }
         if (!event.isCanceled() && event.getAmount() > 0 && event.getEntity() instanceof ServerPlayer player
                 && GeneEffects.installed(player).containsKey(UNDYING_ADAPTIVE_CELLS)) {
             REGEN_HITS.add(new RegenHit(event, player, player.level()));

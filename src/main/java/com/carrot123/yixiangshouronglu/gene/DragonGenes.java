@@ -107,6 +107,7 @@ public final class DragonGenes {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void damaged(LivingDamageEvent event) {
+        if (PhantomState.isFollowUp(event.getSource())) { return; }
         if (event.getEntity() instanceof ServerPlayer player && event.getAmount() > 0 && !event.isCanceled()
                 && !(event.getSource() instanceof GeneMeleeEvents.BonusFreezeDamage)
                 && GeneEffects.installed(player).containsKey(BERSERKER_TENDONS)) {

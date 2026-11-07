@@ -1,0 +1,41 @@
+{
+  "type": "yixiangshouronglu:gene_synthesis",
+  "mode": "UPGRADE",
+  "time": 200,
+  "inputs": [
+    {
+      "slot": 0,
+      "ingredient": {
+        "item": "yixiangshouronglu:gene_module"
+      },
+      "count": 1,
+      "gene": "yixiangshouronglu:phantom_nerves",
+      "quality": "BETA"
+    },
+    {
+      "slot": 1,
+      "ingredient": {
+        "item": "minecraft:netherite_ingot"
+      },
+      "count": 16
+    },
+    {
+      "slot": 2,
+      "ingredient": {
+        "item": "minecraft:dragon_breath"
+      },
+      "count": 4
+    },
+    {
+      "slot": 3,
+      "ingredient": {
+        "item": "cataclysm:enderite_block"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "gene": "yixiangshouronglu:phantom_nerves",
+    "quality": "GAMMA"
+  }
+}
