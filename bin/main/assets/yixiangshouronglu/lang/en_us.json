@@ -211,5 +211,22 @@
   "gene.yixiangshouronglu.skill.result.heat_unavailable": "Mutant More heat particles are unavailable; cannot activate Blazing Domain",
   "gene.yixiangshouronglu.skill.result.already_active": "Blazing Domain is already active",
   "death.attack.yixiangshouronglu.blazing_domain": "%s was consumed by %s’s Blazing Domain",
-  "death.attack.yixiangshouronglu.blazing_domain.player": "%s was consumed by %s’s Blazing Domain"
+  "death.attack.yixiangshouronglu.blazing_domain.player": "%s was consumed by %s’s Blazing Domain",
+  "gene.yixiangshouronglu.wither_core": "Wither Core",
+  "gene.yixiangshouronglu.wither_core.description": "The Wither Core boosts attack damage, life steal and overheal",
+  "gene.yixiangshouronglu.wither_core.life_steal": "Life Steal +%s%%",
+  "gene.yixiangshouronglu.wither_core.overheal": "Overheal +%s%%",
+  "gene.yixiangshouronglu.ender_dragon_brain": "Ender Dragon Brain",
+  "gene.yixiangshouronglu.ender_dragon_brain.description": "Active skill: Dragon Breath. 20 direct damage and 8 damage per second in the breath cloud",
+  "gene.yixiangshouronglu.berserker_tendons": "Berserker Tendons",
+  "gene.yixiangshouronglu.berserker_tendons.description": "Taking damage has a %s%% chance to grant Strength II",
+  "gene.yixiangshouronglu.void_carapace": "Void Carapace",
+  "gene.yixiangshouronglu.void_carapace.description": "Immune to Levitation",
+  "gene.yixiangshouronglu.dragon.name": "Dragon",
+  "gene.yixiangshouronglu.effect.attack": "Attack Damage +%s",
+  "gene.yixiangshouronglu.category_active": "%s active (%s/%s)",
+  "gene.yixiangshouronglu.category_inactive": "%s inactive (%s/%s)",
+  "gene.yixiangshouronglu.skill.dragon_breath": "Dragon Breath",
+  "gene.yixiangshouronglu.skill.activated": "%s activated",
+  "gene.yixiangshouronglu.skill.result.spawn_failed": "Could not spawn the dragon fireball"
 }
