@@ -12,6 +12,7 @@ import com.carrot123.yixiangshouronglu.gene.ExtendedGenes;
 import com.carrot123.yixiangshouronglu.gene.ElementalGenes;
 import com.carrot123.yixiangshouronglu.gene.DragonGenes;
 import com.carrot123.yixiangshouronglu.gene.BossGenes;
+import com.carrot123.yixiangshouronglu.gene.HighTierBossGenes;
 import com.carrot123.yixiangshouronglu.gene.GeneSkillConfig;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
@@ -50,6 +51,7 @@ public final class AnomalousContainmentChronicles {
         ElementalGenes.register();
         DragonGenes.register();
         BossGenes.register();
+        HighTierBossGenes.register();
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, GeneSkillConfig.SPEC);
     }
 }

@@ -13,7 +13,13 @@ public final class GeneSkills {
     public static final ResourceLocation ENDER_TELEPORT = new ResourceLocation("yixiangshouronglu", "ender_teleport");
     private static final Map<ResourceLocation, Skill> SKILLS = new LinkedHashMap<>();
     private GeneSkills() {}
-    public record Skill(ResourceLocation id, ResourceLocation gene, String nameKey, IntSupplier cooldownTicks, Function<ServerPlayer, String> execute) {}
+    public record Skill(ResourceLocation id, ResourceLocation gene, String nameKey, IntSupplier cooldownTicks,
+                        Function<ServerPlayer, String> execute, boolean usesCooldown) {
+        public Skill(ResourceLocation id, ResourceLocation gene, String nameKey, IntSupplier cooldownTicks,
+                     Function<ServerPlayer, String> execute) {
+            this(id, gene, nameKey, cooldownTicks, execute, true);
+        }
+    }
     public record Result(ResourceLocation skill, String status, long readyAt) {}
     public static void register(Skill skill) { if (SKILLS.putIfAbsent(skill.id(), skill) != null) { throw new IllegalArgumentException("Duplicate gene skill " + skill.id()); } }
     public static List<Skill> available(PlayerGenes genes) {
@@ -33,9 +39,10 @@ public final class GeneSkills {
         Skill skill = SKILLS.get(id);
         if (skill == null || available(genes).stream().noneMatch(candidate -> candidate.id().equals(id))) { return new Result(id, "not_installed", ready); }
         if (!player.isAlive() || player.isRemoved() || player.isSpectator() || player.isSleeping() || player.isPassenger() || player.isVehicle() || player.isFallFlying() || player.isChangingDimension() || player.containerMenu != player.inventoryMenu) { return new Result(id, "invalid_state", ready); }
-        if (now < ready) { return new Result(id, "cooldown", ready); }
+        if (!skill.usesCooldown()) { ready = 0; }
+        if (skill.usesCooldown() && now < ready) { return new Result(id, "cooldown", ready); }
         String status = skill.execute().apply(player);
-        if (status.equals("ok")) {
+        if (status.equals("ok") && skill.usesCooldown()) {
             ready = now + Math.max(1, skill.cooldownTicks().getAsInt());
             CompoundTag cooldowns = runtime.getCompound("SkillCooldowns"); cooldowns.putLong(id.toString(), ready); runtime.put("SkillCooldowns", cooldowns);
         }

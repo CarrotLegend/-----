@@ -136,6 +136,7 @@ public final class BossGenes {
         boolean resistance = event.getEntity() instanceof ServerPlayer victim && GeneEffects.installed(victim).containsKey(VOID_SPINE);
         var installed = attacker == null ? Map.<ResourceLocation, ItemStack>of() : GeneEffects.installed(attacker);
         boolean secondary = event.getSource().getDirectEntity() instanceof GeneStormLightning
+                || event.getSource() instanceof HighTierBossGenes.SkillDamage
                 || event.getSource() instanceof GeneMeleeEvents.BonusFreezeDamage;
         boolean storm = !secondary && installed.containsKey(STORM_NERVES);
         boolean ink = installed.containsKey(ACTIVE_INK_SAC);

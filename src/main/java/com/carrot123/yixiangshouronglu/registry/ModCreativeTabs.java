@@ -1,6 +1,9 @@
 package com.carrot123.yixiangshouronglu.registry;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
+import com.carrot123.yixiangshouronglu.gene.GeneTypes;
+import com.carrot123.yixiangshouronglu.gene.HighTierBossGenes;
+import com.carrot123.yixiangshouronglu.item.GeneModuleItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -39,6 +42,9 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.SEDATIVE_MEAT.get());
                                 output.accept(ModItems.EXTRACTOR.get());
                                 output.accept(ModItems.GENE_MODULE.get());
+                                for (var gene : HighTierBossGenes.MODULES) {
+                                    for (var quality : GeneTypes.Quality.values()) { output.accept(GeneModuleItem.create(gene, quality)); }
+                                }
                                 output.accept(ModItems.GENE_SYNTHESIZER.get());
                                 output.accept(ModItems.GENE_MODIFICATION_CHAMBER.get());
                             })

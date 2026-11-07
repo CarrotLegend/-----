@@ -9,6 +9,7 @@ import com.carrot123.yixiangshouronglu.entity.LegendaryCarrotKingEntity;
 import com.carrot123.yixiangshouronglu.entity.GeneDragonFireball;
 import com.carrot123.yixiangshouronglu.entity.GeneDragonBreathCloud;
 import com.carrot123.yixiangshouronglu.entity.GeneStormLightning;
+import com.carrot123.yixiangshouronglu.entity.GeneDragonBreathBeam;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -65,6 +66,11 @@ public final class ModEntities {
             ENTITIES.register("gene_storm_lightning", () -> EntityType.Builder.of(GeneStormLightning::new, MobCategory.MISC)
                     .sized(1, 1).fireImmune().noSave().clientTrackingRange(10).updateInterval(1)
                     .build(AnomalousContainmentChronicles.MOD_ID + ":gene_storm_lightning"));
+
+    public static final RegistryObject<EntityType<GeneDragonBreathBeam>> GENE_DRAGON_BREATH_BEAM =
+            ENTITIES.register("gene_dragon_breath_beam", () -> EntityType.Builder.of(GeneDragonBreathBeam::new, MobCategory.MISC)
+                    .sized(1, 1).fireImmune().noSave().clientTrackingRange(10).updateInterval(1)
+                    .build(AnomalousContainmentChronicles.MOD_ID + ":gene_dragon_breath_beam"));
 
     private ModEntities() {
     }

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:emerald"
+    },
+    {
+      "item": "mokels_boss_mantyd:plantation_rune"
+    }
+  ],
+  "result": {
+    "item": "yixiangshouronglu:saphyra_gem",
+    "count": 1
+  }
+}
