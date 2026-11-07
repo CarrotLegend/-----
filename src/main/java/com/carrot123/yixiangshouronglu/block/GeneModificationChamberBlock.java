@@ -36,8 +36,8 @@ import org.jetbrains.annotations.Nullable;
 public final class GeneModificationChamberBlock extends Block {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
-    private static final VoxelShape LOWER_SHAPE = Block.box(1, 0, 1, 15, 16, 15);
-    private static final VoxelShape UPPER_SHAPE = Block.box(2, 0, 2, 14, 15, 14);
+    private static final VoxelShape LOWER_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
+    private static final VoxelShape UPPER_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
     public GeneModificationChamberBlock(Properties properties) {
         super(properties);

@@ -10,7 +10,7 @@
         "type": "forge:partial_nbt",
         "item": "yixiangshouronglu:containment_extract",
         "nbt": {
-          "EntityId": "minecraft:ender_dragon"
+          "EntityId": "yixiangshouronglu:young_ender_dragon"
         }
       },
       "count": 4

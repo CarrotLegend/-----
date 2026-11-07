@@ -1,0 +1,50 @@
+{
+  "type": "yixiangshouronglu:gene_synthesis",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    }
+  ],
+  "mode": "SYNTHESIS",
+  "shapeless": true,
+  "time": 600,
+  "inputs": [
+    {
+      "slot": 0,
+      "ingredient": {
+        "type": "forge:partial_nbt",
+        "item": "yixiangshouronglu:containment_extract",
+        "nbt": {
+          "EntityId": "cataclysm:the_leviathan"
+        }
+      },
+      "count": 4
+    },
+    {
+      "slot": 1,
+      "ingredient": {
+        "item": "cataclysm:abyssal_egg"
+      },
+      "count": 1
+    },
+    {
+      "slot": 2,
+      "ingredient": {
+        "tag": "yixiangshouronglu:meats"
+      },
+      "count": 8
+    },
+    {
+      "slot": 3,
+      "ingredient": {
+        "tag": "yixiangshouronglu:fishes"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "gene": "yixiangshouronglu:leviathan_gills",
+    "quality": "ALPHA"
+  }
+}

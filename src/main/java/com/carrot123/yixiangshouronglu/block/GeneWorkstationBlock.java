@@ -24,11 +24,7 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public final class GeneWorkstationBlock extends Block implements EntityBlock {
-    private static final VoxelShape SYNTHESIZER_SHAPE = Shapes.or(
-            Block.box(1, 0, 1, 15, 3, 15),
-            Block.box(2, 3, 2, 14, 11, 14),
-            Block.box(4, 11, 4, 12, 24, 12)
-    );
+    private static final VoxelShape SYNTHESIZER_SHAPE = Shapes.block();
 
     private final boolean synthesizer;
     public GeneWorkstationBlock(Properties properties, boolean synthesizer) { super(properties); this.synthesizer = synthesizer; registerDefaultState(stateDefinition.any().setValue(BlockStateProperties.HORIZONTAL_FACING, net.minecraft.core.Direction.NORTH)); }

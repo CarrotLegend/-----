@@ -228,5 +228,21 @@
   "gene.yixiangshouronglu.category_inactive": "%s未激活（%s/%s）",
   "gene.yixiangshouronglu.skill.dragon_breath": "龙息弹",
   "gene.yixiangshouronglu.skill.activated": "已发动%s",
-  "gene.yixiangshouronglu.skill.result.spawn_failed": "龙息弹生成失败"
+  "gene.yixiangshouronglu.skill.result.spawn_failed": "龙息弹生成失败",
+  "gene.yixiangshouronglu.storm_nerves": "风暴神经",
+  "gene.yixiangshouronglu.storm_nerves.description": "有效攻击有 %s%% 概率触发斯库拉闪电",
+  "gene.yixiangshouronglu.leviathan_gills": "利维坦之鳃",
+  "gene.yixiangshouronglu.leviathan_gills.swim": "游泳速度 +%s%%",
+  "gene.yixiangshouronglu.leviathan_gills.description": "处于水中时造成的全部伤害 +%s%%",
+  "gene.yixiangshouronglu.void_spine": "虚空背脊",
+  "gene.yixiangshouronglu.void_spine.description": "受到的伤害降低 %s%%",
+  "gene.yixiangshouronglu.void_spine.resistance": "有效受伤后有 %s%% 概率获得抗性提升Ⅰ，持续 %s 秒",
+  "gene.yixiangshouronglu.saphyra_marrow": "萨菲拉晶髓",
+  "gene.yixiangshouronglu.saphyra_marrow.description": "致命伤害触发生命重构，恢复至最大生命值，冷却 %s 秒",
+  "gene.yixiangshouronglu.tenebrite_muscles": "暗曜肌肉",
+  "gene.yixiangshouronglu.tenebrite_muscles.description": "造成的全部伤害 +%s%%",
+  "gene.yixiangshouronglu.active_ink_sac": "活性墨囊",
+  "gene.yixiangshouronglu.active_ink_sac.dodge": "闪避概率 +%s%%",
+  "gene.yixiangshouronglu.active_ink_sac.description": "有效攻击有 %s%% 概率施加墨水浸染Ⅰ，持续 %s 秒",
+  "entity.yixiangshouronglu.gene_storm_lightning": "基因风暴闪电"
 }

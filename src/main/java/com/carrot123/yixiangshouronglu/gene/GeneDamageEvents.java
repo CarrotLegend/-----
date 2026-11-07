@@ -19,8 +19,11 @@ public final class GeneDamageEvents {
     private GeneDamageEvents() {}
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void hurt(LivingHurtEvent event) {
+        if (event.isCanceled() || event.getAmount() <= 0 || event.getEntity().level().isClientSide) { return; }
+        ServerPlayer attacker = BossGenes.attacker(event.getSource());
+        if (attacker != null) { event.setAmount((float) (event.getAmount() * BossGenes.outgoingMultiplier(attacker))); }
         if (!(event.getEntity() instanceof ServerPlayer player)) { return; }
-        double remaining = 1;
+        double remaining = BossGenes.incomingMultiplier(player);
         if (event.getSource().is(DamageTypeTags.IS_EXPLOSION)) {
             for (var module : GeneEffects.installed(player).values()) {
                 var definition = GeneModuleItem.definition(module);

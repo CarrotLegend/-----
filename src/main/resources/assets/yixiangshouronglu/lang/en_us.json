@@ -228,5 +228,21 @@
   "gene.yixiangshouronglu.category_inactive": "%s inactive (%s/%s)",
   "gene.yixiangshouronglu.skill.dragon_breath": "Dragon Breath",
   "gene.yixiangshouronglu.skill.activated": "%s activated",
-  "gene.yixiangshouronglu.skill.result.spawn_failed": "Could not spawn the dragon fireball"
+  "gene.yixiangshouronglu.skill.result.spawn_failed": "Could not spawn the dragon fireball",
+  "gene.yixiangshouronglu.storm_nerves": "Storm Nerves",
+  "gene.yixiangshouronglu.storm_nerves.description": "Successful attacks have a %s%% chance to summon Scylla lightning",
+  "gene.yixiangshouronglu.leviathan_gills": "Leviathan Gills",
+  "gene.yixiangshouronglu.leviathan_gills.swim": "Swim speed +%s%%",
+  "gene.yixiangshouronglu.leviathan_gills.description": "All damage dealt while in water +%s%%",
+  "gene.yixiangshouronglu.void_spine": "Void Spine",
+  "gene.yixiangshouronglu.void_spine.description": "Damage taken reduced by %s%%",
+  "gene.yixiangshouronglu.void_spine.resistance": "Taking damage has a %s%% chance to grant Resistance I for %s seconds",
+  "gene.yixiangshouronglu.saphyra_marrow": "Saphyra Marrow",
+  "gene.yixiangshouronglu.saphyra_marrow.description": "Fatal damage triggers life reconstruction, restoring maximum health. Cooldown %s seconds",
+  "gene.yixiangshouronglu.tenebrite_muscles": "Tenebrite Muscles",
+  "gene.yixiangshouronglu.tenebrite_muscles.description": "All damage dealt +%s%%",
+  "gene.yixiangshouronglu.active_ink_sac": "Active Ink Sac",
+  "gene.yixiangshouronglu.active_ink_sac.dodge": "Dodge chance +%s%%",
+  "gene.yixiangshouronglu.active_ink_sac.description": "Successful attacks have a %s%% chance to apply Inked I for %s seconds",
+  "entity.yixiangshouronglu.gene_storm_lightning": "Gene Storm Lightning"
 }

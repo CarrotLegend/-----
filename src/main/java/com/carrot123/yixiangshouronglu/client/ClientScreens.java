@@ -26,6 +26,7 @@ public final class ClientScreens {
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.GENE_DRAGON_FIREBALL.get(), DragonFireballRenderer::new);
         event.registerEntityRenderer(ModEntities.GENE_DRAGON_BREATH_CLOUD.get(), NoopRenderer::new);
+        event.registerEntityRenderer(ModEntities.GENE_STORM_LIGHTNING.get(), NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.LEGENDARY_CARROT_KING.get(), LegendaryCarrotKingRenderer::new);
         event.registerBlockEntityRenderer(
                 ModBlockEntities.CONTAINMENT_CHAMBER.get(),
