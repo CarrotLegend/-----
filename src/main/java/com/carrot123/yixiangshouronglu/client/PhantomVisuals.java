@@ -28,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -86,7 +86,7 @@ public final class PhantomVisuals {
         int vertical = Math.max(1, (int) (height * 0.18));
         for (int band = 0; band < 18; band++) {
             double weight = 1 - band / 18.0;
-            int alpha = (int) (weight * weight * (42 + 6 * Math.sin(time + band * 0.4)));
+            int alpha = (int) (weight * weight * (85 + 8 * Math.sin(time + band * 0.4)));
             int color = alpha << 24 | 0x383C40;
             int x1 = band * horizontal / 18, x2 = (band + 1) * horizontal / 18;
             int y1 = band * vertical / 18, y2 = (band + 1) * vertical / 18;
@@ -95,6 +95,16 @@ public final class PhantomVisuals {
             graphics.fill(horizontal, y1, width - horizontal, y2, color);
             graphics.fill(horizontal, height - y2, width - horizontal, height - y1, color);
         }
+    }
+
+    @SubscribeEvent public static void renderFog(RenderGuiEvent.Pre event) {
+        var client = Minecraft.getInstance();
+        if (client.options.hideGui || !active()) { return; }
+        GuiGraphics graphics = event.getGuiGraphics();
+        graphics.flush();
+        try {
+            fog(graphics, event.getPartialTick(), event.getWindow().getGuiScaledWidth(), event.getWindow().getGuiScaledHeight());
+        } finally { graphics.flush(); }
     }
 
     @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {
@@ -225,9 +235,6 @@ public final class PhantomVisuals {
 
     @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static final class Registration {
-        @SubscribeEvent public static void overlays(RegisterGuiOverlaysEvent event) {
-            event.registerBelowAll("phantom_fog", (gui, graphics, partialTick, width, height) -> fog(graphics, partialTick, width, height));
-        }
         @SubscribeEvent public static void layers(EntityRenderersEvent.AddLayers event) {
             normal = new SnapshotRenderer(event.getContext(), false);
             slim = new SnapshotRenderer(event.getContext(), true);
