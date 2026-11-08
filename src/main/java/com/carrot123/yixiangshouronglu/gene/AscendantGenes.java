@@ -77,9 +77,9 @@ public final class AscendantGenes {
                 Component.translatable("gene.yixiangshouronglu.phantom_nerves.state", 30),
                 Component.translatable("gene.yixiangshouronglu.phantom_nerves.defense", 25, 50),
                 Component.translatable("gene.yixiangshouronglu.phantom_nerves.pursuit", 25, 50),
-                Component.translatable("gene.yixiangshouronglu.phantom_nerves.cooldown", 25)));
+                Component.translatable("gene.yixiangshouronglu.phantom_nerves.cooldown", 240)));
         GeneSkills.register(new GeneSkills.Skill(PhantomState.SKILL, PHANTOM_NERVES,
-                "gene.yixiangshouronglu.skill.phantom_state", () -> 500, PhantomState::start));
+                "gene.yixiangshouronglu.skill.phantom_state", () -> 4800, PhantomState::start));
     }
 
     private static void register(ResourceLocation id, GeneTypes.Region region, int cost, Set<ResourceLocation> categories,

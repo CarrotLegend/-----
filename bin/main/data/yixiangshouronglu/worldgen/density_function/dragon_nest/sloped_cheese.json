@@ -28,5 +28,21 @@
       }
     }
   },
-  "argument2": "minecraft:overworld/base_3d_noise"
+  "argument2": {
+    "type": "minecraft:range_choice",
+    "input": "minecraft:y",
+    "min_inclusive": -1000000.0,
+    "max_exclusive": 40.0,
+    "when_in_range": "minecraft:overworld/base_3d_noise",
+    "when_out_of_range": {
+      "type": "minecraft:mul",
+      "argument1": 0.0625,
+      "argument2": {
+        "type": "minecraft:clamp",
+        "input": "minecraft:overworld/base_3d_noise",
+        "min": -1.0,
+        "max": 1.0
+      }
+    }
+  }
 }

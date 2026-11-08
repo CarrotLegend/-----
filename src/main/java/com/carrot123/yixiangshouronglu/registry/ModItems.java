@@ -6,6 +6,7 @@ import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.item.AmethystCrabLureBlock;
 import com.carrot123.yixiangshouronglu.item.BlazeCageItem;
 import com.carrot123.yixiangshouronglu.item.EnderDragonWingsItem;
+import com.carrot123.yixiangshouronglu.item.DragonNestTeleporterItem;
 import com.carrot123.yixiangshouronglu.item.ExemptionShieldItem;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.item.WendigoEyeItem;
@@ -34,6 +35,7 @@ public final class ModItems {
     public static final RegistryObject<Item> WENDIGO_SIGHT = ITEMS.register("wendigo_sight", () -> new WendigoSightItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> BLAZE_CAGE = ITEMS.register("blaze_cage", () -> new BlazeCageItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ENDER_DRAGON_WINGS = ITEMS.register("ender_dragon_wings", () -> new EnderDragonWingsItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final RegistryObject<Item> DRAGON_NEST_TELEPORTER = ITEMS.register("dragon_nest_teleporter", () -> new DragonNestTeleporterItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> REFINED_DRAGON_MEAL = ITEMS.register("refined_dragon_meal", () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SAPHYRA_GEM = ITEMS.register("saphyra_gem", () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> ECHO_CAGE = ITEMS.register("echo_cage", () -> new Item(new Item.Properties().stacksTo(16).rarity(Rarity.EPIC)));

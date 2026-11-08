@@ -289,5 +289,19 @@
   "gene.yixiangshouronglu.skill.phantom_state": "Phantom State",
   "gene.yixiangshouronglu.skill.result.phantom_already_active": "Phantom State is already active and cannot be extended",
   "death.attack.yixiangshouronglu.phantom_follow_up": "%1$s was defeated by %2$s's phantom pursuit",
-  "death.attack.yixiangshouronglu.phantom_follow_up.player": "%1$s was defeated by %2$s's phantom pursuit"
+  "death.attack.yixiangshouronglu.phantom_follow_up.player": "%1$s was defeated by %2$s's phantom pursuit",
+  "biome.yixiangshouronglu.primeval_wyvern_taiga": "Primeval Wyvern Taiga",
+  "biome.yixiangshouronglu.wyvern_plains": "Wyvern Plains",
+  "biome.yixiangshouronglu.primeval_river": "Primeval River",
+  "item.yixiangshouronglu.dragon_nest_teleporter": "Dragon Nest Teleporter",
+  "tooltip.yixiangshouronglu.dragon_nest_teleporter.enter": "Hold use for 1 second to enter the Dragon Nest",
+  "tooltip.yixiangshouronglu.dragon_nest_teleporter.return": "Use inside the Dragon Nest to return to the Overworld",
+  "tooltip.yixiangshouronglu.dragon_nest_teleporter.cooldown": "Cooldown: 2 seconds",
+  "message.yixiangshouronglu.dragon_nest_teleporter.busy": "A teleport is already pending",
+  "message.yixiangshouronglu.dragon_nest_teleporter.unavailable": "You cannot teleport in your current state",
+  "message.yixiangshouronglu.dragon_nest_teleporter.missing_dimension": "The target dimension is not available",
+  "message.yixiangshouronglu.dragon_nest_teleporter.searching": "Searching for a safe destination...",
+  "message.yixiangshouronglu.dragon_nest_teleporter.no_safe_position": "No safe destination was found",
+  "message.yixiangshouronglu.dragon_nest_teleporter.cancelled": "Teleport cancelled",
+  "message.yixiangshouronglu.dragon_nest_teleporter.failed": "Teleport failed"
 }

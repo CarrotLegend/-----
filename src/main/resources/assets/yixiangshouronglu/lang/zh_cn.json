@@ -289,5 +289,19 @@
   "gene.yixiangshouronglu.skill.phantom_state": "幽魂状态",
   "gene.yixiangshouronglu.skill.result.phantom_already_active": "幽魂状态已激活，无法重复延长",
   "death.attack.yixiangshouronglu.phantom_follow_up": "%1$s 被 %2$s 的幽魂追击击败",
-  "death.attack.yixiangshouronglu.phantom_follow_up.player": "%1$s 被 %2$s 的幽魂追击击败"
+  "death.attack.yixiangshouronglu.phantom_follow_up.player": "%1$s 被 %2$s 的幽魂追击击败",
+  "biome.yixiangshouronglu.primeval_wyvern_taiga": "原始飞龙针叶林",
+  "biome.yixiangshouronglu.wyvern_plains": "飞龙平原",
+  "biome.yixiangshouronglu.primeval_river": "原始河流",
+  "item.yixiangshouronglu.dragon_nest_teleporter": "龙巢传送器",
+  "tooltip.yixiangshouronglu.dragon_nest_teleporter.enter": "长按使用1秒，进入龙巢",
+  "tooltip.yixiangshouronglu.dragon_nest_teleporter.return": "在龙巢内使用可返回主世界",
+  "tooltip.yixiangshouronglu.dragon_nest_teleporter.cooldown": "冷却时间：2秒",
+  "message.yixiangshouronglu.dragon_nest_teleporter.busy": "已有传送请求正在处理中",
+  "message.yixiangshouronglu.dragon_nest_teleporter.unavailable": "当前状态无法传送",
+  "message.yixiangshouronglu.dragon_nest_teleporter.missing_dimension": "目标维度不存在或尚未加载",
+  "message.yixiangshouronglu.dragon_nest_teleporter.searching": "正在寻找安全位置……",
+  "message.yixiangshouronglu.dragon_nest_teleporter.no_safe_position": "没有找到安全位置",
+  "message.yixiangshouronglu.dragon_nest_teleporter.cancelled": "传送已取消",
+  "message.yixiangshouronglu.dragon_nest_teleporter.failed": "传送失败"
 }

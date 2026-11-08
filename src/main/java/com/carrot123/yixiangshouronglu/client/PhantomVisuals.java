@@ -28,8 +28,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RenderGuiEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -44,6 +45,15 @@ import java.util.Map;
 public final class PhantomVisuals {
     private static final List<Echo> ECHOES = new ArrayList<>();
     private static final MultiBufferSource.BufferSource BUFFERS = MultiBufferSource.immediate(new BufferBuilder(256));
+    private static final int GRAY_COLOR = 0x383C40;
+    private static final int MAX_ALPHA = 120;
+    private static final int MAX_LAYERS = 32;
+    private static final IGuiOverlay OVERLAY = (gui, graphics, partialTick, width, height) -> {
+        var client = Minecraft.getInstance();
+        if (client.player == null || client.level == null || client.options.hideGui || client.player.isSpectator()
+                || !active()) { return; }
+        fog(graphics, width, height);
+    };
     private static SnapshotRenderer normal;
     private static SnapshotRenderer slim;
     private static long session;
@@ -79,32 +89,26 @@ public final class PhantomVisuals {
                 && client.level.dimension().location().equals(dimension) && client.level.getGameTime() < expires;
     }
 
-    private static void fog(GuiGraphics graphics, float partialTick, int width, int height) {
-        if (!active()) { return; }
-        double time = (Minecraft.getInstance().level.getGameTime() + partialTick) * 0.025;
-        int horizontal = Math.max(1, (int) (width * 0.18));
-        int vertical = Math.max(1, (int) (height * 0.18));
-        for (int band = 0; band < 18; band++) {
-            double weight = 1 - band / 18.0;
-            int alpha = (int) (weight * weight * (85 + 8 * Math.sin(time + band * 0.4)));
-            int color = alpha << 24 | 0x383C40;
-            int x1 = band * horizontal / 18, x2 = (band + 1) * horizontal / 18;
-            int y1 = band * vertical / 18, y2 = (band + 1) * vertical / 18;
-            graphics.fill(x1, 0, x2, height, color);
-            graphics.fill(width - x2, 0, width - x1, height, color);
-            graphics.fill(horizontal, y1, width - horizontal, y2, color);
-            graphics.fill(horizontal, height - y2, width - horizontal, height - y1, color);
+    private static void fog(GuiGraphics graphics, int width, int height) {
+        if (width <= 0 || height <= 0) { return; }
+        int horizontalThickness = Math.max(1, Math.min(width / 2, Math.max(10, width / 9)));
+        int verticalThickness = Math.max(1, Math.min(height / 2, Math.max(10, height / 6)));
+        int layers = Math.max(1, Math.min(MAX_LAYERS, Math.min(horizontalThickness, verticalThickness)));
+        for (int i = 0; i < layers; i++) {
+            float progress = (float) i / layers;
+            float fade = 1.0F - progress;
+            int alpha = Math.round(MAX_ALPHA * fade * fade);
+            if (alpha <= 0) { continue; }
+            int color = (alpha << 24) | GRAY_COLOR;
+            int x0 = i * horizontalThickness / layers;
+            int x1 = (i + 1) * horizontalThickness / layers;
+            int y0 = i * verticalThickness / layers;
+            int y1 = (i + 1) * verticalThickness / layers;
+            graphics.fill(x0, 0, x1, height, color);
+            graphics.fill(width - x1, 0, width - x0, height, color);
+            graphics.fill(0, y0, width, y1, color);
+            graphics.fill(0, height - y1, width, height - y0, color);
         }
-    }
-
-    @SubscribeEvent public static void renderFog(RenderGuiEvent.Pre event) {
-        var client = Minecraft.getInstance();
-        if (client.options.hideGui || !active()) { return; }
-        GuiGraphics graphics = event.getGuiGraphics();
-        graphics.flush();
-        try {
-            fog(graphics, event.getPartialTick(), event.getWindow().getGuiScaledWidth(), event.getWindow().getGuiScaledHeight());
-        } finally { graphics.flush(); }
     }
 
     @SubscribeEvent public static void tick(TickEvent.ClientTickEvent event) {
@@ -235,6 +239,9 @@ public final class PhantomVisuals {
 
     @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static final class Registration {
+        @SubscribeEvent public static void overlays(RegisterGuiOverlaysEvent event) {
+            event.registerAboveAll("phantom_fog", OVERLAY);
+        }
         @SubscribeEvent public static void layers(EntityRenderersEvent.AddLayers event) {
             normal = new SnapshotRenderer(event.getContext(), false);
             slim = new SnapshotRenderer(event.getContext(), true);
