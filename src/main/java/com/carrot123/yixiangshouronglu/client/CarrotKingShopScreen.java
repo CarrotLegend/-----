@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class CarrotKingShopScreen extends GeneScreen<CarrotKingShopMenu> {
+    private static final int BUY_CARD_TOP = 35;
+    private static final int BUY_CARD_SPACING = 38;
+    private static final int BUY_CARD_HEIGHT = 36;
+    private static final int BUY_BUTTON_OFFSET = 8;
     private Button enter;
     private Button buyTab;
     private Button sellTab;
@@ -32,10 +36,10 @@ public final class CarrotKingShopScreen extends GeneScreen<CarrotKingShopMenu> {
         enter = addRenderableWidget(Button.builder(text("enter"), button -> send(0, -1)).bounds(leftPos + 120, topPos + 195, 120, 20).build());
         buyTab = addRenderableWidget(Button.builder(text("buy"), button -> send(1, -1)).bounds(leftPos + 8, topPos + 37, 64, 20).build());
         sellTab = addRenderableWidget(Button.builder(text("sell"), button -> send(2, -1)).bounds(leftPos + 8, topPos + 61, 64, 20).build());
-        for (int index = 0; index < 2; index++) {
+        for (int index = 0; index < ShopCatalog.PRODUCTS.size(); index++) {
             final int product = index;
             purchases.add(addRenderableWidget(Button.builder(text("purchase"), button -> send(3, product))
-                    .bounds(leftPos + 282, topPos + 48 + index * 54, 66, 20).build()));
+                    .bounds(leftPos + 282, topPos + BUY_CARD_TOP + BUY_BUTTON_OFFSET + index * BUY_CARD_SPACING, 66, 20).build()));
         }
     }
     private void updateButtons() {
@@ -47,7 +51,7 @@ public final class CarrotKingShopScreen extends GeneScreen<CarrotKingShopMenu> {
         sellTab.active = ready && menu.page != CarrotKingShopMenu.SELL;
         for (int index = 0; index < purchases.size(); index++) {
             Button button = purchases.get(index);
-            button.visible = menu.page == CarrotKingShopMenu.BUY;
+            button.visible = menu.page == CarrotKingShopMenu.BUY && index < menu.offers.size();
             button.active = ready && index < menu.offers.size() && !menu.offers.get(index).stack().isEmpty()
                     && ShopCapability.get(minecraft.player).canPay(menu.offers.get(index).price());
         }
@@ -72,7 +76,8 @@ public final class CarrotKingShopScreen extends GeneScreen<CarrotKingShopMenu> {
             }
         } else {
             for (int index = 0; index < menu.offers.size(); index++) {
-                drawCard(graphics, menu.offers.get(index), 88, 35 + index * 54, 260, 50, false, mouseX, mouseY, true);
+                drawCard(graphics, menu.offers.get(index), 88, BUY_CARD_TOP + index * BUY_CARD_SPACING,
+                        260, BUY_CARD_HEIGHT, false, mouseX, mouseY, true);
             }
         }
     }
@@ -83,14 +88,22 @@ public final class CarrotKingShopScreen extends GeneScreen<CarrotKingShopMenu> {
         graphics.fill(leftPos + x, topPos + y, leftPos + x + width, topPos + y + height, border);
         graphics.fill(leftPos + x + 1, topPos + y + 1, leftPos + x + width - 1, topPos + y + height - 1, hovered ? 0xFF192D3B : 0xFF101D29);
         var stack = offer.stack();
-        graphics.renderItem(stack, leftPos + x + 6, topPos + y + 12);
-        Component name = stack.isEmpty() ? text("offer." + offer.key()) : stack.getHoverName();
+        graphics.renderItem(stack, leftPos + x + 6, topPos + y + (buying ? 10 : 12));
+        Component name = stack.isEmpty()
+                ? (offer.key().equals("medkit_enchanted") ? text("unavailable") : text("offer." + offer.key()))
+                : stack.getHoverName();
         var lines = font.split(name, buying ? 154 : 94);
         for (int line = 0; line < Math.min(2, lines.size()); line++) {
-            graphics.drawString(font, lines.get(line), leftPos + x + 26, topPos + y + 4 + line * 10, 0xD6E7F2, false);
+            graphics.drawString(font, lines.get(line), leftPos + x + 26, topPos + y + (buying ? 2 : 4) + line * 10, 0xD6E7F2, false);
         }
-        graphics.drawString(font, text("price", offer.price()), leftPos + x + 26, topPos + y + 27, 0xE1B65A, false);
-        if (stack.isEmpty()) { graphics.drawString(font, text("unavailable"), leftPos + x + 26, topPos + y + 38, 0xE66565, false); }
+        graphics.drawString(font, text("price", offer.price()), leftPos + x + 26, topPos + y + (buying ? 24 : 27), 0xE1B65A, false);
+        if (stack.isEmpty()) {
+            if (buying) {
+                graphics.fill(leftPos + x + width - 79, topPos + y + 27, leftPos + x + width - 74, topPos + y + 32, 0xFFE66565);
+            } else {
+                graphics.drawString(font, text("unavailable"), leftPos + x + 26, topPos + y + 38, 0xE66565, false);
+            }
+        }
     }
     @Override protected boolean clickScaled(double x, double y, int button) {
         if (button == 0 && menu.page == CarrotKingShopMenu.SELL) {
@@ -140,10 +153,11 @@ public final class CarrotKingShopScreen extends GeneScreen<CarrotKingShopMenu> {
         }
         if (menu.page != CarrotKingShopMenu.BUY) { return; }
         for (int index = 0; index < menu.offers.size(); index++) {
-            if (isHovering(94, 47 + index * 54, 16, 16, mouseX, mouseY) && !menu.offers.get(index).stack().isEmpty()) {
+            int top = BUY_CARD_TOP + index * BUY_CARD_SPACING;
+            if (isHovering(94, top + 10, 16, 16, mouseX, mouseY) && !menu.offers.get(index).stack().isEmpty()) {
                 graphics.renderTooltip(font, menu.offers.get(index).stack(), mouseX, mouseY);
             }
-            if (isHovering(282, 48 + index * 54, 66, 20, mouseX, mouseY)) {
+            if (isHovering(282, top + BUY_BUTTON_OFFSET, 66, 20, mouseX, mouseY)) {
                 var offer = menu.offers.get(index);
                 List<Component> lines = new ArrayList<>();
                 lines.add(text("price", offer.price()));

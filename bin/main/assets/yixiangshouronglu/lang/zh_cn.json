@@ -303,5 +303,8 @@
   "message.yixiangshouronglu.dragon_nest_teleporter.searching": "正在寻找安全位置……",
   "message.yixiangshouronglu.dragon_nest_teleporter.no_safe_position": "没有找到安全位置",
   "message.yixiangshouronglu.dragon_nest_teleporter.cancelled": "传送已取消",
-  "message.yixiangshouronglu.dragon_nest_teleporter.failed": "传送失败"
+  "message.yixiangshouronglu.dragon_nest_teleporter.failed": "传送失败",
+  "structure.yixiangshouronglu.abandoned_camp": "废弃营地",
+  "structure.yixiangshouronglu.battle_tower": "战斗高塔",
+  "structure.yixiangshouronglu.ancient_stele": "古代石碑"
 }

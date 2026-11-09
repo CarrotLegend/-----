@@ -9,7 +9,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
-
 public final class ShopCatalog {
     public record Product(String key, ResourceLocation item, ResourceLocation potion, long price) {}
     public record Offer(String key, long price, ItemStack stack) {
@@ -18,7 +17,8 @@ public final class ShopCatalog {
     }
     public static final List<Product> PRODUCTS = List.of(
             new Product("chemical_x", new ResourceLocation("minecraft:potion"), new ResourceLocation("mutantmonsters:chemical_x"), 2),
-            new Product("compound_z", new ResourceLocation("mutantmore:compound_z"), null, 20));
+            new Product("compound_z", new ResourceLocation("mutantmore:compound_z"), null, 20),
+            new Product("medkit_enchanted", new ResourceLocation("roughtweaks:medkit_enchanted"), null, 10));
     public static final List<Product> SELL_PRODUCTS = List.of(
             new Product("iron_ingot", new ResourceLocation("minecraft:iron_ingot"), null, 1),
             new Product("gold_ingot", new ResourceLocation("minecraft:gold_ingot"), null, 2),

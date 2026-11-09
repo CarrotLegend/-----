@@ -303,5 +303,8 @@
   "message.yixiangshouronglu.dragon_nest_teleporter.searching": "Searching for a safe destination...",
   "message.yixiangshouronglu.dragon_nest_teleporter.no_safe_position": "No safe destination was found",
   "message.yixiangshouronglu.dragon_nest_teleporter.cancelled": "Teleport cancelled",
-  "message.yixiangshouronglu.dragon_nest_teleporter.failed": "Teleport failed"
+  "message.yixiangshouronglu.dragon_nest_teleporter.failed": "Teleport failed",
+  "structure.yixiangshouronglu.abandoned_camp": "Abandoned Camp",
+  "structure.yixiangshouronglu.battle_tower": "Battle Tower",
+  "structure.yixiangshouronglu.ancient_stele": "Ancient Stele"
 }

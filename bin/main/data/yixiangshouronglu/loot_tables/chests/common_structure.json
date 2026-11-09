@@ -2,7 +2,7 @@
   "type": "minecraft:chest",
   "pools": [
     {
-      "rolls": 6,
+      "rolls": 4,
       "entries": [
         {
           "type": "minecraft:item",
@@ -14,7 +14,7 @@
               "count": {
                 "type": "minecraft:uniform",
                 "min": 0,
-                "max": 4
+                "max": 2
               }
             }
           ]
@@ -82,7 +82,7 @@
       ]
     },
     {
-      "rolls": 5,
+      "rolls": 4,
       "entries": [
         {
           "type": "minecraft:item",
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "rolls": 2,
+      "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
@@ -220,7 +220,7 @@
       ]
     },
     {
-      "rolls": 10,
+      "rolls": 5,
       "entries": [
         {
           "type": "minecraft:item",

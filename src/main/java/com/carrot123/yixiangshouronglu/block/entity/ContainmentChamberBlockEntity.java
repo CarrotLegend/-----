@@ -28,11 +28,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public final class ContainmentChamberBlockEntity extends BlockEntity implements Container, MenuProvider {
-    public static final int MAX_EXTRACT_MB = 2000;
+    public static final int MAX_EXTRACT_MB = 4000;
     public static final int EXTRACT_COST_MB = 100;
     public static final int EXTRACT_TIME = 20;
 
-    private static final int ACCUMULATION_INTERVAL = 60;
+    private static final int ACCUMULATION_INTERVAL = 24;
 
     private ItemStack soul = ItemStack.EMPTY;
     private final NonNullList<ItemStack> outputs = NonNullList.withSize(2, ItemStack.EMPTY);
@@ -333,7 +333,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
         productionProgress = Math.max(0, tag.getInt("ProductionProgress"));
         extractStoredMb = Math.max(0, Math.min(MAX_EXTRACT_MB, tag.getInt("ExtractStoredMb")));
-        extractionAccumulationTicks = Math.max(0, Math.min(59, tag.getInt("ExtractionAccumulationTicks")));
+        extractionAccumulationTicks = Math.max(0, Math.min(ACCUMULATION_INTERVAL - 1, tag.getInt("ExtractionAccumulationTicks")));
         extractionProgress = Math.max(0, Math.min(EXTRACT_TIME, tag.getInt("ExtractionProgress")));
 
         extractionInput = tag.contains("ExtractionInput", 10)
