@@ -318,5 +318,9 @@
   "item.yixiangshouronglu.eternal_spring_bucket": "Eternal Spring Bucket",
   "item.yixiangshouronglu.bottled_eternal_spring": "Bottled Eternal Spring",
   "item.yixiangshouronglu.madness_mask": "Madness Mask",
-  "tooltip.yixiangshouronglu.madness_mask": "Lose 2 health points per second; gain Strength IV for 5 seconds every 20 seconds."
+  "tooltip.yixiangshouronglu.madness_mask": "Lose 2 health points per second; gain Strength IV for 5 seconds every 20 seconds.",
+  "item.yixiangshouronglu.soul_guiding_lantern": "Soul-Guiding Lantern",
+  "tooltip.yixiangshouronglu.soul_guiding_lantern.charges": "Charges remaining: %s/%s",
+  "item.yixiangshouronglu.final_knell": "Final Knell",
+  "tooltip.yixiangshouronglu.final_knell": "When attacking a target below 2% health, there is a 25% chance to instantly kill it."
 }

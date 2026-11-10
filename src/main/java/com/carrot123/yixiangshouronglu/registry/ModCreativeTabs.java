@@ -29,6 +29,8 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.LEGENDARY_CARROT_KING_SPAWN_EGG.get());
                                 output.accept(ModItems.LEGENDARY_CARROT_KING_SUMMONER.get());
                                 output.accept(ModItems.PANACEA.get());
+                                output.accept(ModItems.SOUL_GUIDING_LANTERN.get());
+                                output.accept(ModItems.FINAL_KNELL.get());
                                 output.accept(ModItems.WENDIGO_EYE.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_FRAGMENT.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_SPAWN_EGG.get());

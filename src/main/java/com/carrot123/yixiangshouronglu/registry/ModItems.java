@@ -14,6 +14,8 @@ import com.carrot123.yixiangshouronglu.item.ExemptionShieldItem;
 import com.carrot123.yixiangshouronglu.item.LegendaryCarrotKingSummonerItem;
 import com.carrot123.yixiangshouronglu.item.MadnessMaskItem;
 import com.carrot123.yixiangshouronglu.item.PanaceaItem;
+import com.carrot123.yixiangshouronglu.item.FinalKnellItem;
+import com.carrot123.yixiangshouronglu.item.SoulGuidingLanternItem;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.item.WendigoEyeItem;
 import com.carrot123.yixiangshouronglu.item.WendigoSightItem;
@@ -35,6 +37,8 @@ public final class ModItems {
     public static final RegistryObject<Item> LEGENDARY_CARROT_KING_SPAWN_EGG = ITEMS.register("legendary_carrot_king_spawn_egg", () -> new ForgeSpawnEggItem(ModEntities.LEGENDARY_CARROT_KING, 0xE9943F, 0x79B56C, new Item.Properties()));
     public static final RegistryObject<Item> LEGENDARY_CARROT_KING_SUMMONER = ITEMS.register("legendary_carrot_king_summoner", () -> new LegendaryCarrotKingSummonerItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PANACEA = ITEMS.register("panacea", () -> new PanaceaItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final RegistryObject<Item> SOUL_GUIDING_LANTERN = ITEMS.register("soul_guiding_lantern", () -> new SoulGuidingLanternItem(new Item.Properties().durability(3).rarity(Rarity.EPIC)));
+    public static final RegistryObject<Item> FINAL_KNELL = ITEMS.register("final_knell", () -> new FinalKnellItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> WENDIGO_EYE = ITEMS.register("wendigo_eye", () -> new WendigoEyeItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2F).alwaysEat().build())));
     public static final RegistryObject<Item> TENACIOUS_SHIELD_FRAGMENT = ITEMS.register("tenacious_shield_fragment", () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SHADOW_FRAGMENT = ITEMS.register("shadow_fragment", () -> new Item(new Item.Properties().stacksTo(64)));

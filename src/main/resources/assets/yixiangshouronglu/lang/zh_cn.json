@@ -318,5 +318,9 @@
   "item.yixiangshouronglu.eternal_spring_bucket": "不老泉桶",
   "item.yixiangshouronglu.bottled_eternal_spring": "瓶装不老泉",
   "item.yixiangshouronglu.madness_mask": "狂言面具",
-  "tooltip.yixiangshouronglu.madness_mask": "每秒失去2点生命值；每20秒获得持续5秒的力量IV。"
+  "tooltip.yixiangshouronglu.madness_mask": "每秒失去2点生命值；每20秒获得持续5秒的力量IV。",
+  "item.yixiangshouronglu.soul_guiding_lantern": "引魂提灯",
+  "tooltip.yixiangshouronglu.soul_guiding_lantern.charges": "剩余充能：%s/%s",
+  "item.yixiangshouronglu.final_knell": "终末丧钟",
+  "tooltip.yixiangshouronglu.final_knell": "当攻击目标生命值小于2%时，有25%概率直接击杀目标。"
 }
