@@ -306,5 +306,17 @@
   "message.yixiangshouronglu.dragon_nest_teleporter.failed": "Teleport failed",
   "structure.yixiangshouronglu.abandoned_camp": "Abandoned Camp",
   "structure.yixiangshouronglu.battle_tower": "Battle Tower",
-  "structure.yixiangshouronglu.ancient_stele": "Ancient Stele"
+  "structure.yixiangshouronglu.ancient_stele": "Ancient Stele",
+  "item.yixiangshouronglu.legendary_carrot_king_summoner": "Legendary Carrot King Summoner",
+  "tooltip.yixiangshouronglu.legendary_carrot_king_summoner": "Right-click to summon the Legendary Carrot King. Sneak-right-click to retrieve him.",
+  "message.yixiangshouronglu.legendary_carrot_king_summoner.spawn_failed": "The Legendary Carrot King cannot be summoned here.",
+  "message.yixiangshouronglu.legendary_carrot_king_summoner.recover_failed": "The summoner could not be dropped. The Legendary Carrot King is still here.",
+  "item.yixiangshouronglu.panacea": "Panacea",
+  "tooltip.yixiangshouronglu.panacea": "Immune to all negative status effects.",
+  "fluid_type.yixiangshouronglu.eternal_spring": "Eternal Spring",
+  "block.yixiangshouronglu.eternal_spring_block": "Eternal Spring",
+  "item.yixiangshouronglu.eternal_spring_bucket": "Eternal Spring Bucket",
+  "item.yixiangshouronglu.bottled_eternal_spring": "Bottled Eternal Spring",
+  "item.yixiangshouronglu.madness_mask": "Madness Mask",
+  "tooltip.yixiangshouronglu.madness_mask": "Lose 2 health points per second; gain Strength IV for 5 seconds every 20 seconds."
 }

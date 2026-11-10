@@ -3,12 +3,19 @@ package com.carrot123.yixiangshouronglu.client;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import com.carrot123.yixiangshouronglu.registry.ModEntities;
+import com.carrot123.yixiangshouronglu.registry.ModFluids;
+import com.carrot123.yixiangshouronglu.registry.ModItems;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.DragonFireballRenderer;
 import net.minecraft.client.renderer.entity.NoopRenderer;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -51,6 +58,12 @@ public final class ClientScreens {
     }
 
     @SubscribeEvent
+    public static void onRegisterItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register((stack, tintIndex) -> tintIndex == 0 ? PotionUtils.getColor(Potions.WATER) : -1,
+                ModItems.BOTTLED_ETERNAL_SPRING.get());
+    }
+
+    @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             MenuScreens.register(ModMenus.CARROT_KING_SHOP.get(), CarrotKingShopScreen::new);
@@ -60,6 +73,8 @@ public final class ClientScreens {
                     ModMenus.CONTAINMENT_CHAMBER.get(),
                     ContainmentChamberScreen::new
             );
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.ETERNAL_SPRING.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.FLOWING_ETERNAL_SPRING.get(), RenderType.translucent());
         });
     }
 }

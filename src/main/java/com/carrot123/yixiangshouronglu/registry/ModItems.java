@@ -1,13 +1,19 @@
 package com.carrot123.yixiangshouronglu.registry;
 
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BucketItem;
+
 import com.carrot123.yixiangshouronglu.item.GeneModuleItem;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.item.AmethystCrabLureBlock;
 import com.carrot123.yixiangshouronglu.item.BlazeCageItem;
+import com.carrot123.yixiangshouronglu.item.BottledEternalSpringItem;
 import com.carrot123.yixiangshouronglu.item.EnderDragonWingsItem;
 import com.carrot123.yixiangshouronglu.item.DragonNestTeleporterItem;
 import com.carrot123.yixiangshouronglu.item.ExemptionShieldItem;
+import com.carrot123.yixiangshouronglu.item.LegendaryCarrotKingSummonerItem;
+import com.carrot123.yixiangshouronglu.item.MadnessMaskItem;
+import com.carrot123.yixiangshouronglu.item.PanaceaItem;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.item.WendigoEyeItem;
 import com.carrot123.yixiangshouronglu.item.WendigoSightItem;
@@ -15,6 +21,7 @@ import com.carrot123.yixiangshouronglu.item.ContainmentExtractItem;
 
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
@@ -26,6 +33,8 @@ public final class ModItems {
     public static final RegistryObject<Item> CONTAINMENT_CHAMBER = ITEMS.register("containment_chamber", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> SOUL = ITEMS.register("soul", () -> new SoulItem(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> LEGENDARY_CARROT_KING_SPAWN_EGG = ITEMS.register("legendary_carrot_king_spawn_egg", () -> new ForgeSpawnEggItem(ModEntities.LEGENDARY_CARROT_KING, 0xE9943F, 0x79B56C, new Item.Properties()));
+    public static final RegistryObject<Item> LEGENDARY_CARROT_KING_SUMMONER = ITEMS.register("legendary_carrot_king_summoner", () -> new LegendaryCarrotKingSummonerItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> PANACEA = ITEMS.register("panacea", () -> new PanaceaItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> WENDIGO_EYE = ITEMS.register("wendigo_eye", () -> new WendigoEyeItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2F).alwaysEat().build())));
     public static final RegistryObject<Item> TENACIOUS_SHIELD_FRAGMENT = ITEMS.register("tenacious_shield_fragment", () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SHADOW_FRAGMENT = ITEMS.register("shadow_fragment", () -> new Item(new Item.Properties().stacksTo(64)));
@@ -47,7 +56,9 @@ public final class ModItems {
     public static final RegistryObject<Item> GENE_MODULE = ITEMS.register("gene_module", () -> new GeneModuleItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GENE_SYNTHESIZER = ITEMS.register("gene_synthesizer", () -> new BlockItem(ModBlocks.GENE_SYNTHESIZER.get(), new Item.Properties()));
     public static final RegistryObject<Item> GENE_MODIFICATION_CHAMBER = ITEMS.register("gene_modification_chamber", () -> new BlockItem(ModBlocks.GENE_MODIFICATION_CHAMBER.get(), new Item.Properties()));
-
+    public static final RegistryObject<Item> ETERNAL_SPRING_BUCKET = ITEMS.register("eternal_spring_bucket", () -> new BucketItem(ModFluids.ETERNAL_SPRING, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+    public static final RegistryObject<Item> BOTTLED_ETERNAL_SPRING = ITEMS.register("bottled_eternal_spring", () -> new BottledEternalSpringItem(new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> MADNESS_MASK = ITEMS.register("madness_mask", () -> new MadnessMaskItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     private ModItems() {
     }
 }

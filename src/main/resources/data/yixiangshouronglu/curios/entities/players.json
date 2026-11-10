@@ -4,6 +4,7 @@
   ],
   "slots": [
     "head",
-    "back"
+    "back",
+    "charm"
   ]
 }

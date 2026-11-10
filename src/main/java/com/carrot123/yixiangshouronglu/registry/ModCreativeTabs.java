@@ -27,6 +27,8 @@ public final class ModCreativeTabs {
                             .displayItems((parameters, output) -> {
                                 output.accept(ModItems.SOUL.get());
                                 output.accept(ModItems.LEGENDARY_CARROT_KING_SPAWN_EGG.get());
+                                output.accept(ModItems.LEGENDARY_CARROT_KING_SUMMONER.get());
+                                output.accept(ModItems.PANACEA.get());
                                 output.accept(ModItems.WENDIGO_EYE.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_FRAGMENT.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_SPAWN_EGG.get());
@@ -52,6 +54,9 @@ public final class ModCreativeTabs {
                                 }
                                 output.accept(ModItems.GENE_SYNTHESIZER.get());
                                 output.accept(ModItems.GENE_MODIFICATION_CHAMBER.get());
+                                output.accept(ModItems.ETERNAL_SPRING_BUCKET.get());
+                                output.accept(ModItems.BOTTLED_ETERNAL_SPRING.get());
+                                output.accept(ModItems.MADNESS_MASK.get());
                             })
                             .build()
             );

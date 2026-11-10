@@ -21,6 +21,7 @@ import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import com.carrot123.yixiangshouronglu.registry.ModBlocks;
 import com.carrot123.yixiangshouronglu.registry.ModCreativeTabs;
 import com.carrot123.yixiangshouronglu.registry.ModEntities;
+import com.carrot123.yixiangshouronglu.registry.ModFluids;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -55,5 +56,7 @@ public final class AnomalousContainmentChronicles {
         HighTierBossGenes.register();
         AscendantGenes.register();
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, GeneSkillConfig.SPEC);
+        ModFluids.FLUID_TYPES.register(modBus);
+        ModFluids.FLUIDS.register(modBus);
     }
 }

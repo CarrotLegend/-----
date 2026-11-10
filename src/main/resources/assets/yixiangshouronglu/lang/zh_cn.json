@@ -306,5 +306,17 @@
   "message.yixiangshouronglu.dragon_nest_teleporter.failed": "传送失败",
   "structure.yixiangshouronglu.abandoned_camp": "废弃营地",
   "structure.yixiangshouronglu.battle_tower": "战斗高塔",
-  "structure.yixiangshouronglu.ancient_stele": "古代石碑"
+  "structure.yixiangshouronglu.ancient_stele": "古代石碑",
+  "item.yixiangshouronglu.legendary_carrot_king_summoner": "传奇萝卜王召唤器",
+  "tooltip.yixiangshouronglu.legendary_carrot_king_summoner": "右键释放传奇萝卜王，潜行右键回收。",
+  "message.yixiangshouronglu.legendary_carrot_king_summoner.spawn_failed": "无法在这里释放传奇萝卜王。",
+  "message.yixiangshouronglu.legendary_carrot_king_summoner.recover_failed": "无法掉落召唤器，传奇萝卜王仍留在原处。",
+  "item.yixiangshouronglu.panacea": "万灵药",
+  "tooltip.yixiangshouronglu.panacea": "免疫一切负面效果。",
+  "fluid_type.yixiangshouronglu.eternal_spring": "不老泉",
+  "block.yixiangshouronglu.eternal_spring_block": "不老泉",
+  "item.yixiangshouronglu.eternal_spring_bucket": "不老泉桶",
+  "item.yixiangshouronglu.bottled_eternal_spring": "瓶装不老泉",
+  "item.yixiangshouronglu.madness_mask": "狂言面具",
+  "tooltip.yixiangshouronglu.madness_mask": "每秒失去2点生命值；每20秒获得持续5秒的力量IV。"
 }

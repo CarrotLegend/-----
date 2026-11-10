@@ -8,6 +8,8 @@ import com.carrot123.yixiangshouronglu.block.IncubatingDragonEggBlock;
 import com.carrot123.yixiangshouronglu.block.GeneModificationChamberBlock;
 
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.registries.DeferredRegister;
@@ -22,6 +24,7 @@ public final class ModBlocks {
 
     public static final RegistryObject<Block> GENE_SYNTHESIZER = BLOCKS.register("gene_synthesizer", () -> new GeneWorkstationBlock(BlockBehaviour.Properties.of().strength(4.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion(), true));
     public static final RegistryObject<Block> GENE_MODIFICATION_CHAMBER = BLOCKS.register("gene_modification_chamber", () -> new GeneModificationChamberBlock(BlockBehaviour.Properties.of().strength(4.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion()));
+    public static final RegistryObject<LiquidBlock> ETERNAL_SPRING_BLOCK = BLOCKS.register("eternal_spring_block", () -> new LiquidBlock(ModFluids.ETERNAL_SPRING, BlockBehaviour.Properties.copy(Blocks.WATER).noLootTable()));
 
     private ModBlocks() {
     }
