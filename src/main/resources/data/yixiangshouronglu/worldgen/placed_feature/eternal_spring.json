@@ -1,0 +1,27 @@
+{
+  "feature": "yixiangshouronglu:eternal_spring",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 24
+    },
+    {
+      "type": "minecraft:random_offset",
+      "xz_spread": {
+        "type": "minecraft:uniform",
+        "value": {
+          "min_inclusive": 1,
+          "max_inclusive": 9
+        }
+      },
+      "y_spread": 0
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "OCEAN_FLOOR_WG"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

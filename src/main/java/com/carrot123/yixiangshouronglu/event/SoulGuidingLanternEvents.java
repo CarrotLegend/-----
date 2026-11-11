@@ -1,6 +1,7 @@
 package com.carrot123.yixiangshouronglu.event;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
+import com.carrot123.yixiangshouronglu.network.LanternNetwork;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
@@ -40,7 +41,7 @@ public final class SoulGuidingLanternEvents {
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 900, 1));
                 player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 1));
                 player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 800, 0));
-                player.level().broadcastEntityEvent(player, (byte) 35);
+                LanternNetwork.activate(player);
                 player.getInventory().setChanged();
                 player.containerMenu.broadcastChanges();
                 return;

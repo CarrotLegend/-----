@@ -2,6 +2,7 @@ package com.carrot123.yixiangshouronglu;
 
 import com.carrot123.yixiangshouronglu.network.GeneNetwork;
 import com.carrot123.yixiangshouronglu.network.ShopNetwork;
+import com.carrot123.yixiangshouronglu.network.LanternNetwork;
 import com.carrot123.yixiangshouronglu.shop.PlayerShopData;
 import com.carrot123.yixiangshouronglu.gene.PlayerGenes;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -22,6 +23,7 @@ import com.carrot123.yixiangshouronglu.registry.ModBlocks;
 import com.carrot123.yixiangshouronglu.registry.ModCreativeTabs;
 import com.carrot123.yixiangshouronglu.registry.ModEntities;
 import com.carrot123.yixiangshouronglu.registry.ModFluids;
+import com.carrot123.yixiangshouronglu.registry.ModFeatures;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -46,6 +48,7 @@ public final class AnomalousContainmentChronicles {
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerGenes.class));
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerShopData.class));
         ShopNetwork.register();
+        LanternNetwork.register();
         GeneNetwork.register();
         RegenerativeCells.register();
         AdditionalGenes.register();
@@ -58,5 +61,6 @@ public final class AnomalousContainmentChronicles {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, GeneSkillConfig.SPEC);
         ModFluids.FLUID_TYPES.register(modBus);
         ModFluids.FLUIDS.register(modBus);
+        ModFeatures.FEATURES.register(modBus);
     }
 }
