@@ -3,7 +3,7 @@
   "biomes": "#yixiangshouronglu:has_structure/mystical_altar",
   "step": "underground_structures",
   "spawn_overrides": {},
-  "terrain_adaptation": "none",
+  "terrain_adaptation": "bury",
   "start_pool": "yixiangshouronglu:mystical_altar",
   "size": 1,
   "start_height": {

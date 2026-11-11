@@ -46,6 +46,10 @@ public final class SoulGuidingLanternItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
+        tooltip.add(Component.translatable("tooltip.yixiangshouronglu.soul_guiding_lantern.revive")
+                .withStyle(ChatFormatting.GOLD));
+        tooltip.add(Component.translatable("tooltip.yixiangshouronglu.soul_guiding_lantern.recharge")
+                .withStyle(ChatFormatting.GOLD));
         int remaining = Math.max(0, stack.getMaxDamage() - stack.getDamageValue());
         tooltip.add(Component.translatable("tooltip.yixiangshouronglu.soul_guiding_lantern.charges",
                         remaining, stack.getMaxDamage())

@@ -191,30 +191,6 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void playerWillDestroy(
-            Level level,
-            BlockPos pos,
-            BlockState state,
-            Player player
-    ) {
-        if (!level.isClientSide) {
-            BlockPos lowerPos = state.getValue(HALF) == DoubleBlockHalf.LOWER
-                    ? pos
-                    : pos.below();
-
-            if (level.getBlockEntity(lowerPos) instanceof ContainmentChamberBlockEntity chamber) {
-                ItemStack extracted = chamber.extractSoul();
-
-                if (!extracted.isEmpty()) {
-                    Block.popResource(level, lowerPos, extracted);
-                }
-            }
-        }
-
-        super.playerWillDestroy(level, pos, state, player);
-    }
-
-    @Override
     public void onRemove(
             BlockState state,
             Level level,
@@ -228,14 +204,7 @@ public class ContainmentChamberBlock extends BaseEntityBlock {
                     : pos.below();
 
             if (level.getBlockEntity(lowerPos) instanceof ContainmentChamberBlockEntity chamber) {
-                ItemStack extracted = chamber.extractSoul();
-
-                if (!extracted.isEmpty()) {
-                    Block.popResource(level, lowerPos, extracted);
-                }
-
-                Containers.dropContents(level, lowerPos, chamber);
-                chamber.clearContent();
+                Containers.dropContents(level, lowerPos, chamber.drainContents());
             }
 
             BlockPos upperPos = lowerPos.above();

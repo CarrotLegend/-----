@@ -32,10 +32,20 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
     public static final int EXTRACT_COST_MB = 100;
     public static final int EXTRACT_TIME = 20;
 
+    public static final int BASE_OUTPUTS = 2;
+    public static final int MAX_OUTPUTS = 5;
+    public static final int EXTRACTION_INPUT = MAX_OUTPUTS;
+    public static final int EXTRACTION_OUTPUT = EXTRACTION_INPUT + 1;
+    public static final int FIRST_UPGRADE = EXTRACTION_OUTPUT + 1;
+    public static final int UPGRADE_COUNT = 3;
+    public static final int SLOT_COUNT = FIRST_UPGRADE + UPGRADE_COUNT;
+    public static final int DATA_COUNT = 5;
+
     private static final int ACCUMULATION_INTERVAL = 24;
 
     private ItemStack soul = ItemStack.EMPTY;
-    private final NonNullList<ItemStack> outputs = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> outputs = NonNullList.withSize(MAX_OUTPUTS, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> upgrades = NonNullList.withSize(UPGRADE_COUNT, ItemStack.EMPTY);
 
     private ItemStack extractionInput = ItemStack.EMPTY;
     private ItemStack extractionOutput = ItemStack.EMPTY;
@@ -53,6 +63,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
                 case 1 -> getProductionInterval();
                 case 2 -> extractStoredMb;
                 case 3 -> extractionProgress;
+                case 4 -> getUnlockedOutputs();
                 default -> 0;
             };
         }
@@ -70,7 +81,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
         @Override
         public int getCount() {
-            return 4;
+            return DATA_COUNT;
         }
     };
 
@@ -94,7 +105,57 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
     public int getProductionInterval() {
         ChamberProduction.Recipe recipe = ChamberProduction.forEntity(getEntityId());
-        return recipe == null ? 0 : recipe.intervalTicks();
+        return recipe == null ? 0 : productionInterval(recipe.intervalTicks());
+    }
+
+    private int productionInterval(int base) {
+        int multiplier = 1;
+        for (ItemStack upgrade : upgrades) {
+            if (upgrade.is(ModItems.SPEED_UPGRADE.get())) {
+                multiplier++;
+            }
+        }
+        return Math.max(1, (int) ((base + (long) multiplier - 1) / multiplier));
+    }
+
+    public int getUnlockedOutputs() {
+        int count = BASE_OUTPUTS;
+        for (ItemStack upgrade : upgrades) {
+            if (upgrade.is(ModItems.CAPACITY_UPGRADE.get())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static boolean isUpgrade(ItemStack stack) {
+        return stack.is(ModItems.CAPACITY_UPGRADE.get()) || stack.is(ModItems.SPEED_UPGRADE.get());
+    }
+
+    public boolean canChangeUpgrade(int slot, ItemStack replacement) {
+        if (!isUpgradeSlot(slot) || (!replacement.isEmpty() && (!isUpgrade(replacement) || replacement.getCount() != 1))) {
+            return false;
+        }
+        if (!getItem(slot).is(ModItems.CAPACITY_UPGRADE.get()) || replacement.is(ModItems.CAPACITY_UPGRADE.get())) {
+            return true;
+        }
+        int unlocked = getUnlockedOutputs();
+        return outputs.get(unlocked - 1).isEmpty();
+    }
+
+    private static boolean isUpgradeSlot(int slot) {
+        return slot >= FIRST_UPGRADE && slot < SLOT_COUNT;
+    }
+
+    private void changeUpgrade(int slot, ItemStack replacement) {
+        int oldInterval = getProductionInterval();
+        upgrades.set(slot - FIRST_UPGRADE, replacement);
+        int newInterval = getProductionInterval();
+        if (oldInterval > 0 && newInterval > 0 && oldInterval != newInterval) {
+            productionProgress = (int) Math.min(newInterval - 1L,
+                    (long) productionProgress * newInterval / oldInterval);
+        }
+        setChanged();
     }
 
     public int getExtractStoredMb() {
@@ -160,9 +221,10 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
         ChamberProduction.Recipe recipe = ChamberProduction.forEntity(entityId);
 
         if (recipe != null && chamber.canStore(recipe.item())) {
-            chamber.productionProgress++;
+            int interval = chamber.productionInterval(recipe.intervalTicks());
+            chamber.productionProgress = Math.min(chamber.productionProgress, interval - 1) + 1;
 
-            if (chamber.productionProgress >= recipe.intervalTicks()) {
+            if (chamber.productionProgress >= interval) {
                 if (chamber.storeOne(recipe.item())) {
                     chamber.productionProgress = 0;
                 }
@@ -256,7 +318,9 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
     }
 
     private boolean canStore(Item item) {
-        for (ItemStack stack : outputs) {
+        int unlocked = getUnlockedOutputs();
+        for (int index = 0; index < unlocked; index++) {
+            ItemStack stack = outputs.get(index);
             if (stack.isEmpty()
                     || (stack.is(item) && stack.getCount() < stack.getMaxStackSize())) {
                 return true;
@@ -267,7 +331,8 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
     }
 
     private boolean storeOne(Item item) {
-        for (int index = 0; index < outputs.size(); index++) {
+        int unlocked = getUnlockedOutputs();
+        for (int index = 0; index < unlocked; index++) {
             ItemStack stack = outputs.get(index);
 
             if (stack.isEmpty()) {
@@ -302,6 +367,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
         }
 
         ContainerHelper.saveAllItems(tag, outputs);
+        tag.put("Upgrades", ContainerHelper.saveAllItems(new CompoundTag(), upgrades));
 
         tag.putInt("ProductionProgress", productionProgress);
         tag.putInt("ExtractStoredMb", extractStoredMb);
@@ -330,6 +396,8 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
         }
 
         ContainerHelper.loadAllItems(tag, outputs);
+        upgrades.clear();
+        ContainerHelper.loadAllItems(tag.getCompound("Upgrades"), upgrades);
 
         productionProgress = Math.max(0, tag.getInt("ProductionProgress"));
         extractStoredMb = Math.max(0, Math.min(MAX_EXTRACT_MB, tag.getInt("ExtractStoredMb")));
@@ -378,106 +446,98 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
     @Override
     public int getContainerSize() {
-        return 4;
+        return SLOT_COUNT;
     }
 
     @Override
     public boolean isEmpty() {
-        for (ItemStack stack : outputs) {
-            if (!stack.isEmpty()) {
+        for (int slot = 0; slot < SLOT_COUNT; slot++) {
+            if (!getItem(slot).isEmpty()) {
                 return false;
             }
         }
-
-        return extractionInput.isEmpty() && extractionOutput.isEmpty();
+        return true;
     }
 
     @Override
     public ItemStack getItem(int slot) {
+        if (slot >= 0 && slot < MAX_OUTPUTS) {
+            return outputs.get(slot);
+        }
+        if (isUpgradeSlot(slot)) {
+            return upgrades.get(slot - FIRST_UPGRADE);
+        }
         return switch (slot) {
-            case 0, 1 -> outputs.get(slot);
-            case 2 -> extractionInput;
-            case 3 -> extractionOutput;
+            case EXTRACTION_INPUT -> extractionInput;
+            case EXTRACTION_OUTPUT -> extractionOutput;
             default -> ItemStack.EMPTY;
         };
     }
 
     @Override
     public ItemStack removeItem(int slot, int amount) {
-        ItemStack result;
-
-        if (slot >= 0 && slot < outputs.size()) {
-            result = ContainerHelper.removeItem(outputs, slot, amount);
-        } else if (slot == 2) {
-            result = extractionInput.split(amount);
-
-            if (extractionInput.isEmpty()) {
-                extractionInput = ItemStack.EMPTY;
-            }
-
-            extractionProgress = 0;
-        } else if (slot == 3) {
-            result = extractionOutput.split(amount);
-
-            if (extractionOutput.isEmpty()) {
-                extractionOutput = ItemStack.EMPTY;
-            }
-        } else {
+        if (amount <= 0 || !canRemove(slot)) {
             return ItemStack.EMPTY;
         }
-
+        if (isUpgradeSlot(slot)) {
+            ItemStack result = getItem(slot);
+            if (!result.isEmpty()) {
+                changeUpgrade(slot, ItemStack.EMPTY);
+            }
+            return result;
+        }
+        ItemStack result = getItem(slot).split(amount);
         if (!result.isEmpty()) {
+            if (slot == EXTRACTION_INPUT) {
+                extractionProgress = 0;
+            }
             setChanged();
         }
-
         return result;
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
-        ItemStack result;
+        return removeItem(slot, getItem(slot).getCount());
+    }
 
-        if (slot >= 0 && slot < outputs.size()) {
-            result = ContainerHelper.takeItem(outputs, slot);
-        } else if (slot == 2) {
-            result = extractionInput;
-            extractionInput = ItemStack.EMPTY;
-            extractionProgress = 0;
-        } else if (slot == 3) {
-            result = extractionOutput;
-            extractionOutput = ItemStack.EMPTY;
-        } else {
-            return ItemStack.EMPTY;
+    private boolean canRemove(int slot) {
+        if (slot >= 0 && slot < MAX_OUTPUTS) {
+            return slot < getUnlockedOutputs();
         }
-
-        if (!result.isEmpty()) {
-            setChanged();
+        if (isUpgradeSlot(slot)) {
+            return canChangeUpgrade(slot, ItemStack.EMPTY);
         }
+        return slot == EXTRACTION_INPUT || slot == EXTRACTION_OUTPUT;
+    }
 
-        return result;
+    @Override
+    public boolean canTakeItem(Container target, int slot, ItemStack stack) {
+        return canRemove(slot);
     }
 
     @Override
     public void setItem(int slot, ItemStack stack) {
-        if (slot < 0 || slot >= getContainerSize()) {
+        if (isUpgradeSlot(slot)) {
+            if (canChangeUpgrade(slot, stack)) {
+                changeUpgrade(slot, stack);
+            }
             return;
         }
-
+        if (!canRemove(slot)) {
+            return;
+        }
         if (stack.getCount() > getMaxStackSize()) {
             stack.setCount(getMaxStackSize());
         }
-
-        switch (slot) {
-            case 0, 1 -> outputs.set(slot, stack);
-            case 2 -> {
-                extractionInput = stack;
-                extractionProgress = 0;
-            }
-            case 3 -> extractionOutput = stack;
-            default -> {
-            }
+        if (slot < MAX_OUTPUTS) {
+            outputs.set(slot, stack);
+        } else if (slot == EXTRACTION_INPUT) {
+            extractionInput = stack;
+            extractionProgress = 0;
+        } else {
+            extractionOutput = stack;
         }
-
         setChanged();
     }
 
@@ -488,31 +548,37 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        if (slot != 2 || getEntityId().isEmpty()) {
-            return false;
+        if (isUpgradeSlot(slot)) {
+            return isUpgrade(stack) && canChangeUpgrade(slot, stack);
         }
+        return slot == EXTRACTION_INPUT && acceptsExtraction(getEntityId(), stack);
+    }
 
-        if (stack.is(ModItems.EXTRACTOR.get())) {
-            return true;
+    public static boolean acceptsExtraction(String entityId, ItemStack stack) {
+        return !entityId.isEmpty() && (stack.is(ModItems.EXTRACTOR.get())
+                || (stack.is(ModItems.CONTAINMENT_EXTRACT.get())
+                && ChamberSpecialProducts.forInput(entityId, ContainmentExtractItem.getEntityId(stack)) != null));
+    }
+
+    public NonNullList<ItemStack> drainContents() {
+        NonNullList<ItemStack> contents = NonNullList.create();
+        contents.add(soul);
+        soul = ItemStack.EMPTY;
+        for (int slot = 0; slot < SLOT_COUNT; slot++) {
+            contents.add(getItem(slot));
         }
-
-        return stack.is(ModItems.CONTAINMENT_EXTRACT.get())
-                && ChamberSpecialProducts.forInput(
-                        getEntityId(),
-                        ContainmentExtractItem.getEntityId(stack)
-                ) != null;
+        clearContent();
+        return contents;
     }
 
     @Override
     public void clearContent() {
-        for (int index = 0; index < outputs.size(); index++) {
-            outputs.set(index, ItemStack.EMPTY);
-        }
-
+        outputs.clear();
+        upgrades.clear();
         extractionInput = ItemStack.EMPTY;
         extractionOutput = ItemStack.EMPTY;
         extractionProgress = 0;
-
+        productionProgress = 0;
         setChanged();
     }
 }

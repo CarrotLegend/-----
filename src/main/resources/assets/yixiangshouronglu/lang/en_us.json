@@ -322,5 +322,13 @@
   "item.yixiangshouronglu.soul_guiding_lantern": "Soul-Guiding Lantern",
   "tooltip.yixiangshouronglu.soul_guiding_lantern.charges": "Charges remaining: %s/%s",
   "item.yixiangshouronglu.final_knell": "Final Knell",
-  "tooltip.yixiangshouronglu.final_knell": "When attacking a target below 2% health, there is a 25% chance to instantly kill it."
+  "tooltip.yixiangshouronglu.final_knell": "When attacking a target below 2% health, there is a 25% chance to instantly kill it.",
+  "item.yixiangshouronglu.capacity_upgrade": "Capacity Upgrade",
+  "item.yixiangshouronglu.speed_upgrade": "Speed Upgrade",
+  "tooltip.yixiangshouronglu.capacity_upgrade": "Adds one slot to the production interface.",
+  "tooltip.yixiangshouronglu.speed_upgrade": "Increases production speed by 100%.",
+  "screen.yixiangshouronglu.chamber.upgrade_tab": "Upgrades",
+  "screen.yixiangshouronglu.chamber.rate_seconds": "1 per %s s",
+  "tooltip.yixiangshouronglu.soul_guiding_lantern.revive": "Consumes one soul charge to revive the player",
+  "tooltip.yixiangshouronglu.soul_guiding_lantern.recharge": "Right-click with a soul to recharge."
 }

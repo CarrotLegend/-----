@@ -307,6 +307,7 @@
   "structure.yixiangshouronglu.abandoned_camp": "废弃营地",
   "structure.yixiangshouronglu.battle_tower": "战斗高塔",
   "structure.yixiangshouronglu.ancient_stele": "古代石碑",
+  "structure.yixiangshouronglu.mystical_altar": "神秘祭坛",
   "item.yixiangshouronglu.legendary_carrot_king_summoner": "传奇萝卜王召唤器",
   "tooltip.yixiangshouronglu.legendary_carrot_king_summoner": "右键释放传奇萝卜王，潜行右键回收。",
   "message.yixiangshouronglu.legendary_carrot_king_summoner.spawn_failed": "无法在这里释放传奇萝卜王。",
@@ -322,5 +323,13 @@
   "item.yixiangshouronglu.soul_guiding_lantern": "引魂提灯",
   "tooltip.yixiangshouronglu.soul_guiding_lantern.charges": "剩余充能：%s/%s",
   "item.yixiangshouronglu.final_knell": "终末丧钟",
-  "tooltip.yixiangshouronglu.final_knell": "当攻击目标生命值小于2%时，有25%概率直接击杀目标。"
+  "tooltip.yixiangshouronglu.final_knell": "当攻击目标生命值小于2%时，有25%概率直接击杀目标。",
+  "item.yixiangshouronglu.capacity_upgrade": "扩容升级",
+  "item.yixiangshouronglu.speed_upgrade": "速度升级",
+  "tooltip.yixiangshouronglu.capacity_upgrade": "产出界面的槽位增加一个。",
+  "tooltip.yixiangshouronglu.speed_upgrade": "产出界面的产出速度增加100%。",
+  "screen.yixiangshouronglu.chamber.upgrade_tab": "升级",
+  "screen.yixiangshouronglu.chamber.rate_seconds": "1个/%s秒",
+  "tooltip.yixiangshouronglu.soul_guiding_lantern.revive": "消耗一格灵魂复活玩家",
+  "tooltip.yixiangshouronglu.soul_guiding_lantern.recharge": "使用灵魂右键以充能。"
 }

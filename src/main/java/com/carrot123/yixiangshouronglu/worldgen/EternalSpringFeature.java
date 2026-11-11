@@ -24,9 +24,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnorePr
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public final class EternalSpringFeature extends Feature<NoneFeatureConfiguration> {
     private static final ResourceLocation TEMPLATE = new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "eternal_spring");
     private static final TagKey<Biome> BIOMES = TagKey.create(Registries.BIOME,
@@ -40,35 +37,46 @@ public final class EternalSpringFeature extends Feature<NoneFeatureConfiguration
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel level = context.level();
-        BlockPos surface = context.origin().below();
-        int localX = surface.getX() & 15;
-        int localZ = surface.getZ() & 15;
-        if (!level.getLevel().dimension().equals(Level.OVERWORLD) || localX < 1 || localX > 9 || localZ < 1 || localZ > 9
-                || level.isOutsideBuildHeight(surface.below(3)) || level.isOutsideBuildHeight(surface.above(3))) {
+        BlockPos candidate = context.origin();
+        int localX = candidate.getX() & 15;
+        int localZ = candidate.getZ() & 15;
+
+        if (!level.getLevel().dimension().equals(Level.OVERWORLD)
+                || localX < 1 || localX > 9 || localZ < 1 || localZ > 9) {
             return false;
         }
 
+        int centerX = candidate.getX() + 2;
+        int centerZ = candidate.getZ() + 2;
+        int groundY = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, centerX, centerZ) - 1;
+        BlockPos surface = new BlockPos(candidate.getX(), groundY, candidate.getZ());
         BlockPos origin = surface.below(2);
-        if (!level.ensureCanWrite(origin) || !level.ensureCanWrite(origin.offset(5, 3, 5))) {
+
+        if (level.isOutsideBuildHeight(origin)
+                || level.isOutsideBuildHeight(origin.offset(5, 3, 5))
+                || !level.ensureCanWrite(origin)
+                || !level.ensureCanWrite(origin.offset(5, 3, 5))
+                || !level.getBiome(new BlockPos(centerX, groundY, centerZ)).is(BIOMES)) {
             return false;
         }
+
         StructureTemplate template = level.getLevel().getStructureManager().get(TEMPLATE).orElse(null);
         if (template == null || !SIZE.equals(template.getSize())) {
             return false;
         }
 
-        StructurePlaceSettings settings = new StructurePlaceSettings().setIgnoreEntities(true).setKeepLiquids(false)
+        StructurePlaceSettings settings = new StructurePlaceSettings()
+                .setIgnoreEntities(true)
+                .setKeepLiquids(false)
                 .addProcessor(BlockIgnoreProcessor.STRUCTURE_AND_AIR);
         var sources = template.filterBlocks(origin, settings, ModBlocks.ETERNAL_SPRING_BLOCK.get());
-        Set<BlockPos> pool = new HashSet<>();
-        for (var source : sources) {
-            if (source.pos().getY() == surface.getY()) {
-                pool.add(source.pos());
-            }
-        }
-        if (sources.size() != 16 || !fitsTerrain(level, surface, pool)) {
+
+        if (sources.size() != 16 || !fitsTerrain(level, surface)) {
             return false;
         }
+
+        clearSurface(level, surface);
+
         if (!template.placeInWorld(level, origin, origin, settings, context.random(), Block.UPDATE_CLIENTS)) {
             return false;
         }
@@ -82,27 +90,57 @@ public final class EternalSpringFeature extends Feature<NoneFeatureConfiguration
         return true;
     }
 
-    private static boolean fitsTerrain(WorldGenLevel level, BlockPos surface, Set<BlockPos> pool) {
-        for (BlockPos ground : BlockPos.betweenClosed(surface, surface.offset(5, 0, 5))) {
-            if (!level.getBiome(ground).is(BIOMES)
-                    || level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, ground.getX(), ground.getZ()) != ground.getY() + 1) {
-                return false;
-            }
-            for (int depth = 0; depth <= 3; depth++) {
-                BlockPos pos = ground.below(depth);
-                BlockState state = level.getBlockState(pos);
-                if ((!state.is(BlockTags.DIRT) && (depth == 0 || !state.is(BlockTags.BASE_STONE_OVERWORLD)))
-                        || !state.getFluidState().isEmpty() || state.hasBlockEntity()
-                        || !state.isFaceSturdy(level, pos, Direction.UP)) {
+    private static boolean fitsTerrain(WorldGenLevel level, BlockPos surface) {
+        for (int dx = 0; dx < SIZE.getX(); dx++) {
+            for (int dz = 0; dz < SIZE.getZ(); dz++) {
+                int x = surface.getX() + dx;
+                int z = surface.getZ() + dz;
+                int y = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+
+                if (Math.abs(y - surface.getY()) > 1) {
                     return false;
                 }
-            }
-            BlockState above = level.getBlockState(ground.above());
-            if ((!above.isAir() && (pool.contains(ground) || !(above.is(Blocks.GRASS) || above.is(Blocks.FERN))))
-                    || !level.isEmptyBlock(ground.above(2)) || !level.isEmptyBlock(ground.above(3))) {
-                return false;
+
+                BlockPos ground = new BlockPos(x, y, z);
+                if (!level.getBlockState(ground).is(BlockTags.DIRT)) {
+                    return false;
+                }
+
+                for (int depth = 0; depth < 3; depth++) {
+                    BlockPos below = ground.below(depth);
+                    BlockState state = level.getBlockState(below);
+                    if (state.isAir() || !state.getFluidState().isEmpty()
+                            || state.hasBlockEntity()
+                            || !state.isFaceSturdy(level, below, Direction.UP)) {
+                        return false;
+                    }
+                }
+
+                for (int testY = y + 1; testY <= surface.getY() + 3; testY++) {
+                    BlockPos above = new BlockPos(x, testY, z);
+                    BlockState state = level.getBlockState(above);
+                    if (!state.isAir() && (!state.canBeReplaced()
+                            || !state.getFluidState().isEmpty() || state.hasBlockEntity())) {
+                        return false;
+                    }
+                }
             }
         }
         return true;
+    }
+
+    private static void clearSurface(WorldGenLevel level, BlockPos surface) {
+        for (int dx = 0; dx < SIZE.getX(); dx++) {
+            for (int dz = 0; dz < SIZE.getZ(); dz++) {
+                for (int y = surface.getY() + 1; y <= surface.getY() + 3; y++) {
+                    BlockPos pos = new BlockPos(surface.getX() + dx, y, surface.getZ() + dz);
+                    BlockState state = level.getBlockState(pos);
+                    if (!state.isAir() && (state.canBeReplaced()
+                            || (y == surface.getY() + 1 && state.is(BlockTags.DIRT)))) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+                    }
+                }
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@
   "biomes": "#yixiangshouronglu:has_structure/battle_tower",
   "step": "surface_structures",
   "spawn_overrides": {},
-  "terrain_adaptation": "none",
+  "terrain_adaptation": "beard_thin",
   "start_pool": "yixiangshouronglu:battle_tower",
   "size": 1,
   "start_height": {

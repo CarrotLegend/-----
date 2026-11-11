@@ -3,7 +3,7 @@
   "biomes": "#yixiangshouronglu:has_structure/ancient_stele",
   "step": "surface_structures",
   "spawn_overrides": {},
-  "terrain_adaptation": "none",
+  "terrain_adaptation": "beard_thin",
   "start_pool": "yixiangshouronglu:ancient_stele",
   "size": 1,
   "start_height": {

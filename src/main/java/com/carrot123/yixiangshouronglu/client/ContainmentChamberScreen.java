@@ -10,6 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
+import java.math.BigDecimal;
+
 public final class ContainmentChamberScreen extends AbstractContainerScreen<ContainmentChamberMenu> {
     private static final int TAB_WIDTH = 64;
     private static final int TAB_HEIGHT = 20;
@@ -35,11 +37,16 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
 
         if (menu.getPage() == ContainmentChamberMenu.PAGE_EXTRACTION) {
             renderExtractionSlots(graphics, x, y);
+        } else if (menu.getPage() == ContainmentChamberMenu.PAGE_UPGRADE) {
+            for (int index = ContainmentChamberBlockEntity.FIRST_UPGRADE;
+                 index < ContainmentChamberBlockEntity.SLOT_COUNT; index++) {
+                var slot = menu.getSlot(index);
+                drawSpecialSlot(graphics, x + slot.x - 1, y + slot.y - 1);
+            }
         } else {
-            for (int index = 0; index < 2; index++) {
-                int slotX = x + 69 + index * 18;
-                graphics.fill(slotX, y + 44, slotX + 18, y + 62, 0xFFBDA474);
-                graphics.fill(slotX + 1, y + 45, slotX + 17, y + 61, 0xFF292F3A);
+            for (int index = 0; index < menu.getUnlockedOutputs(); index++) {
+                var slot = menu.getSlot(index);
+                drawSpecialSlot(graphics, x + slot.x - 1, y + slot.y - 1);
             }
         }
 
@@ -55,7 +62,7 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
 
         if (menu.getPage() == ContainmentChamberMenu.PAGE_EXTRACTION) {
             renderExtraction(graphics, x, y);
-        } else {
+        } else if (menu.getPage() == ContainmentChamberMenu.PAGE_PRODUCTION) {
             renderProduction(graphics, x, y);
         }
 
@@ -66,15 +73,18 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
         ChamberProduction.Recipe recipe = ChamberProduction.forEntity(menu.getEntityId());
 
         if (recipe != null) {
+            int interval = menu.getInterval();
+            Component period = interval > 0 && interval != recipe.intervalTicks()
+                    ? Component.translatable("screen.yixiangshouronglu.chamber.rate_seconds",
+                            BigDecimal.valueOf(interval * 5L, 2).stripTrailingZeros().toPlainString())
+                    : Component.translatable(recipe.rateKey());
             Component rate = Component.translatable(
                     "screen.yixiangshouronglu.chamber.rate",
                     new ItemStack(recipe.item()).getHoverName(),
-                    Component.translatable(recipe.rateKey())
+                    period
             );
 
             graphics.drawCenteredString(font, rate, x + imageWidth / 2, y + 79, 0xFFE5C994);
-
-            int interval = menu.getInterval();
 
             if (interval > 0) {
                 int width = Math.max(0, Math.min(100, menu.getProgress() * 100 / interval));
@@ -160,6 +170,15 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
                 mouseX,
                 mouseY
         );
+
+        renderTab(
+                graphics,
+                ContainmentChamberMenu.PAGE_UPGRADE,
+                Component.translatable("screen.yixiangshouronglu.chamber.upgrade_tab"),
+                2,
+                mouseX,
+                mouseY
+        );
     }
 
     private void renderTab(
@@ -221,7 +240,6 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
             return;
         }
 
-        menu.clickMenuButton(minecraft.player, page);
         minecraft.gameMode.handleInventoryButtonClick(menu.containerId, page);
     }
 
@@ -235,6 +253,11 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
 
             if (isOverTab(mouseX, mouseY, 1)) {
                 changePage(ContainmentChamberMenu.PAGE_EXTRACTION);
+                return true;
+            }
+
+            if (isOverTab(mouseX, mouseY, 2)) {
+                changePage(ContainmentChamberMenu.PAGE_UPGRADE);
                 return true;
             }
         }

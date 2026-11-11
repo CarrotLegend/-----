@@ -3,6 +3,7 @@ package com.carrot123.yixiangshouronglu.menu;
 import com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity;
 import com.carrot123.yixiangshouronglu.production.ChamberProduction;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
+import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -11,14 +12,22 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import static com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity.*;
+
 public final class ContainmentChamberMenu extends AbstractContainerMenu {
     public static final int PAGE_PRODUCTION = 0;
     public static final int PAGE_EXTRACTION = 1;
+    public static final int PAGE_UPGRADE = 2;
+    private static final int HOTBAR_START = SLOT_COUNT + 27;
+    private static final int MENU_END = HOTBAR_START + 9;
+    private static final int[] OUTPUT_X = {70, 88, 106, 52, 124};
 
     private final Container container;
     private final ContainerData data;
@@ -26,10 +35,11 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
     @Nullable
     private final ContainmentChamberBlockEntity chamber;
 
-    private int page = PAGE_PRODUCTION;
+    private final DataSlot page = DataSlot.standalone();
 
     public ContainmentChamberMenu(int id, Inventory inventory, FriendlyByteBuf buffer) {
-        this(id, inventory, findContainer(inventory, buffer.readBlockPos()), new SimpleContainerData(4));
+        this(id, inventory, new SimpleContainer(SLOT_COUNT), new SimpleContainerData(DATA_COUNT),
+                findChamber(inventory, buffer.readBlockPos()));
     }
 
     public ContainmentChamberMenu(
@@ -37,93 +47,35 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
             Inventory inventory,
             ContainmentChamberBlockEntity chamber
     ) {
-        this(id, inventory, chamber, chamber.getProductionData());
+        this(id, inventory, chamber, chamber.getProductionData(), chamber);
     }
 
     private ContainmentChamberMenu(
             int id,
             Inventory inventory,
             Container container,
-            ContainerData data
+            ContainerData data,
+            @Nullable ContainmentChamberBlockEntity chamber
     ) {
         super(ModMenus.CONTAINMENT_CHAMBER.get(), id);
 
-        checkContainerSize(container, 4);
-        checkContainerDataCount(data, 4);
+        checkContainerSize(container, SLOT_COUNT);
+        checkContainerDataCount(data, DATA_COUNT);
 
         this.container = container;
         this.data = data;
-        this.chamber = container instanceof ContainmentChamberBlockEntity entity ? entity : null;
+        this.chamber = chamber;
 
         container.startOpen(inventory.player);
 
-        addSlot(new Slot(container, 0, 70, 45) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
-
-            @Override
-            public boolean mayPickup(Player player) {
-                return page == PAGE_PRODUCTION;
-            }
-
-            @Override
-            public boolean isActive() {
-                return page == PAGE_PRODUCTION;
-            }
-        });
-
-        addSlot(new Slot(container, 1, 88, 45) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
-
-            @Override
-            public boolean mayPickup(Player player) {
-                return page == PAGE_PRODUCTION;
-            }
-
-            @Override
-            public boolean isActive() {
-                return page == PAGE_PRODUCTION;
-            }
-        });
-
-        addSlot(new Slot(container, 2, 51, 45) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return page == PAGE_EXTRACTION && container.canPlaceItem(2, stack);
-            }
-
-            @Override
-            public boolean mayPickup(Player player) {
-                return page == PAGE_EXTRACTION;
-            }
-
-            @Override
-            public boolean isActive() {
-                return page == PAGE_EXTRACTION;
-            }
-        });
-
-        addSlot(new Slot(container, 3, 111, 45) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
-
-            @Override
-            public boolean mayPickup(Player player) {
-                return page == PAGE_EXTRACTION;
-            }
-
-            @Override
-            public boolean isActive() {
-                return page == PAGE_EXTRACTION;
-            }
-        });
+        for (int index = 0; index < MAX_OUTPUTS; index++) {
+            addSlot(new ChamberSlot(index, OUTPUT_X[index], PAGE_PRODUCTION));
+        }
+        addSlot(new ChamberSlot(EXTRACTION_INPUT, 51, PAGE_EXTRACTION));
+        addSlot(new ChamberSlot(EXTRACTION_OUTPUT, 111, PAGE_EXTRACTION));
+        for (int index = 0; index < UPGRADE_COUNT; index++) {
+            addSlot(new ChamberSlot(FIRST_UPGRADE + index, 62 + index * 18, PAGE_UPGRADE));
+        }
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
@@ -141,19 +93,21 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
         }
 
         addDataSlots(data);
+        addDataSlot(page);
     }
 
-    private static Container findContainer(Inventory inventory, BlockPos pos) {
-        if (inventory.player.level().getBlockEntity(pos)
-                instanceof ContainmentChamberBlockEntity chamber) {
-            return chamber;
-        }
-
-        return new SimpleContainer(4);
+    @Nullable
+    private static ContainmentChamberBlockEntity findChamber(Inventory inventory, BlockPos pos) {
+        return inventory.player.level().getBlockEntity(pos) instanceof ContainmentChamberBlockEntity entity
+                ? entity : null;
     }
 
     public int getPage() {
-        return page;
+        return page.get();
+    }
+
+    public int getUnlockedOutputs() {
+        return Math.max(BASE_OUTPUTS, Math.min(MAX_OUTPUTS, data.get(4)));
     }
 
     public String getEntityId() {
@@ -193,17 +147,35 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (id != PAGE_PRODUCTION && id != PAGE_EXTRACTION) {
+        if (id < PAGE_PRODUCTION || id > PAGE_UPGRADE || !stillValid(player)) {
             return false;
         }
-
-        page = id;
+        page.set(id);
         return true;
     }
 
     @Override
     public boolean stillValid(Player player) {
-        return chamber == null || chamber.stillValid(player);
+        return player.level().isClientSide || (chamber != null && chamber.stillValid(player));
+    }
+
+    @Override
+    public void clicked(int index, int button, ClickType type, Player player) {
+        if (index >= 0 && (index >= slots.size() || !slots.get(index).isActive()
+                || (type == ClickType.CLONE && !slots.get(index).mayPickup(player)))) {
+            return;
+        }
+        super.clicked(index, button, type, player);
+    }
+
+    @Override
+    public boolean canDragTo(Slot slot) {
+        return slot.isActive();
+    }
+
+    @Override
+    public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
+        return slot.isActive();
     }
 
     @Override
@@ -211,50 +183,98 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
         if (index < 0 || index >= slots.size()) {
             return ItemStack.EMPTY;
         }
-
         Slot slot = slots.get(index);
-
-        if (!slot.hasItem() || !slot.isActive()) {
+        if (!slot.hasItem() || !slot.isActive() || !slot.mayPickup(player)) {
             return ItemStack.EMPTY;
         }
 
-        ItemStack stack = slot.getItem();
+        boolean movingUpgrade = index >= FIRST_UPGRADE && index < SLOT_COUNT;
+        ItemStack stack = movingUpgrade ? slot.getItem().copy() : slot.getItem();
         ItemStack original = stack.copy();
-
-        if (index < 4) {
-            if (!moveItemStackTo(stack, 4, 40, true)) {
+        if (index < SLOT_COUNT) {
+            if (!moveItemStackTo(stack, SLOT_COUNT, MENU_END, true)) {
                 return ItemStack.EMPTY;
             }
-        } else {
-            boolean movedToInput = page == PAGE_EXTRACTION
-                    && container.canPlaceItem(2, stack)
-                    && moveItemStackTo(stack, 2, 3, false);
-
-            if (!movedToInput) {
-                if (index < 31) {
-                    if (!moveItemStackTo(stack, 31, 40, false)) {
-                        return ItemStack.EMPTY;
-                    }
-                } else {
-                    if (!moveItemStackTo(stack, 4, 31, false)) {
-                        return ItemStack.EMPTY;
-                    }
-                }
+        } else if (!moveToChamber(stack)) {
+            boolean moved = index < HOTBAR_START
+                    ? moveItemStackTo(stack, HOTBAR_START, MENU_END, false)
+                    : moveItemStackTo(stack, SLOT_COUNT, HOTBAR_START, false);
+            if (!moved) {
+                return ItemStack.EMPTY;
             }
-        }
-
-        if (stack.isEmpty()) {
-            slot.set(ItemStack.EMPTY);
-        } else {
-            slot.setChanged();
         }
 
         if (stack.getCount() == original.getCount()) {
             return ItemStack.EMPTY;
         }
-
+        if (movingUpgrade || stack.isEmpty()) {
+            slot.set(stack.isEmpty() ? ItemStack.EMPTY : stack);
+        } else {
+            slot.setChanged();
+        }
         slot.onTake(player, stack);
         return original;
+    }
+
+    private boolean moveToChamber(ItemStack stack) {
+        if (getPage() == PAGE_EXTRACTION && getSlot(EXTRACTION_INPUT).mayPlace(stack)) {
+            return moveItemStackTo(stack, EXTRACTION_INPUT, EXTRACTION_INPUT + 1, false);
+        }
+        if (getPage() == PAGE_UPGRADE && isUpgrade(stack)) {
+            for (int index = FIRST_UPGRADE; index < SLOT_COUNT; index++) {
+                if (!getSlot(index).hasItem() && getSlot(index).mayPlace(stack)) {
+                    return moveItemStackTo(stack, index, index + 1, false);
+                }
+            }
+        }
+        return false;
+    }
+
+    private final class ChamberSlot extends Slot {
+        private final int slot;
+        private final int slotPage;
+
+        private ChamberSlot(int slot, int x, int slotPage) {
+            super(ContainmentChamberMenu.this.container, slot, x, 45);
+            this.slot = slot;
+            this.slotPage = slotPage;
+        }
+
+        @Override
+        public boolean isActive() {
+            return getPage() == slotPage && (slotPage != PAGE_PRODUCTION || slot < getUnlockedOutputs());
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack) {
+            if (!isActive()) {
+                return false;
+            }
+            if (slot >= FIRST_UPGRADE) {
+                return isUpgrade(stack);
+            }
+            return slot == EXTRACTION_INPUT && acceptsExtraction(getEntityId(), stack);
+        }
+
+        @Override
+        public boolean mayPickup(Player player) {
+            if (!isActive()) {
+                return false;
+            }
+            if (slot < FIRST_UPGRADE) {
+                return true;
+            }
+            if (container instanceof ContainmentChamberBlockEntity entity) {
+                return entity.canChangeUpgrade(slot, ItemStack.EMPTY);
+            }
+            return !getItem().is(ModItems.CAPACITY_UPGRADE.get())
+                    || container.getItem(getUnlockedOutputs() - 1).isEmpty();
+        }
+
+        @Override
+        public int getMaxStackSize() {
+            return slot >= FIRST_UPGRADE ? 1 : super.getMaxStackSize();
+        }
     }
 
     @Override

@@ -3,7 +3,7 @@
   "biomes": "#yixiangshouronglu:has_structure/abandoned_camp",
   "step": "surface_structures",
   "spawn_overrides": {},
-  "terrain_adaptation": "none",
+  "terrain_adaptation": "beard_thin",
   "start_pool": "yixiangshouronglu:abandoned_camp",
   "size": 1,
   "start_height": {

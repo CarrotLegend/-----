@@ -2,5 +2,5 @@
   "type": "forge:add_features",
   "biomes": "#yixiangshouronglu:has_feature/eternal_spring",
   "features": "yixiangshouronglu:eternal_spring",
-  "step": "vegetal_decoration"
+  "step": "surface_structures"
 }

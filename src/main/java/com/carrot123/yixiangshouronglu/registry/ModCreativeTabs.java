@@ -31,6 +31,8 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.PANACEA.get());
                                 output.accept(ModItems.SOUL_GUIDING_LANTERN.get());
                                 output.accept(ModItems.FINAL_KNELL.get());
+                                output.accept(ModItems.CAPACITY_UPGRADE.get());
+                                output.accept(ModItems.SPEED_UPGRADE.get());
                                 output.accept(ModItems.WENDIGO_EYE.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_FRAGMENT.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_SPAWN_EGG.get());
