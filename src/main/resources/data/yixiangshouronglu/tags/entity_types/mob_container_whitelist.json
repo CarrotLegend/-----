@@ -1,0 +1,139 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:allay",
+    "minecraft:axolotl",
+    "minecraft:bat",
+    "minecraft:bee",
+    "minecraft:blaze",
+    "minecraft:camel",
+    "minecraft:cat",
+    "minecraft:cave_spider",
+    "minecraft:chicken",
+    "minecraft:cod",
+    "minecraft:cow",
+    "minecraft:creeper",
+    "minecraft:dolphin",
+    "minecraft:donkey",
+    "minecraft:drowned",
+    "minecraft:enderman",
+    "minecraft:endermite",
+    "minecraft:evoker",
+    "minecraft:fox",
+    "minecraft:frog",
+    "minecraft:ghast",
+    "minecraft:glow_squid",
+    "minecraft:goat",
+    "minecraft:hoglin",
+    "minecraft:horse",
+    "minecraft:husk",
+    "minecraft:llama",
+    "minecraft:magma_cube",
+    "minecraft:mooshroom",
+    "minecraft:mule",
+    "minecraft:ocelot",
+    "minecraft:panda",
+    "minecraft:parrot",
+    "minecraft:phantom",
+    "minecraft:pig",
+    "minecraft:piglin",
+    "minecraft:piglin_brute",
+    "minecraft:pillager",
+    "minecraft:polar_bear",
+    "minecraft:pufferfish",
+    "minecraft:rabbit",
+    "minecraft:salmon",
+    "minecraft:sheep",
+    "minecraft:shulker",
+    "minecraft:silverfish",
+    "minecraft:skeleton",
+    "minecraft:skeleton_horse",
+    "minecraft:slime",
+    "minecraft:sniffer",
+    "minecraft:snow_golem",
+    "minecraft:spider",
+    "minecraft:squid",
+    "minecraft:stray",
+    "minecraft:strider",
+    "minecraft:tadpole",
+    "minecraft:trader_llama",
+    "minecraft:tropical_fish",
+    "minecraft:turtle",
+    "minecraft:vex",
+    "minecraft:villager",
+    "minecraft:vindicator",
+    "minecraft:wandering_trader",
+    "minecraft:witch",
+    "minecraft:wither_skeleton",
+    "minecraft:wolf",
+    "minecraft:zoglin",
+    "minecraft:zombie",
+    "minecraft:zombie_horse",
+    "minecraft:zombie_villager",
+    "minecraft:zombified_piglin",
+    {
+      "id": "cataclysm:endermaptera",
+      "required": false
+    },
+    {
+      "id": "cataclysm:the_watcher",
+      "required": false
+    },
+    {
+      "id": "cataclysm:deepling_brute",
+      "required": false
+    },
+    {
+      "id": "cataclysm:deepling_warlock",
+      "required": false
+    },
+    {
+      "id": "cataclysm:deepling_priest",
+      "required": false
+    },
+    {
+      "id": "cataclysm:deepling_angler",
+      "required": false
+    },
+    {
+      "id": "cataclysm:deepling",
+      "required": false
+    },
+    {
+      "id": "cataclysm:lionfish",
+      "required": false
+    },
+    {
+      "id": "cataclysm:koboleton",
+      "required": false
+    },
+    {
+      "id": "cataclysm:elite_draugr",
+      "required": false
+    },
+    {
+      "id": "cataclysm:royal_draugr",
+      "required": false
+    },
+    {
+      "id": "cataclysm:draugr",
+      "required": false
+    },
+    {
+      "id": "cataclysm:cindaria",
+      "required": false
+    },
+    {
+      "id": "cataclysm:urchinkin",
+      "required": false
+    },
+    {
+      "id": "cataclysm:octohost",
+      "required": false
+    },
+    {
+      "id": "cataclysm:symbiocto",
+      "required": false
+    }
+  ]
+}

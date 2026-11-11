@@ -15,6 +15,7 @@ import com.carrot123.yixiangshouronglu.item.LegendaryCarrotKingSummonerItem;
 import com.carrot123.yixiangshouronglu.item.MadnessMaskItem;
 import com.carrot123.yixiangshouronglu.item.PanaceaItem;
 import com.carrot123.yixiangshouronglu.item.ChamberUpgradeItem;
+import com.carrot123.yixiangshouronglu.item.MobContainerItem;
 import com.carrot123.yixiangshouronglu.item.FinalKnellItem;
 import com.carrot123.yixiangshouronglu.item.SoulGuidingLanternItem;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
@@ -40,6 +41,7 @@ public final class ModItems {
     public static final RegistryObject<Item> PANACEA = ITEMS.register("panacea", () -> new PanaceaItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> SOUL_GUIDING_LANTERN = ITEMS.register("soul_guiding_lantern", () -> new SoulGuidingLanternItem(new Item.Properties().durability(3).rarity(Rarity.EPIC)));
     public static final RegistryObject<Item> FINAL_KNELL = ITEMS.register("final_knell", () -> new FinalKnellItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final RegistryObject<MobContainerItem> MOB_CONTAINER = ITEMS.register("mob_container", MobContainerItem::new);
     public static final RegistryObject<Item> CAPACITY_UPGRADE = ITEMS.register("capacity_upgrade", () -> new ChamberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SPEED_UPGRADE = ITEMS.register("speed_upgrade", () -> new ChamberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> WENDIGO_EYE = ITEMS.register("wendigo_eye", () -> new WendigoEyeItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2F).alwaysEat().build())));

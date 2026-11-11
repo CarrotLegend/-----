@@ -330,5 +330,10 @@
   "screen.yixiangshouronglu.chamber.upgrade_tab": "Upgrades",
   "screen.yixiangshouronglu.chamber.rate_seconds": "1 per %s s",
   "tooltip.yixiangshouronglu.soul_guiding_lantern.revive": "Consumes one soul charge to revive the player",
-  "tooltip.yixiangshouronglu.soul_guiding_lantern.recharge": "Right-click with a soul to recharge."
+  "tooltip.yixiangshouronglu.soul_guiding_lantern.recharge": "Right-click with a soul to recharge.",
+  "item.yixiangshouronglu.mob_container": "Mob Container",
+  "tooltip.yixiangshouronglu.mob_container.usage": "Sneak and right-click to capture a mob, then right-click a block to release it",
+  "tooltip.yixiangshouronglu.mob_container.current": "Currently stored: %s",
+  "tooltip.yixiangshouronglu.mob_container.empty": "None",
+  "tooltip.yixiangshouronglu.mob_container.unknown": "Unknown Mob"
 }

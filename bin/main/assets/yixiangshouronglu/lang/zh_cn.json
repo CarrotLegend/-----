@@ -331,5 +331,10 @@
   "screen.yixiangshouronglu.chamber.upgrade_tab": "升级",
   "screen.yixiangshouronglu.chamber.rate_seconds": "1个/%s秒",
   "tooltip.yixiangshouronglu.soul_guiding_lantern.revive": "消耗一格灵魂复活玩家",
-  "tooltip.yixiangshouronglu.soul_guiding_lantern.recharge": "使用灵魂右键以充能。"
+  "tooltip.yixiangshouronglu.soul_guiding_lantern.recharge": "使用灵魂右键以充能。",
+  "item.yixiangshouronglu.mob_container": "生物捕捉笼",
+  "tooltip.yixiangshouronglu.mob_container.usage": "Shift+右键收容生物，再次右键释放",
+  "tooltip.yixiangshouronglu.mob_container.current": "当前已收容：%s",
+  "tooltip.yixiangshouronglu.mob_container.empty": "无",
+  "tooltip.yixiangshouronglu.mob_container.unknown": "未知生物"
 }
