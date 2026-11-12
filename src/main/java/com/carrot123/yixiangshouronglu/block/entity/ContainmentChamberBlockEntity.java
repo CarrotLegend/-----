@@ -149,16 +149,21 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
         return slot >= FIRST_UPGRADE && slot < SLOT_COUNT;
     }
 
-    public int getExtractionInterval() {
-        if (!extractionInput.is(ModItems.EXTRACTOR.get())) {
-            return EXTRACT_TIME;
-        }
+    private int getExtractionMultiplier() {
         int multiplier = 1;
         for (ItemStack upgrade : upgrades) {
             if (upgrade.is(ModItems.EXTRACTION_UPGRADE.get())) {
                 multiplier++;
             }
         }
+        return multiplier;
+    }
+
+    public int getExtractionInterval() {
+        if (!extractionInput.is(ModItems.EXTRACTOR.get())) {
+            return EXTRACT_TIME;
+        }
+        int multiplier = getExtractionMultiplier();
         return Math.max(1, (EXTRACT_TIME + multiplier - 1) / multiplier);
     }
 
@@ -257,10 +262,10 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
     private void tickExtraction(String entityId) {
         if (extractStoredMb < MAX_EXTRACT_MB) {
-            extractionAccumulationTicks++;
+            extractionAccumulationTicks += getExtractionMultiplier();
 
             if (extractionAccumulationTicks >= ACCUMULATION_INTERVAL) {
-                extractionAccumulationTicks = 0;
+                extractionAccumulationTicks -= ACCUMULATION_INTERVAL;
                 extractStoredMb = Math.min(MAX_EXTRACT_MB, extractStoredMb + 1);
             }
         } else {
