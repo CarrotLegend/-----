@@ -43,6 +43,7 @@ public final class ModItems {
     public static final RegistryObject<Item> FINAL_KNELL = ITEMS.register("final_knell", () -> new FinalKnellItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     public static final RegistryObject<MobContainerItem> MOB_CONTAINER = ITEMS.register("mob_container", MobContainerItem::new);
     public static final RegistryObject<Item> CAPACITY_UPGRADE = ITEMS.register("capacity_upgrade", () -> new ChamberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> EXTRACTION_UPGRADE = ITEMS.register("extraction_upgrade", () -> new ChamberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SPEED_UPGRADE = ITEMS.register("speed_upgrade", () -> new ChamberUpgradeItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> WENDIGO_EYE = ITEMS.register("wendigo_eye", () -> new WendigoEyeItem(new Item.Properties().stacksTo(16).food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2F).alwaysEat().build())));
     public static final RegistryObject<Item> TENACIOUS_SHIELD_FRAGMENT = ITEMS.register("tenacious_shield_fragment", () -> new Item(new Item.Properties().rarity(Rarity.RARE)));

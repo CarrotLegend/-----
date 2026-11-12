@@ -43,7 +43,6 @@ public final class SoulDropEvents {
             new ResourceLocation("cataclysm", "amethyst_crab"),
             new ResourceLocation("cataclysm", "clawdian"),
             new ResourceLocation("cataclysm", "scylla"),
-            new ResourceLocation("cataclysm", "the_leviathan"),
             new ResourceLocation("cataclysm", "ender_guardian")
     );
 
@@ -52,8 +51,6 @@ public final class SoulDropEvents {
             new ResourceLocation("minecraft", "wither"),
             new ResourceLocation("theinkarena", "blot"),
             new ResourceLocation("mythsandlegends", "black_charro"),
-            new ResourceLocation("cataclysm", "netherite_monstrosity"),
-            new ResourceLocation("cataclysm", "ancient_remnant"),
             new ResourceLocation(
                     AnomalousContainmentChronicles.MOD_ID,
                     "tenacious_shield"

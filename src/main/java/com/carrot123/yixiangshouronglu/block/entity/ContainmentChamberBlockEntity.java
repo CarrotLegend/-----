@@ -39,7 +39,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
     public static final int FIRST_UPGRADE = EXTRACTION_OUTPUT + 1;
     public static final int UPGRADE_COUNT = 3;
     public static final int SLOT_COUNT = FIRST_UPGRADE + UPGRADE_COUNT;
-    public static final int DATA_COUNT = 5;
+    public static final int DATA_COUNT = 6;
 
     private static final int ACCUMULATION_INTERVAL = 24;
 
@@ -64,6 +64,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
                 case 2 -> extractStoredMb;
                 case 3 -> extractionProgress;
                 case 4 -> getUnlockedOutputs();
+                case 5 -> getExtractionInterval();
                 default -> 0;
             };
         }
@@ -129,7 +130,8 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
     }
 
     public static boolean isUpgrade(ItemStack stack) {
-        return stack.is(ModItems.CAPACITY_UPGRADE.get()) || stack.is(ModItems.SPEED_UPGRADE.get());
+        return stack.is(ModItems.CAPACITY_UPGRADE.get()) || stack.is(ModItems.SPEED_UPGRADE.get())
+                || stack.is(ModItems.EXTRACTION_UPGRADE.get());
     }
 
     public boolean canChangeUpgrade(int slot, ItemStack replacement) {
@@ -147,10 +149,29 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
         return slot >= FIRST_UPGRADE && slot < SLOT_COUNT;
     }
 
+    public int getExtractionInterval() {
+        if (!extractionInput.is(ModItems.EXTRACTOR.get())) {
+            return EXTRACT_TIME;
+        }
+        int multiplier = 1;
+        for (ItemStack upgrade : upgrades) {
+            if (upgrade.is(ModItems.EXTRACTION_UPGRADE.get())) {
+                multiplier++;
+            }
+        }
+        return Math.max(1, (EXTRACT_TIME + multiplier - 1) / multiplier);
+    }
+
     private void changeUpgrade(int slot, ItemStack replacement) {
+        int oldExtractionInterval = getExtractionInterval();
         int oldInterval = getProductionInterval();
         upgrades.set(slot - FIRST_UPGRADE, replacement);
         int newInterval = getProductionInterval();
+        int newExtractionInterval = getExtractionInterval();
+        if (oldExtractionInterval != newExtractionInterval) {
+            extractionProgress = (int) Math.max(0L, Math.min(newExtractionInterval - 1L,
+                    (long) extractionProgress * newExtractionInterval / oldExtractionInterval));
+        }
         if (oldInterval > 0 && newInterval > 0 && oldInterval != newInterval) {
             productionProgress = (int) Math.min(newInterval - 1L,
                     (long) productionProgress * newInterval / oldInterval);
@@ -266,14 +287,20 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
             }
         }
 
-        if (result.isEmpty() || !canStoreExtraction(result)) {
+        if (result.isEmpty()) {
             extractionProgress = 0;
+            return;
+        }
+        if (!canStoreExtraction(result)) {
+            if (!usingExtractor) {
+                extractionProgress = 0;
+            }
             return;
         }
 
         extractionProgress++;
 
-        if (extractionProgress < EXTRACT_TIME) {
+        if (extractionProgress < getExtractionInterval()) {
             return;
         }
 
@@ -402,7 +429,6 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
         productionProgress = Math.max(0, tag.getInt("ProductionProgress"));
         extractStoredMb = Math.max(0, Math.min(MAX_EXTRACT_MB, tag.getInt("ExtractStoredMb")));
         extractionAccumulationTicks = Math.max(0, Math.min(ACCUMULATION_INTERVAL - 1, tag.getInt("ExtractionAccumulationTicks")));
-        extractionProgress = Math.max(0, Math.min(EXTRACT_TIME, tag.getInt("ExtractionProgress")));
 
         extractionInput = tag.contains("ExtractionInput", 10)
                 ? ItemStack.of(tag.getCompound("ExtractionInput"))
@@ -411,6 +437,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
         extractionOutput = tag.contains("ExtractionOutput", 10)
                 ? ItemStack.of(tag.getCompound("ExtractionOutput"))
                 : ItemStack.EMPTY;
+        extractionProgress = Math.max(0, Math.min(getExtractionInterval() - 1, tag.getInt("ExtractionProgress")));
     }
 
     @Override

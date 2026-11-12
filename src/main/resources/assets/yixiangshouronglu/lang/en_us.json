@@ -335,5 +335,7 @@
   "tooltip.yixiangshouronglu.mob_container.usage": "Sneak and right-click to capture a mob, then right-click a block to release it",
   "tooltip.yixiangshouronglu.mob_container.current": "Currently stored: %s",
   "tooltip.yixiangshouronglu.mob_container.empty": "None",
-  "tooltip.yixiangshouronglu.mob_container.unknown": "Unknown Mob"
+  "tooltip.yixiangshouronglu.mob_container.unknown": "Unknown Mob",
+  "item.yixiangshouronglu.extraction_upgrade": "Extraction Upgrade",
+  "tooltip.yixiangshouronglu.extraction_upgrade": "Increases extraction fluid processing speed by 100%."
 }

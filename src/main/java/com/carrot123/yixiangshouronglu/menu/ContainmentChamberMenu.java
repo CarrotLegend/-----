@@ -134,6 +134,11 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
         return data.get(2);
     }
 
+    public int getExtractionInterval() {
+        int interval = data.get(5);
+        return interval > 0 ? interval : EXTRACT_TIME;
+    }
+
     public int getExtractionProgress() {
         return data.get(3);
     }

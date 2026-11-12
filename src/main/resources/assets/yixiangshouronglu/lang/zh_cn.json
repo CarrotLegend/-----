@@ -336,5 +336,7 @@
   "tooltip.yixiangshouronglu.mob_container.usage": "Shift+右键收容生物，再次右键释放",
   "tooltip.yixiangshouronglu.mob_container.current": "当前已收容：%s",
   "tooltip.yixiangshouronglu.mob_container.empty": "无",
-  "tooltip.yixiangshouronglu.mob_container.unknown": "未知生物"
+  "tooltip.yixiangshouronglu.mob_container.unknown": "未知生物",
+  "item.yixiangshouronglu.extraction_upgrade": "提取升级",
+  "tooltip.yixiangshouronglu.extraction_upgrade": "提取界面的提取液提取速度增加100%。"
 }

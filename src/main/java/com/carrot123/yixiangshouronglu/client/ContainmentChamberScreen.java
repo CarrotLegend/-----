@@ -108,8 +108,9 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
     }
 
     private void renderExtraction(GuiGraphics graphics, int x, int y) {
+        int interval = menu.getExtractionInterval();
         int progress = Math.max(0, Math.min(
-                ContainmentChamberBlockEntity.EXTRACT_TIME,
+                interval,
                 menu.getExtractionProgress()
         ));
 
@@ -117,7 +118,7 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
         graphics.fill(x + 76, y + 50, x + 105, y + 56, 0xFF353C48);
 
         if (progress > 0) {
-            int width = progress * 29 / ContainmentChamberBlockEntity.EXTRACT_TIME;
+            int width = progress * 29 / interval;
             graphics.fill(x + 76, y + 50, x + 76 + width, y + 56, 0xFFC6A363);
         }
 

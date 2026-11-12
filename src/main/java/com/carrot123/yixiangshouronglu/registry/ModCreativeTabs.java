@@ -34,6 +34,7 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.MOB_CONTAINER.get());
                                 output.accept(ModItems.CAPACITY_UPGRADE.get());
                                 output.accept(ModItems.SPEED_UPGRADE.get());
+                                output.accept(ModItems.EXTRACTION_UPGRADE.get());
                                 output.accept(ModItems.WENDIGO_EYE.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_FRAGMENT.get());
                                 output.accept(ModItems.TENACIOUS_SHIELD_SPAWN_EGG.get());
