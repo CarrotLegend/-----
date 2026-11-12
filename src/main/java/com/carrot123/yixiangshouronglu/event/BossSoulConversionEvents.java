@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -48,6 +49,9 @@ public final class BossSoulConversionEvents {
         ResourceLocation targetId = ForgeRegistries.ENTITY_TYPES.getKey(target.getType());
         ResourceLocation bossId = targetId == null ? null : CONVERSIONS.get(targetId);
         if (bossId == null || !ForgeRegistries.ENTITY_TYPES.containsKey(bossId)) {
+            return;
+        }
+        if (!(target instanceof TamableAnimal tamable) || !tamable.isTame()) {
             return;
         }
 
