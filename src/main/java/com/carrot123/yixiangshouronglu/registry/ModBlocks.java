@@ -1,5 +1,7 @@
 package com.carrot123.yixiangshouronglu.registry;
 
+import com.carrot123.yixiangshouronglu.block.GeneResearchTableBlock;
+
 import com.carrot123.yixiangshouronglu.block.GeneWorkstationBlock;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.block.AmethystCrabLureBlock;
@@ -23,6 +25,7 @@ public final class ModBlocks {
     public static final RegistryObject<Block> AMETHYST_CRAB_LURE = BLOCKS.register("amethyst_crab_lure", () -> new AmethystCrabLureBlock(BlockBehaviour.Properties.of().strength(2.0F, 3.0F).sound(SoundType.AMETHYST).noOcclusion()));
 
     public static final RegistryObject<Block> GENE_SYNTHESIZER = BLOCKS.register("gene_synthesizer", () -> new GeneWorkstationBlock(BlockBehaviour.Properties.of().strength(4.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion(), true));
+    public static final RegistryObject<Block> GENE_RESEARCH_TABLE = BLOCKS.register("gene_research_table", () -> new GeneResearchTableBlock(BlockBehaviour.Properties.of().strength(4.0F).sound(SoundType.METAL).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> GENE_MODIFICATION_CHAMBER = BLOCKS.register("gene_modification_chamber", () -> new GeneModificationChamberBlock(BlockBehaviour.Properties.of().strength(4.0F).sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion()));
     public static final RegistryObject<LiquidBlock> ETERNAL_SPRING_BLOCK = BLOCKS.register("eternal_spring_block", () -> new LiquidBlock(ModFluids.ETERNAL_SPRING, BlockBehaviour.Properties.copy(Blocks.WATER).noLootTable()));
 

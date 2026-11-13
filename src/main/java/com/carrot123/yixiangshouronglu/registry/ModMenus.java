@@ -1,5 +1,7 @@
 package com.carrot123.yixiangshouronglu.registry;
 
+import com.carrot123.yixiangshouronglu.menu.GeneResearchTableMenu;
+
 import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
 import com.carrot123.yixiangshouronglu.menu.CarrotKingShopMenu;
 import com.carrot123.yixiangshouronglu.menu.GeneSynthesizerMenu;
@@ -25,6 +27,7 @@ public final class ModMenus {
             );
 
     public static final RegistryObject<MenuType<GeneSynthesizerMenu>> GENE_SYNTHESIZER = MENUS.register("gene_synthesizer", () -> IForgeMenuType.create(GeneSynthesizerMenu::new));
+    public static final RegistryObject<MenuType<GeneResearchTableMenu>> GENE_RESEARCH_TABLE = MENUS.register("gene_research_table", () -> IForgeMenuType.create(GeneResearchTableMenu::new));
     public static final RegistryObject<MenuType<GeneModificationMenu>> GENE_MODIFICATION_CHAMBER = MENUS.register("gene_modification_chamber", () -> IForgeMenuType.create(GeneModificationMenu::new));
 
     private ModMenus() {

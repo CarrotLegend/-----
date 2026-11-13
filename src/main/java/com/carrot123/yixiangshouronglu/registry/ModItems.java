@@ -1,5 +1,8 @@
 package com.carrot123.yixiangshouronglu.registry;
 
+import com.carrot123.yixiangshouronglu.gene.research.GeneResearchRegistry;
+import com.carrot123.yixiangshouronglu.item.GeneModifierItem;
+
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
 
@@ -65,6 +68,12 @@ public final class ModItems {
 
     public static final RegistryObject<Item> GENE_MODULE = ITEMS.register("gene_module", () -> new GeneModuleItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> GENE_SYNTHESIZER = ITEMS.register("gene_synthesizer", () -> new BlockItem(ModBlocks.GENE_SYNTHESIZER.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GENE_RESEARCH_TABLE = ITEMS.register("gene_research_table", () -> new BlockItem(ModBlocks.GENE_RESEARCH_TABLE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> GENE_MODIFIER_FROST = ITEMS.register("gene_modifier_frost", () -> new GeneModifierItem(new Item.Properties().stacksTo(64).rarity(Rarity.RARE), GeneResearchRegistry.FROST));
+    public static final RegistryObject<Item> GENE_MODIFIER_ARMOR_SHRED = ITEMS.register("gene_modifier_armor_shred", () -> new GeneModifierItem(new Item.Properties().stacksTo(64).rarity(Rarity.RARE), GeneResearchRegistry.ARMOR_SHRED));
+    public static final RegistryObject<Item> GENE_MODIFIER_ARMOR = ITEMS.register("gene_modifier_armor", () -> new GeneModifierItem(new Item.Properties().stacksTo(64).rarity(Rarity.RARE), GeneResearchRegistry.ARMOR));
+    public static final RegistryObject<Item> GENE_MODIFIER_ATTACK = ITEMS.register("gene_modifier_attack", () -> new GeneModifierItem(new Item.Properties().stacksTo(64).rarity(Rarity.RARE), GeneResearchRegistry.ATTACK));
+    public static final RegistryObject<Item> GENE_MODIFIER_HEALTH = ITEMS.register("gene_modifier_health", () -> new GeneModifierItem(new Item.Properties().stacksTo(64).rarity(Rarity.RARE), GeneResearchRegistry.HEALTH));
     public static final RegistryObject<Item> GENE_MODIFICATION_CHAMBER = ITEMS.register("gene_modification_chamber", () -> new BlockItem(ModBlocks.GENE_MODIFICATION_CHAMBER.get(), new Item.Properties()));
     public static final RegistryObject<Item> ETERNAL_SPRING_BUCKET = ITEMS.register("eternal_spring_bucket", () -> new BucketItem(ModFluids.ETERNAL_SPRING, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
     public static final RegistryObject<Item> BOTTLED_ETERNAL_SPRING = ITEMS.register("bottled_eternal_spring", () -> new BottledEternalSpringItem(new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));

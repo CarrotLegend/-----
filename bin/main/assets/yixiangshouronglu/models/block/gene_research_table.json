@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "yixiangshouronglu:block/gene_research_table_side",
+    "north": "yixiangshouronglu:block/gene_research_table",
+    "up": "yixiangshouronglu:block/gene_research_table_top",
+    "down": "yixiangshouronglu:block/gene_research_table_side",
+    "east": "yixiangshouronglu:block/gene_research_table_side",
+    "west": "yixiangshouronglu:block/gene_research_table_side",
+    "south": "yixiangshouronglu:block/gene_research_table_side"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "yixiangshouronglu:block/gene_research_table",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "yixiangshouronglu:block/gene_research_table",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "yixiangshouronglu:block/gene_research_table",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "yixiangshouronglu:block/gene_research_table",
+      "y": 270
+    }
+  }
+}

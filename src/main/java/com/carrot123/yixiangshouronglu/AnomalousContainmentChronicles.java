@@ -1,5 +1,9 @@
 package com.carrot123.yixiangshouronglu;
 
+import com.carrot123.yixiangshouronglu.gene.research.GeneResearchRegistry;
+import com.carrot123.yixiangshouronglu.gene.research.PlayerGeneResearch;
+import com.carrot123.yixiangshouronglu.network.GeneResearchNetwork;
+
 import com.carrot123.yixiangshouronglu.network.GeneNetwork;
 import com.carrot123.yixiangshouronglu.network.ShopNetwork;
 import com.carrot123.yixiangshouronglu.network.LanternNetwork;
@@ -46,10 +50,13 @@ public final class AnomalousContainmentChronicles {
         ModGeneRecipes.TYPES.register(modBus);
         ModGeneRecipes.SERIALIZERS.register(modBus);
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerGenes.class));
+        modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerGeneResearch.class));
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerShopData.class));
         ShopNetwork.register();
         LanternNetwork.register();
         GeneNetwork.register();
+        GeneResearchNetwork.register();
+        GeneResearchRegistry.registerDefaults();
         RegenerativeCells.register();
         AdditionalGenes.register();
         ExtendedGenes.register();

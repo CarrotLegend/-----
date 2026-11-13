@@ -59,6 +59,12 @@ public final class ModCreativeTabs {
                                     for (var quality : GeneTypes.Quality.values()) { output.accept(GeneModuleItem.create(gene, quality)); }
                                 }
                                 output.accept(ModItems.GENE_SYNTHESIZER.get());
+                                output.accept(ModItems.GENE_RESEARCH_TABLE.get());
+                                output.accept(ModItems.GENE_MODIFIER_HEALTH.get());
+                                output.accept(ModItems.GENE_MODIFIER_ATTACK.get());
+                                output.accept(ModItems.GENE_MODIFIER_ARMOR.get());
+                                output.accept(ModItems.GENE_MODIFIER_ARMOR_SHRED.get());
+                                output.accept(ModItems.GENE_MODIFIER_FROST.get());
                                 output.accept(ModItems.GENE_MODIFICATION_CHAMBER.get());
                                 output.accept(ModItems.ETERNAL_SPRING_BUCKET.get());
                                 output.accept(ModItems.BOTTLED_ETERNAL_SPRING.get());
