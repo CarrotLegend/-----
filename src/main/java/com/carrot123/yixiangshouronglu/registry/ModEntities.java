@@ -6,10 +6,6 @@ import com.carrot123.yixiangshouronglu.entity.TenaciousShieldEntity;
 import com.carrot123.yixiangshouronglu.entity.ShadowDemonEntity;
 import com.carrot123.yixiangshouronglu.entity.YoungEnderDragonEntity;
 import com.carrot123.yixiangshouronglu.entity.LegendaryCarrotKingEntity;
-import com.carrot123.yixiangshouronglu.entity.GeneDragonFireball;
-import com.carrot123.yixiangshouronglu.entity.GeneDragonBreathCloud;
-import com.carrot123.yixiangshouronglu.entity.GeneStormLightning;
-import com.carrot123.yixiangshouronglu.entity.GeneDragonBreathBeam;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -51,26 +47,6 @@ public final class ModEntities {
     public static final RegistryObject<EntityType<LegendaryCarrotKingEntity>> LEGENDARY_CARROT_KING = ENTITIES.register("legendary_carrot_king",
             () -> EntityType.Builder.of(LegendaryCarrotKingEntity::new, MobCategory.CREATURE).sized(0.6F, 1.8F)
                     .clientTrackingRange(10).build(AnomalousContainmentChronicles.MOD_ID + ":legendary_carrot_king"));
-
-    public static final RegistryObject<EntityType<GeneDragonFireball>> GENE_DRAGON_FIREBALL =
-            ENTITIES.register("gene_dragon_fireball", () -> EntityType.Builder.of(GeneDragonFireball::new, MobCategory.MISC)
-                    .sized(1, 1).fireImmune().noSave().clientTrackingRange(4).updateInterval(10)
-                    .build(AnomalousContainmentChronicles.MOD_ID + ":gene_dragon_fireball"));
-
-    public static final RegistryObject<EntityType<GeneDragonBreathCloud>> GENE_DRAGON_BREATH_CLOUD =
-            ENTITIES.register("gene_dragon_breath_cloud", () -> EntityType.Builder.of(GeneDragonBreathCloud::new, MobCategory.MISC)
-                    .sized(6, 0.5F).fireImmune().noSave().clientTrackingRange(10).updateInterval(Integer.MAX_VALUE)
-                    .build(AnomalousContainmentChronicles.MOD_ID + ":gene_dragon_breath_cloud"));
-
-    public static final RegistryObject<EntityType<GeneStormLightning>> GENE_STORM_LIGHTNING =
-            ENTITIES.register("gene_storm_lightning", () -> EntityType.Builder.of(GeneStormLightning::new, MobCategory.MISC)
-                    .sized(1, 1).fireImmune().noSave().clientTrackingRange(10).updateInterval(1)
-                    .build(AnomalousContainmentChronicles.MOD_ID + ":gene_storm_lightning"));
-
-    public static final RegistryObject<EntityType<GeneDragonBreathBeam>> GENE_DRAGON_BREATH_BEAM =
-            ENTITIES.register("gene_dragon_breath_beam", () -> EntityType.Builder.of(GeneDragonBreathBeam::new, MobCategory.MISC)
-                    .sized(1, 1).fireImmune().noSave().clientTrackingRange(10).updateInterval(1)
-                    .build(AnomalousContainmentChronicles.MOD_ID + ":gene_dragon_breath_beam"));
 
     private ModEntities() {
     }

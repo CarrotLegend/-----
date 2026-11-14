@@ -34,6 +34,14 @@ public final class ChamberProduction {
         }
 
         return switch (entityId) {
+            case "minecraft:zombie" ->
+                    new Recipe(Items.ROTTEN_FLESH, 1200,
+                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
+
+            case "minecraft:skeleton" ->
+                    new Recipe(Items.BONE, 1200,
+                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
+
             case "mutantmonsters:mutant_zombie" ->
                     new Recipe(Items.IRON_INGOT, 600,
                             "screen.yixiangshouronglu.chamber.rate_two_per_minute");

@@ -1,7 +1,6 @@
 package com.carrot123.yixiangshouronglu.event;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
-import com.carrot123.yixiangshouronglu.gene.PhantomState;
 import com.carrot123.yixiangshouronglu.item.FinalKnellItem;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,9 +48,6 @@ public final class FinalKnellEvents {
     }
 
     private static ServerPlayer attacker(DamageSource source) {
-        if (PhantomState.isFollowUp(source)) {
-            return null;
-        }
         Entity direct = source.getDirectEntity();
         Entity owner = source.getEntity();
         if (source.is(DamageTypes.PLAYER_ATTACK)) {

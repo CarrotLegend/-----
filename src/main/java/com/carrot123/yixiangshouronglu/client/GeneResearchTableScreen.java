@@ -121,7 +121,6 @@ public final class GeneResearchTableScreen extends GeneScreen<GeneResearchTableM
             int progress = data.progress(definition.id());
             graphics.drawWordWrap(font, Component.translatable(definition.effectKey()), 143, 49, 147, 0xFFE0E7EF);
             textLocal(graphics, label("research_range", definition.minProgress(), definition.maxProgress()), 143, 70, 147, 0xFFE0E7EF);
-            textLocal(graphics, label("used_extracts", data.used(definition.id()).size()), 143, 82, 147, 0xFF80C9D2);
             graphics.drawString(font, label("progress", progress), 143, 94, 0xFFF2CC79, false);
             graphics.fill(143, 104, 287, 109, 0xFF080E15);
             graphics.fill(143, 104, 143 + 144 * progress / 100, 109, 0xFF4B9CA7);

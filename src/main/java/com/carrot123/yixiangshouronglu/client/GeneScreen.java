@@ -10,10 +10,12 @@ public abstract class GeneScreen<T extends AbstractContainerMenu> extends Abstra
     private float scale = 1;
     protected GeneScreen(T menu, Inventory inventory, Component title, int panelWidth, int panelHeight) { super(menu, inventory, title); imageWidth = panelWidth; imageHeight = panelHeight; inventoryLabelY = -10000; }
     @Override protected void init() {
-        scale = Math.min(1.0F, Math.min((float) width / (imageWidth + 12), (float) height / (imageHeight + 12)));
+        scale = Math.min(1.0F, Math.min((float) width / (imageWidth + 12 + extraHorizontalSpace()), (float) height / (imageHeight + 12)));
         width = (int) (width / scale); height = (int) (height / scale); super.init(); widgets();
     }
     protected abstract void widgets();
+    public float guiScale() { return scale; }
+    protected int extraHorizontalSpace() { return 0; }
     protected void panel(GuiGraphics graphics) {
         graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xFF121B25);
         graphics.fill(leftPos + 1, topPos + 1, leftPos + imageWidth - 1, topPos + 3, 0xFF4B9CA7);

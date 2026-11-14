@@ -2,11 +2,8 @@ package com.carrot123.yixiangshouronglu.block;
 
 import com.carrot123.yixiangshouronglu.block.entity.GeneSynthesizerBlockEntity;
 import com.carrot123.yixiangshouronglu.gene.GeneCapability;
-import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
-import com.carrot123.yixiangshouronglu.network.GeneNetwork;
 import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
@@ -38,16 +35,15 @@ public final class GeneWorkstationBlock extends Block implements EntityBlock {
     @Override public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
             if (synthesizer && level.getBlockEntity(pos) instanceof GeneSynthesizerBlockEntity machine) { NetworkHooks.openScreen(serverPlayer, machine, pos); }
-            else if (!synthesizer) {
-                NetworkHooks.openScreen(serverPlayer, new SimpleMenuProvider((id, inventory, owner) -> new GeneModificationMenu(id, inventory, pos), Component.translatable("block.yixiangshouronglu.gene_modification_chamber")), pos);
-                GeneNetwork.sync(serverPlayer, "ok");
-            }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
     @Override public void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
         if (!state.is(next.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) instanceof GeneSynthesizerBlockEntity machine) {
             for (int slot = 0; slot < 5; slot++) { Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), machine.inventory.extractItem(slot, Integer.MAX_VALUE, false)); }
+            for (int slot = 0; slot < 5; slot++) {
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), machine.chimeraInventory.extractItem(slot, Integer.MAX_VALUE, false));
+            }
         }
         super.onRemove(state, level, pos, next, moving);
     }

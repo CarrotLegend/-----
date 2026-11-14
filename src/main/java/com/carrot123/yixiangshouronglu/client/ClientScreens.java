@@ -9,8 +9,6 @@ import com.carrot123.yixiangshouronglu.registry.ModMenus;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.DragonFireballRenderer;
-import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,10 +29,6 @@ public final class ClientScreens {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntities.GENE_DRAGON_FIREBALL.get(), DragonFireballRenderer::new);
-        event.registerEntityRenderer(ModEntities.GENE_DRAGON_BREATH_CLOUD.get(), NoopRenderer::new);
-        event.registerEntityRenderer(ModEntities.GENE_STORM_LIGHTNING.get(), NoopRenderer::new);
-        event.registerEntityRenderer(ModEntities.GENE_DRAGON_BREATH_BEAM.get(), GeneDragonBreathRenderer::new);
         event.registerEntityRenderer(ModEntities.LEGENDARY_CARROT_KING.get(), LegendaryCarrotKingRenderer::new);
         event.registerBlockEntityRenderer(
                 ModBlockEntities.CONTAINMENT_CHAMBER.get(),

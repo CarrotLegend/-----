@@ -1,10 +1,6 @@
 package com.carrot123.yixiangshouronglu.registry;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
-import com.carrot123.yixiangshouronglu.gene.GeneTypes;
-import com.carrot123.yixiangshouronglu.gene.HighTierBossGenes;
-import com.carrot123.yixiangshouronglu.gene.AscendantGenes;
-import com.carrot123.yixiangshouronglu.item.GeneModuleItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -48,16 +44,12 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.REFINED_DRAGON_MEAL.get());
                                 output.accept(ModItems.SAPHYRA_GEM.get());
                                 output.accept(ModItems.ECHO_CAGE.get());
+                                output.accept(ModItems.ZOMBIE_BRAIN.get());
+                                output.accept(ModItems.ROTTEN_BRAIN.get());
+                                output.accept(ModItems.BONE_CAGE.get());
                                 output.accept(ModItems.AMETHYST_CRAB_LURE.get());
                                 output.accept(ModItems.SEDATIVE_MEAT.get());
                                 output.accept(ModItems.EXTRACTOR.get());
-                                output.accept(ModItems.GENE_MODULE.get());
-                                for (var gene : HighTierBossGenes.MODULES) {
-                                    for (var quality : GeneTypes.Quality.values()) { output.accept(GeneModuleItem.create(gene, quality)); }
-                                }
-                                for (var gene : AscendantGenes.MODULES) {
-                                    for (var quality : GeneTypes.Quality.values()) { output.accept(GeneModuleItem.create(gene, quality)); }
-                                }
                                 output.accept(ModItems.GENE_SYNTHESIZER.get());
                                 output.accept(ModItems.GENE_RESEARCH_TABLE.get());
                                 output.accept(ModItems.GENE_MODIFIER_HEALTH.get());

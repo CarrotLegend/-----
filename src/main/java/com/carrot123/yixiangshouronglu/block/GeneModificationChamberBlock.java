@@ -1,15 +1,11 @@
 package com.carrot123.yixiangshouronglu.block;
 
-import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
-import com.carrot123.yixiangshouronglu.network.GeneNetwork;
+import com.carrot123.yixiangshouronglu.block.entity.GeneModificationChamberBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,6 +16,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -33,7 +31,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
-public final class GeneModificationChamberBlock extends Block {
+public final class GeneModificationChamberBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
     private static final VoxelShape LOWER_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
@@ -101,19 +99,34 @@ public final class GeneModificationChamberBlock extends Block {
             if (!lower.is(this) || lower.getValue(HALF) != DoubleBlockHalf.LOWER) {
                 return InteractionResult.FAIL;
             }
-            MenuProvider provider = new SimpleMenuProvider(
-                    (id, inventory, owner) -> new GeneModificationMenu(id, inventory, lowerPos),
-                    Component.translatable("block.yixiangshouronglu.gene_modification_chamber")
-            );
-            NetworkHooks.openScreen(serverPlayer, provider, lowerPos);
-            GeneNetwork.sync(serverPlayer, "ok");
+            BlockEntity existing = level.getBlockEntity(lowerPos);
+            if (existing == null) {
+                existing = new GeneModificationChamberBlockEntity(lowerPos, lower);
+                level.setBlockEntity(existing);
+                existing.setChanged();
+            }
+            if (!(existing instanceof GeneModificationChamberBlockEntity chamber)) {
+                return InteractionResult.FAIL;
+            }
+            NetworkHooks.openScreen(serverPlayer, chamber, lowerPos);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(HALF) == DoubleBlockHalf.LOWER
+                ? new GeneModificationChamberBlockEntity(pos, state) : null;
     }
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
         if (!state.is(next.getBlock()) && !level.isClientSide) {
+            if (state.getValue(HALF) == DoubleBlockHalf.LOWER
+                    && level.getBlockEntity(pos) instanceof GeneModificationChamberBlockEntity chamber) {
+                chamber.dropInventory();
+            }
             BlockPos otherPos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
             BlockState otherState = level.getBlockState(otherPos);
             if (otherState.is(this) && otherState.getValue(HALF) != state.getValue(HALF)) {
