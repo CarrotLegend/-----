@@ -1,6 +1,7 @@
 package com.carrot123.yixiangshouronglu.client;
 
 import com.carrot123.yixiangshouronglu.gene.GeneTime;
+import com.carrot123.yixiangshouronglu.block.entity.GeneSynthesizerBlockEntity;
 import com.carrot123.yixiangshouronglu.menu.GeneSynthesizerMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -25,8 +26,12 @@ public final class GeneSynthesizerScreen extends GeneScreen<GeneSynthesizerMenu>
         if (chimera) {
             drawChimera(graphics);
         } else {
-            for (int index = 0; index < 4; index++) { slot(graphics, 22 + index % 2 * 22, 48 + index / 2 * 22, 0xFF445968); }
-            slot(graphics, 142, 59, 0xFFB69A53);
+            slot(graphics, 45, 54, 0xFF445968);
+            slot(graphics, 205, 54, 0xFF445968);
+            int width = 116 * Math.max(0, Math.min(menu.researchProgress(), GeneSynthesizerBlockEntity.RESEARCH_DURATION))
+                    / GeneSynthesizerBlockEntity.RESEARCH_DURATION;
+            graphics.fill(leftPos + 74, topPos + 57, leftPos + 192, topPos + 67, 0xFF263B47);
+            graphics.fill(leftPos + 75, topPos + 58, leftPos + 75 + width, topPos + 66, 0xFF60CCD4);
         }
         for (int row = 0; row < 3; row++) { for (int col = 0; col < 9; col++) { slot(graphics, 51 + col * 18, 121 + row * 18, 0xFF334958); } }
         for (int col = 0; col < 9; col++) { slot(graphics, 51 + col * 18, 179, 0xFF334958); }
@@ -54,8 +59,12 @@ public final class GeneSynthesizerScreen extends GeneScreen<GeneSynthesizerMenu>
             }
             return;
         }
-        graphics.drawCenteredString(font, Component.translatable("gui.yixiangshouronglu.legacy_inventory_hint"),
-                133, 100, 0xFFAAB9C8);
+        if (!menu.researchInput().isEmpty()) {
+            graphics.drawCenteredString(font, menu.researchInput().getHoverName(), 133, 36, 0xFFE4F1FA);
+        }
+        graphics.drawCenteredString(font, Component.translatable("gene.yixiangshouronglu.progress",
+                GeneTime.seconds(menu.researchProgress()), GeneTime.totalSeconds(GeneSynthesizerBlockEntity.RESEARCH_DURATION)),
+                133, 82, 0xFFAAB9C8);
     }
 
     private void drawChimera(GuiGraphics graphics) {
@@ -71,7 +80,7 @@ public final class GeneSynthesizerScreen extends GeneScreen<GeneSynthesizerMenu>
     }
 
     private Component tabLabel(int page) {
-        return Component.translatable(page == PAGE_GENE ? "gui.yixiangshouronglu.gene_synthesis_tab" : "gui.yixiangshouronglu.chimera_tab");
+        return Component.translatable(page == PAGE_RESEARCH ? "gui.yixiangshouronglu.biological_research_tab" : "gui.yixiangshouronglu.chimera_tab");
     }
 
     private int tabWidth() {

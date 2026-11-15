@@ -3,14 +3,12 @@ package com.carrot123.yixiangshouronglu.client;
 import com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.menu.ContainmentChamberMenu;
-import com.carrot123.yixiangshouronglu.production.ChamberProduction;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-import java.math.BigDecimal;
 
 public final class ContainmentChamberScreen extends AbstractContainerScreen<ContainmentChamberMenu> {
     private static final int TAB_WIDTH = 64;
@@ -70,35 +68,23 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
     }
 
     private void renderProduction(GuiGraphics graphics, int x, int y) {
-        ChamberProduction.Recipe recipe = ChamberProduction.forEntity(menu.getEntityId());
-
-        if (recipe != null) {
-            int interval = menu.getInterval();
-            Component period = interval > 0 && interval != recipe.intervalTicks()
-                    ? Component.translatable("screen.yixiangshouronglu.chamber.rate_seconds",
-                            BigDecimal.valueOf(interval * 5L, 2).stripTrailingZeros().toPlainString())
-                    : Component.translatable(recipe.rateKey());
-            Component rate = Component.translatable(
-                    "screen.yixiangshouronglu.chamber.rate",
-                    new ItemStack(recipe.item()).getHoverName(),
-                    period
-            );
-
-            graphics.drawCenteredString(font, rate, x + imageWidth / 2, y + 79, 0xFFE5C994);
-
-            if (interval > 0) {
-                int width = Math.max(0, Math.min(100, menu.getProgress() * 100 / interval));
-                graphics.fill(x + 38, y + 89, x + 138, y + 94, 0xFF353C48);
-                graphics.fill(x + 38, y + 89, x + 38 + width, y + 94, 0xFFC6A363);
-            }
+        int interval = menu.getInterval();
+        boolean pending = menu.hasPendingProduction();
+        String key = "screen.yixiangshouronglu.chamber.";
+        Component label;
+        if (pending) {
+            label = Component.translatable(key + "loot_blocked");
+        } else if (interval > 0) {
+            int seconds = (Math.max(0, interval - menu.getProgress()) + 19) / 20;
+            label = Component.translatable(key + "loot_remaining", seconds);
         } else {
-            graphics.drawCenteredString(
-                    font,
-                    Component.translatable("screen.yixiangshouronglu.chamber.no_production"),
-                    x + imageWidth / 2,
-                    y + 79,
-                    0xFFB3B5BE
-            );
+            label = Component.translatable(key + "no_production");
+        }
+        graphics.drawCenteredString(font, label, x + imageWidth / 2, y + 79, 0xFFE5C994);
+        if (pending || interval > 0) {
+            int width = pending ? 100 : Math.max(0, Math.min(100, menu.getProgress() * 100 / interval));
+            graphics.fill(x + 38, y + 89, x + 138, y + 94, 0xFF353C48);
+            graphics.fill(x + 38, y + 89, x + 38 + width, y + 94, 0xFFC6A363);
         }
     }
 

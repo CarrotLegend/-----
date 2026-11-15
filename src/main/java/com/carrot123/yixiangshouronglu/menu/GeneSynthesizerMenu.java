@@ -2,6 +2,7 @@ package com.carrot123.yixiangshouronglu.menu;
 
 import com.carrot123.yixiangshouronglu.block.entity.GeneSynthesizerBlockEntity;
 import com.carrot123.yixiangshouronglu.registry.*;
+import com.carrot123.yixiangshouronglu.item.BiologicalResearchItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.*;
@@ -10,10 +11,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.*;
 
 public final class GeneSynthesizerMenu extends AbstractContainerMenu {
-    public static final int PAGE_GENE = 0;
+    public static final int PAGE_RESEARCH = 0;
     public static final int PAGE_CHIMERA = 1;
     public static final int PAGE_BUTTON = 2;
-    private static final int CHIMERA_START = 41;
+    private static final int CHIMERA_START = 38;
     private final DataSlot page = DataSlot.standalone();
     private final BlockPos pos;
     private final Inventory playerInventory;
@@ -23,14 +24,14 @@ public final class GeneSynthesizerMenu extends AbstractContainerMenu {
     public GeneSynthesizerMenu(int id, Inventory inventory, GeneSynthesizerBlockEntity machine) { this(id, inventory, machine.getBlockPos(), machine); }
     private GeneSynthesizerMenu(int id, Inventory inventory, BlockPos pos, GeneSynthesizerBlockEntity machine) {
         super(ModMenus.GENE_SYNTHESIZER.get(), id); this.pos = pos; playerInventory = inventory; this.machine = machine;
-        IItemHandler handler = machine == null ? new ItemStackHandler(5) : machine.inventory;
-        data = machine == null ? new SimpleContainerData(2) : new ContainerData() {
-            public int get(int index) { return index == 0 ? machine.chimeraProgress() : machine.chimeraMatched() ? 1 : 0; }
+        IItemHandler handler = machine == null ? new ItemStackHandler(2) : machine.researchInventory;
+        data = machine == null ? new SimpleContainerData(3) : new ContainerData() {
+            public int get(int index) { return switch (index) { case 0 -> machine.chimeraProgress(); case 1 -> machine.chimeraMatched() ? 1 : 0; case 2 -> machine.researchProgress(); default -> 0; }; }
             public void set(int index, int value) {}
-            public int getCount() { return 2; }
+            public int getCount() { return 3; }
         };
-        for (int slot = 0; slot < 4; slot++) { addSlot(new PageSlot(handler, slot, 22 + (slot % 2) * 22, 48 + (slot / 2) * 22, PAGE_GENE)); }
-        addSlot(new PageSlot(handler, 4, 142, 59, PAGE_GENE));
+        addSlot(new PageSlot(handler, 0, 45, 54, PAGE_RESEARCH));
+        addSlot(new PageSlot(handler, 1, 205, 54, PAGE_RESEARCH));
         addInventory(inventory, 51, 121);
         IItemHandler chimera = machine == null ? new ItemStackHandler(5) : machine.chimeraInventory;
         for (int slot = 0; slot < 5; slot++) {
@@ -46,6 +47,8 @@ public final class GeneSynthesizerMenu extends AbstractContainerMenu {
     public static int chimeraX(int slot) { return slot == 4 ? 125 : 44 + slot % 2 * 162; }
     public static int chimeraY(int slot) { return slot == 4 ? 55 : 27 + slot / 2 * 56; }
     public int page() { return page.get(); }
+    public int researchProgress() { return data.get(2); }
+    public ItemStack researchInput() { return getSlot(0).getItem(); }
     public int chimeraProgress() { return data.get(0); }
     public boolean chimeraMatched() { return data.get(1) != 0; }
 
@@ -56,7 +59,7 @@ public final class GeneSynthesizerMenu extends AbstractContainerMenu {
         private PageSlot(IItemHandler handler, int index, int x, int y, int slotPage) {
             super(handler, index, x, y);
             this.slotPage = slotPage;
-            input = slotPage == PAGE_CHIMERA && index < 4;
+            input = slotPage == PAGE_CHIMERA ? index < 4 : index == 0;
         }
 
         @Override public void setChanged() {
@@ -67,7 +70,8 @@ public final class GeneSynthesizerMenu extends AbstractContainerMenu {
         }
 
         @Override public boolean isActive() { return page() == slotPage; }
-        @Override public boolean mayPlace(ItemStack stack) { return input && !stack.is(ModItems.GENE_MODULE.get()) && isActive() && super.mayPlace(stack); }
+        @Override public boolean mayPlace(ItemStack stack) { return input && isActive() && (slotPage == PAGE_RESEARCH
+                ? BiologicalResearchItem.entityId(stack, false) != null : !stack.is(ModItems.GENE_MODULE.get())) && super.mayPlace(stack); }
         @Override public boolean mayPickup(Player player) { return isActive() && super.mayPickup(player); }
     }
 
@@ -91,12 +95,12 @@ public final class GeneSynthesizerMenu extends AbstractContainerMenu {
         if (!stillValid(player) || index < 0 || index >= slots.size() || !getSlot(index).isActive()) { return ItemStack.EMPTY; }
         Slot slot = slots.get(index); if (!slot.hasItem()) { return ItemStack.EMPTY; }
         ItemStack stack = slot.getItem(); ItemStack original = stack.copy();
-        if (index < 5 || index >= CHIMERA_START) {
-            if (!moveItemStackTo(stack, 5, CHIMERA_START, true)) { return ItemStack.EMPTY; }
+        if (index < 2 || index >= CHIMERA_START) {
+            if (!moveItemStackTo(stack, 2, CHIMERA_START, true)) { return ItemStack.EMPTY; }
         } else {
-            if (page() != PAGE_CHIMERA || stack.is(ModItems.GENE_MODULE.get())) { return ItemStack.EMPTY; }
-            int start = CHIMERA_START;
-            if (!moveItemStackTo(stack, start, start + 4, false)) { return ItemStack.EMPTY; }
+            int start = page() == PAGE_CHIMERA ? CHIMERA_START : 0;
+            int end = page() == PAGE_CHIMERA ? CHIMERA_START + 4 : 1;
+            if (!moveItemStackTo(stack, start, end, false)) { return ItemStack.EMPTY; }
         }
         if (stack.isEmpty()) { slot.set(ItemStack.EMPTY); } else { slot.setChanged(); }
         slot.onTake(player, stack); return original;

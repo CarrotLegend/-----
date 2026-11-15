@@ -1,6 +1,11 @@
 package com.carrot123.yixiangshouronglu.item;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
@@ -18,6 +23,8 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 import java.util.List;
 
 public final class MadnessMaskItem extends Item implements ICurioItem {
+    private static final ResourceKey<DamageType> DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
+            new ResourceLocation("yixiangshouronglu", "madness_mask"));
     private static final String START_TICK = "yixiangshouronglu_madness_mask_start_tick";
     private static final String LAST_TICK = "yixiangshouronglu_madness_mask_last_tick";
 
@@ -50,10 +57,9 @@ public final class MadnessMaskItem extends Item implements ICurioItem {
 
         long elapsed = now - data.getLong(START_TICK);
         if (elapsed > 0 && elapsed % 20L == 0) {
-            float health = player.getHealth() - 2.0F;
-            player.setHealth(Math.max(0.0F, health));
-            if (health <= 0.0F) {
-                player.die(player.damageSources().magic());
+            var type = player.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(DAMAGE);
+            player.hurt(new DamageSource(type), 2.0F);
+            if (!player.isAlive()) {
                 return;
             }
         }

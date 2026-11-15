@@ -8,8 +8,7 @@
   "mixins": [
     "NearestAttackableTargetGoalAccess",
     "TargetingConditionsAccess",
-    "DungeonsLibsAbilityHelperMixin",
-    "AttributesLibPhantomMixin"
+    "DungeonsLibsAbilityHelperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

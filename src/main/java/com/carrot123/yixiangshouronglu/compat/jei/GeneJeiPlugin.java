@@ -4,6 +4,9 @@ import com.carrot123.yixiangshouronglu.client.ContainmentChamberScreen;
 import com.carrot123.yixiangshouronglu.client.ChimeraDiagram;
 import com.carrot123.yixiangshouronglu.gene.recipe.ChimeraRecipe;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
+import com.carrot123.yixiangshouronglu.item.BiologicalResearchItem;
+import com.carrot123.yixiangshouronglu.block.entity.GeneSynthesizerBlockEntity;
+import net.minecraft.nbt.CompoundTag;
 import com.carrot123.yixiangshouronglu.menu.ContainmentChamberMenu;
 import com.carrot123.yixiangshouronglu.menu.GeneSynthesizerMenu;
 import com.carrot123.yixiangshouronglu.production.ChamberSpecialProducts;
@@ -49,6 +52,12 @@ import java.util.List;
 public final class GeneJeiPlugin implements IModPlugin {
     private static final RecipeType<ChimeraRecipe> CHIMERA = RecipeType.create("yixiangshouronglu", "chimera_modification", ChimeraRecipe.class);
     private static final RecipeType<ChamberSpecialProducts.Rule> EXTRACTION = RecipeType.create("yixiangshouronglu", "special_extraction", ChamberSpecialProducts.Rule.class);
+    private static final RecipeType<ResearchExample> RESEARCH =
+            RecipeType.create("yixiangshouronglu", "biological_research", ResearchExample.class);
+
+    private record ResearchExample(ItemStack sample, ItemStack result) {
+    }
+
     private List<ChimeraRecipe> chimeraRecipes = List.of();
     private final java.util.Set<ChimeraRecipe> indexedChimera = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
     private IJeiRuntime runtime;
@@ -68,7 +77,7 @@ public final class GeneJeiPlugin implements IModPlugin {
 
     @Override public void registerCategories(IRecipeCategoryRegistration registration) {
         IGuiHelper helper = registration.getJeiHelpers().getGuiHelper();
-        registration.addRecipeCategories(new ChimeraCategory(helper), new ExtractionCategory(helper));
+        registration.addRecipeCategories(new ChimeraCategory(helper), new ExtractionCategory(helper), new ResearchCategory(helper));
     }
 
     @Override public void registerRecipes(IRecipeRegistration registration) {
@@ -77,11 +86,18 @@ public final class GeneJeiPlugin implements IModPlugin {
         indexedChimera.clear();
         indexedChimera.addAll(chimeraRecipes);
         registration.addRecipes(CHIMERA, chimeraRecipes);
+        ResourceLocation exampleId = new ResourceLocation("minecraft", "zombie");
+        CompoundTag exampleData = new CompoundTag();
+        exampleData.putString("id", exampleId.toString());
+        exampleData.putUUID("UUID", new java.util.UUID(0, 0));
+        exampleData.putFloat("Health", 0);
+        ItemStack example = BiologicalResearchItem.sample(exampleId, exampleData);
+        registration.addRecipes(RESEARCH, List.of(new ResearchExample(example, BiologicalResearchItem.finish(example))));
         registration.addRecipes(EXTRACTION, ChamberSpecialProducts.availableRules());
     }
 
     @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(ModItems.GENE_SYNTHESIZER.get()), CHIMERA);
+        registration.addRecipeCatalyst(new ItemStack(ModItems.GENE_SYNTHESIZER.get()), CHIMERA, RESEARCH);
         registration.addRecipeCatalyst(new ItemStack(ModItems.CONTAINMENT_CHAMBER.get()), EXTRACTION);
     }
 
@@ -89,7 +105,10 @@ public final class GeneJeiPlugin implements IModPlugin {
         registration.addGuiContainerHandler(GeneSynthesizerScreen.class, new IGuiContainerHandler<>() {
             @Override public Collection<IGuiClickableArea> getGuiClickableAreas(GeneSynthesizerScreen screen, double mouseX, double mouseY) {
                 boolean chimera = screen.getMenu().page() == GeneSynthesizerMenu.PAGE_CHIMERA;
-                if (!chimera || chimeraRecipes.isEmpty()) {
+                if (!chimera) {
+                    return List.of(scaledArea(screen, 74, 57, 118, 10, RESEARCH));
+                }
+                if (chimeraRecipes.isEmpty()) {
                     return List.of();
                 }
                 if (chimera) {
@@ -155,6 +174,31 @@ public final class GeneJeiPlugin implements IModPlugin {
         return manager.getAllRecipesFor(ModGeneRecipes.CHIMERA_TYPE.get()).stream()
                 .filter(recipe -> recipe.inputs().stream().allMatch(input -> java.util.Arrays.stream(input.ingredient().getItems()).anyMatch(stack -> !stack.is(ModItems.GENE_MODULE.get()))))
                 .toList();
+    }
+
+    private static final class ResearchCategory implements IRecipeCategory<ResearchExample> {
+        private final IDrawable background;
+        private final IDrawable icon;
+
+        private ResearchCategory(IGuiHelper helper) {
+            background = helper.createBlankDrawable(150, 61);
+            icon = helper.createDrawableItemStack(new ItemStack(ModItems.GENE_SYNTHESIZER.get()));
+        }
+
+        @Override public RecipeType<ResearchExample> getRecipeType() { return RESEARCH; }
+        @Override public Component getTitle() { return Component.translatable("jei.yixiangshouronglu.biological_research"); }
+        @Override public IDrawable getBackground() { return background; }
+        @Override public IDrawable getIcon() { return icon; }
+
+        @Override public void setRecipe(IRecipeLayoutBuilder builder, ResearchExample recipe, IFocusGroup focuses) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 12, 19).setStandardSlotBackground().addItemStack(recipe.sample());
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 120, 19).setOutputSlotBackground().addItemStack(recipe.result());
+        }
+
+        @Override public void draw(ResearchExample recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
+            graphics.fill(38, 23, 108, 30, 0xFF60CCD4);
+            drawTime(graphics, GeneSynthesizerBlockEntity.RESEARCH_DURATION, 47);
+        }
     }
 
     private static final class ChimeraCategory implements IRecipeCategory<ChimeraRecipe> {

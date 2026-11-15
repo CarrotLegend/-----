@@ -21,7 +21,6 @@ public final class ModCreativeTabs {
                             .title(Component.translatable("itemGroup.yixiangshouronglu.main"))
                             .icon(() -> new ItemStack(ModItems.CONTAINMENT_CHAMBER.get()))
                             .displayItems((parameters, output) -> {
-                                output.accept(ModItems.SOUL.get());
                                 output.accept(ModItems.LEGENDARY_CARROT_KING_SPAWN_EGG.get());
                                 output.accept(ModItems.LEGENDARY_CARROT_KING_SUMMONER.get());
                                 output.accept(ModItems.PANACEA.get());
@@ -38,19 +37,14 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.SHADOW_FRAGMENT.get());
                                 output.accept(ModItems.EXEMPTION_SHIELD.get());
                                 output.accept(ModItems.WENDIGO_SIGHT.get());
-                                output.accept(ModItems.BLAZE_CAGE.get());
                                 output.accept(ModItems.ENDER_DRAGON_WINGS.get());
                                 output.accept(ModItems.DRAGON_NEST_TELEPORTER.get());
-                                output.accept(ModItems.REFINED_DRAGON_MEAL.get());
-                                output.accept(ModItems.SAPHYRA_GEM.get());
-                                output.accept(ModItems.ECHO_CAGE.get());
-                                output.accept(ModItems.ZOMBIE_BRAIN.get());
-                                output.accept(ModItems.ROTTEN_BRAIN.get());
-                                output.accept(ModItems.BONE_CAGE.get());
                                 output.accept(ModItems.AMETHYST_CRAB_LURE.get());
                                 output.accept(ModItems.SEDATIVE_MEAT.get());
                                 output.accept(ModItems.EXTRACTOR.get());
                                 output.accept(ModItems.GENE_SYNTHESIZER.get());
+                                output.accept(ModItems.BIOLOGICAL_RESEARCH_SAMPLE.get());
+                                output.accept(ModItems.CONTAINMENT_DEVICE.get());
                                 output.accept(ModItems.GENE_RESEARCH_TABLE.get());
                                 output.accept(ModItems.GENE_MODIFIER_HEALTH.get());
                                 output.accept(ModItems.GENE_MODIFIER_ATTACK.get());

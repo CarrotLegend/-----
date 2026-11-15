@@ -1,189 +1,62 @@
 package com.carrot123.yixiangshouronglu.production;
 
 import com.carrot123.yixiangshouronglu.registry.ModItems;
-import com.carrot123.yixiangshouronglu.util.SoulEntityUtil;
+import com.mojang.logging.LogUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+
+import java.util.List;
 
 public final class ChamberProduction {
-    public record Recipe(Item item, int intervalTicks, String rateKey) {
-    }
+    public static final int INTERVAL = 1200;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final LootContextParamSet PARAMETERS = new LootContextParamSet.Builder()
+            .required(LootContextParams.ORIGIN)
+            .required(LootContextParams.DAMAGE_SOURCE)
+            .build();
 
     private ChamberProduction() {
     }
 
-    @Nullable
-    public static Recipe forEntity(String entityId) {
-        if (SoulEntityUtil.isAntlersWendigo(entityId)) {
-            return new Recipe(
-                    ModItems.WENDIGO_EYE.get(),
-                    6000,
-                    "screen.yixiangshouronglu.chamber.rate_five_minutes"
-            );
+    public static List<ItemStack> roll(ServerLevel level, BlockPos pos, String entityId) {
+        ResourceLocation id = ResourceLocation.tryParse(entityId);
+        if (id == null || !ForgeRegistries.ENTITY_TYPES.containsKey(id)) {
+            return List.of();
+        }
+        var type = ForgeRegistries.ENTITY_TYPES.getValue(id);
+        ResourceLocation tableId = type.getDefaultLootTable();
+        if (BuiltInLootTables.EMPTY.equals(tableId)) {
+            return List.of();
+        }
+        LootTable table = level.getServer().getLootData().getLootTable(tableId);
+        if (table == LootTable.EMPTY) {
+            return List.of();
         }
 
-        if (SoulEntityUtil.isMutantMoreZombie(entityId)) {
-            return new Recipe(
-                    Items.DIAMOND,
-                    1200,
-                    "screen.yixiangshouronglu.chamber.rate_one_per_minute"
-            );
+        LootParams params = new LootParams.Builder(level)
+                .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+                .withParameter(LootContextParams.DAMAGE_SOURCE, level.damageSources().generic())
+                .create(PARAMETERS);
+        try {
+            return table.getRandomItems(params).stream()
+                    .filter(stack -> !stack.isEmpty() && !stack.is(ModItems.SOUL.get())
+                            && !stack.is(ModItems.BIOLOGICAL_RESEARCH_SAMPLE.get())
+                            && !stack.is(ModItems.BIOLOGICAL_RESEARCH_RESULT.get()))
+                    .map(ItemStack::copy)
+                    .toList();
+        } catch (RuntimeException exception) {
+            LOGGER.warn("Could not roll containment loot table {} for {} without an entity", tableId, id, exception);
+            return List.of();
         }
-
-        return switch (entityId) {
-            case "minecraft:zombie" ->
-                    new Recipe(Items.ROTTEN_FLESH, 1200,
-                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
-
-            case "minecraft:skeleton" ->
-                    new Recipe(Items.BONE, 1200,
-                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
-
-            case "mutantmonsters:mutant_zombie" ->
-                    new Recipe(Items.IRON_INGOT, 600,
-                            "screen.yixiangshouronglu.chamber.rate_two_per_minute");
-
-            case "mutantmonsters:mutant_skeleton" ->
-                    new Recipe(Items.GOLD_INGOT, 600,
-                            "screen.yixiangshouronglu.chamber.rate_two_per_minute");
-
-            case "mutantmonsters:mutant_creeper" ->
-                    new Recipe(Items.GUNPOWDER, 600,
-                            "screen.yixiangshouronglu.chamber.rate_two_per_minute");
-
-            case "mutantmonsters:mutant_enderman" ->
-                    new Recipe(Items.ENDER_PEARL, 2400,
-                            "screen.yixiangshouronglu.chamber.rate_two_minutes");
-
-            case "mutantmore:mutant_shulker" ->
-                    new Recipe(Items.SHULKER_SHELL, 1200,
-                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
-
-            case "cataclysm:ignis" ->
-                    externalItem(
-                            "cataclysm",
-                            "ignitium_ingot",
-                            4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes"
-                    );
-
-            case "cataclysm:maledictus" ->
-                    externalItem(
-                            "cataclysm",
-                            "cursium_ingot",
-                            4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes"
-                    );
-
-            case "minecraft:wither" ->
-                    new Recipe(Items.NETHERITE_SCRAP, 1200,
-                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
-
-            case "minecraft:warden" ->
-                    new Recipe(Items.ECHO_SHARD, 1200,
-                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
-
-            case "cataclysm:amethyst_crab" ->
-                    new Recipe(Items.AMETHYST_SHARD, 600,
-                            "screen.yixiangshouronglu.chamber.rate_two_per_minute");
-
-            case "cataclysm:clawdian" ->
-                    new Recipe(Items.LAPIS_LAZULI, 1200,
-                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
-
-            case "cataclysm:scylla" ->
-                    externalItem("cataclysm", "essence_of_the_storm", 6000,
-                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
-
-            case "cataclysm:the_leviathan" ->
-                    externalItem("cataclysm", "abyssal_egg", 6000,
-                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
-
-            case "cataclysm:ender_guardian" ->
-                    externalItem("cataclysm", "enderite_block", 6000,
-                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
-
-            case "cataclysm:the_harbinger" ->
-                    externalItem("cataclysm", "witherite_ingot", 2400,
-                            "screen.yixiangshouronglu.chamber.rate_two_minutes");
-
-            case "cataclysm:netherite_monstrosity" ->
-                    externalItem("cataclysm", "monstrous_horn", 2400,
-                            "screen.yixiangshouronglu.chamber.rate_two_minutes");
-
-            case "cataclysm:ancient_remnant" ->
-                    new Recipe(Items.NETHERITE_INGOT, 3600,
-                            "screen.yixiangshouronglu.chamber.rate_three_minutes");
-
-            case "yixiangshouronglu:tenacious_shield" ->
-                    new Recipe(ModItems.TENACIOUS_SHIELD_FRAGMENT.get(), 4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
-
-            case "yixiangshouronglu:shadow_demon" ->
-                    new Recipe(ModItems.SHADOW_FRAGMENT.get(), 6000,
-                            "screen.yixiangshouronglu.chamber.rate_five_minutes");
-
-            case "mutantmore:mutant_wither_skeleton",
-                 "mutantmore:mutant_hoglin" ->
-                    new Recipe(Items.COPPER_INGOT, 300,
-                            "screen.yixiangshouronglu.chamber.rate_four_per_minute");
-
-            case "mutantmore:mutant_blaze" ->
-                    new Recipe(Items.BLAZE_ROD, 1200,
-                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
-
-            case "iceandfire:fire_dragon" ->
-                    externalItem("iceandfire", "dragonsteel_fire_ingot", 4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
-
-            case "iceandfire:ice_dragon" ->
-                    externalItem("iceandfire", "dragonsteel_ice_ingot", 4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
-
-            case "iceandfire:lightning_dragon" ->
-                    externalItem("iceandfire", "dragonsteel_lightning_ingot", 4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
-
-            case "yixiangshouronglu:young_ender_dragon" ->
-                    new Recipe(Items.DRAGON_EGG, 4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
-
-            case "mokels_boss_mantyd:boss_mantyd" ->
-                    new Recipe(Items.DIAMOND, 1200,
-                            "screen.yixiangshouronglu.chamber.rate_one_per_minute");
-
-            case "theinkarena:blot" ->
-                    externalItem("theinkarena", "ink_waste", 600,
-                            "screen.yixiangshouronglu.chamber.rate_two_per_minute");
-
-            case "mythsandlegends:black_charro" ->
-                    externalItem("mythsandlegends", "tenebrite_shard", 4800,
-                            "screen.yixiangshouronglu.chamber.rate_four_minutes");
-
-            default -> null;
-        };
-    }
-
-    @Nullable
-    private static Recipe externalItem(
-            String namespace,
-            String path,
-            int intervalTicks,
-            String rateKey
-    ) {
-        ResourceLocation id = new ResourceLocation(namespace, path);
-
-        if (!ForgeRegistries.ITEMS.containsKey(id)) {
-            return null;
-        }
-
-        Item item = ForgeRegistries.ITEMS.getValue(id);
-
-        return item == null
-                ? null
-                : new Recipe(item, intervalTicks, rateKey);
     }
 }

@@ -41,6 +41,9 @@ public final class GeneWorkstationBlock extends Block implements EntityBlock {
     @Override public void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
         if (!state.is(next.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) instanceof GeneSynthesizerBlockEntity machine) {
             for (int slot = 0; slot < 5; slot++) { Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), machine.inventory.extractItem(slot, Integer.MAX_VALUE, false)); }
+            for (int slot = 0; slot < 2; slot++) {
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), machine.researchInventory.extractItem(slot, Integer.MAX_VALUE, false));
+            }
             for (int slot = 0; slot < 5; slot++) {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), machine.chimeraInventory.extractItem(slot, Integer.MAX_VALUE, false));
             }

@@ -1,7 +1,6 @@
 package com.carrot123.yixiangshouronglu.menu;
 
 import com.carrot123.yixiangshouronglu.block.entity.ContainmentChamberBlockEntity;
-import com.carrot123.yixiangshouronglu.production.ChamberProduction;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -74,7 +73,7 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
         addSlot(new ChamberSlot(EXTRACTION_INPUT, 51, PAGE_EXTRACTION));
         addSlot(new ChamberSlot(EXTRACTION_OUTPUT, 111, PAGE_EXTRACTION));
         for (int index = 0; index < UPGRADE_COUNT; index++) {
-            addSlot(new ChamberSlot(FIRST_UPGRADE + index, 62 + index * 18, PAGE_UPGRADE));
+            addSlot(new ChamberSlot(FIRST_UPGRADE + index, 53 + index % 4 * 18, 37 + index / 4 * 20, PAGE_UPGRADE));
         }
 
         for (int row = 0; row < 3; row++) {
@@ -143,11 +142,8 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
         return data.get(3);
     }
 
-    @Nullable
-    public ChamberProduction.Recipe getProductionRecipe() {
-        return chamber == null
-                ? null
-                : ChamberProduction.forEntity(chamber.getEntityId());
+    public boolean hasPendingProduction() {
+        return data.get(6) != 0;
     }
 
     @Override
@@ -155,7 +151,9 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
         if (id < PAGE_PRODUCTION || id > PAGE_UPGRADE || !stillValid(player)) {
             return false;
         }
+        resetQuickCraft();
         page.set(id);
+        broadcastChanges();
         return true;
     }
 
@@ -166,8 +164,8 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
 
     @Override
     public void clicked(int index, int button, ClickType type, Player player) {
-        if (index >= 0 && (index >= slots.size() || !slots.get(index).isActive()
-                || (type == ClickType.CLONE && !slots.get(index).mayPickup(player)))) {
+        if (!stillValid(player) || (index >= 0 && (index >= slots.size() || !slots.get(index).isActive()
+                || (type == ClickType.CLONE && !slots.get(index).mayPickup(player))))) {
             return;
         }
         super.clicked(index, button, type, player);
@@ -185,7 +183,7 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        if (index < 0 || index >= slots.size()) {
+        if (!stillValid(player) || index < 0 || index >= slots.size()) {
             return ItemStack.EMPTY;
         }
         Slot slot = slots.get(index);
@@ -240,7 +238,11 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
         private final int slotPage;
 
         private ChamberSlot(int slot, int x, int slotPage) {
-            super(ContainmentChamberMenu.this.container, slot, x, 45);
+            this(slot, x, 45, slotPage);
+        }
+
+        private ChamberSlot(int slot, int x, int y, int slotPage) {
+            super(ContainmentChamberMenu.this.container, slot, x, y);
             this.slot = slot;
             this.slotPage = slotPage;
         }
@@ -272,8 +274,16 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
             if (container instanceof ContainmentChamberBlockEntity entity) {
                 return entity.canChangeUpgrade(slot, ItemStack.EMPTY);
             }
-            return !getItem().is(ModItems.CAPACITY_UPGRADE.get())
-                    || container.getItem(getUnlockedOutputs() - 1).isEmpty();
+            if (!getItem().is(ModItems.CAPACITY_UPGRADE.get())) {
+                return true;
+            }
+            int capacity = BASE_OUTPUTS;
+            for (int index = FIRST_UPGRADE; index < SLOT_COUNT; index++) {
+                if (container.getItem(index).is(ModItems.CAPACITY_UPGRADE.get())) {
+                    capacity++;
+                }
+            }
+            return capacity > MAX_OUTPUTS || container.getItem(getUnlockedOutputs() - 1).isEmpty();
         }
 
         @Override

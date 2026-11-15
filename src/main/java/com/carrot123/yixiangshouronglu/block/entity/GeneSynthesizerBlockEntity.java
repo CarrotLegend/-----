@@ -1,6 +1,7 @@
 package com.carrot123.yixiangshouronglu.block.entity;
 
 import com.carrot123.yixiangshouronglu.gene.recipe.ChimeraRecipe;
+import com.carrot123.yixiangshouronglu.item.BiologicalResearchItem;
 import com.carrot123.yixiangshouronglu.menu.GeneSynthesizerMenu;
 import com.carrot123.yixiangshouronglu.registry.*;
 import net.minecraft.core.BlockPos;
@@ -30,6 +31,19 @@ public final class GeneSynthesizerBlockEntity extends BlockEntity implements Men
     public final ItemStackHandler chimeraInventory = new ItemStackHandler(5) {
         @Override protected void onContentsChanged(int slot) { setChanged(); }
     };
+    public static final int RESEARCH_DURATION = 40;
+    public final ItemStackHandler researchInventory = new ItemStackHandler(2) {
+        @Override public boolean isItemValid(int slot, ItemStack stack) {
+            return slot == 0 && BiologicalResearchItem.entityId(stack, false) != null;
+        }
+
+        @Override protected void onContentsChanged(int slot) { setChanged(); }
+    };
+    private ItemStack researchInput = ItemStack.EMPTY;
+    private int researchProgress;
+
+    public int researchProgress() { return researchProgress; }
+
     private int chimeraProgress;
     private boolean chimeraMatched;
     private CompoundTag chimeraContext = new CompoundTag();
@@ -41,12 +55,23 @@ public final class GeneSynthesizerBlockEntity extends BlockEntity implements Men
     public GeneSynthesizerBlockEntity(BlockPos pos, BlockState state) { super(ModBlockEntities.GENE_SYNTHESIZER.get(), pos, state); }
     private IItemHandler automationHandler() {
         return new IItemHandler() {
-            public int getSlots() { return 5; }
-            public ItemStack getStackInSlot(int slot) { return inventory.getStackInSlot(slot); }
-            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) { return stack; }
-            public ItemStack extractItem(int slot, int amount, boolean simulate) { return inventory.extractItem(slot, amount, simulate); }
-            public int getSlotLimit(int slot) { return inventory.getSlotLimit(slot); }
-            public boolean isItemValid(int slot, ItemStack stack) { return false; }
+            public int getSlots() { return 7; }
+            public ItemStack getStackInSlot(int slot) {
+                return slot < 5 ? inventory.getStackInSlot(slot) : researchInventory.getStackInSlot(slot - 5);
+            }
+            public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+                return slot == 5 ? researchInventory.insertItem(0, stack, simulate) : stack;
+            }
+            public ItemStack extractItem(int slot, int amount, boolean simulate) {
+                if (slot < 5) {
+                    return inventory.extractItem(slot, amount, simulate);
+                }
+                return slot == 6 ? researchInventory.extractItem(1, amount, simulate) : ItemStack.EMPTY;
+            }
+            public int getSlotLimit(int slot) { return slot < 5 ? inventory.getSlotLimit(slot) : 1; }
+            public boolean isItemValid(int slot, ItemStack stack) {
+                return slot == 5 && researchInventory.isItemValid(0, stack);
+            }
         };
     }
     @Override public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) { return capability == ForgeCapabilities.ITEM_HANDLER ? automation.cast() : super.getCapability(capability, side); }
@@ -55,7 +80,27 @@ public final class GeneSynthesizerBlockEntity extends BlockEntity implements Men
     public static void tick(Level level, BlockPos pos, BlockState state, GeneSynthesizerBlockEntity machine) {
         if (level.isClientSide) { return; }
         machine.tickChimera(level);
+        machine.tickResearch();
     }
+    private void tickResearch() {
+        ItemStack input = researchInventory.getStackInSlot(0);
+        if (!ItemStack.matches(input, researchInput)) {
+            researchInput = input.copy();
+            researchProgress = 0;
+            setChanged();
+        }
+        if (BiologicalResearchItem.entityId(input, false) == null || !researchInventory.getStackInSlot(1).isEmpty()) {
+            return;
+        }
+        if (++researchProgress == RESEARCH_DURATION) {
+            researchInventory.setStackInSlot(1, BiologicalResearchItem.finish(input));
+            researchInventory.setStackInSlot(0, ItemStack.EMPTY);
+            researchInput = ItemStack.EMPTY;
+            researchProgress = 0;
+        }
+        setChanged();
+    }
+
     private SimpleContainer chimeraInputs() {
         SimpleContainer inputs = new SimpleContainer(4);
         for (int slot = 0; slot < 4; slot++) {
@@ -117,11 +162,22 @@ public final class GeneSynthesizerBlockEntity extends BlockEntity implements Men
     }
 
     @Override protected void saveAdditional(CompoundTag tag) { super.saveAdditional(tag); tag.put("Items", inventory.serializeNBT());
+        tag.put("ResearchItems", researchInventory.serializeNBT());
+        tag.put("ResearchInput", researchInput.save(new CompoundTag()));
+        tag.putInt("ResearchProgress", researchProgress);
         tag.put("ChimeraItems", chimeraInventory.serializeNBT());
         tag.putInt("ChimeraProgress", chimeraProgress);
         tag.put("ChimeraContext", chimeraContext.copy());
     }
-    @Override public void load(CompoundTag tag) { super.load(tag); inventory.deserializeNBT(tag.getCompound("Items"));
+    @Override public void load(CompoundTag tag) { super.load(tag); CompoundTag legacy = tag.getCompound("Items").copy();
+        legacy.putInt("Size", 5);
+        inventory.deserializeNBT(legacy);
+        CompoundTag research = tag.getCompound("ResearchItems").copy();
+        research.putInt("Size", 2);
+        researchInventory.deserializeNBT(research);
+        researchInput = ItemStack.of(tag.getCompound("ResearchInput"));
+        researchProgress = !researchInput.isEmpty() && ItemStack.matches(researchInput, researchInventory.getStackInSlot(0))
+                ? Math.max(0, Math.min(RESEARCH_DURATION - 1, tag.getInt("ResearchProgress"))) : 0;
         CompoundTag items = tag.getCompound("ChimeraItems").copy();
         items.putInt("Size", 5);
         chimeraInventory.deserializeNBT(items);

@@ -1,8 +1,6 @@
 package com.carrot123.yixiangshouronglu.entity;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
-import com.carrot123.yixiangshouronglu.item.SoulItem;
-import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -31,13 +29,11 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.DragonFireball;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -182,37 +178,6 @@ public final class YoungEnderDragonEntity extends TamableAnimal {
     ) {
         if (!isTame() || !isOwnedBy(player)) {
             return super.mobInteract(player, hand);
-        }
-
-        ItemStack held = player.getItemInHand(hand);
-
-        if (hand == InteractionHand.MAIN_HAND
-                && !held.is(Items.NETHER_STAR)
-                && player.getOffhandItem().is(Items.NETHER_STAR)) {
-            return InteractionResult.PASS;
-        }
-
-        if (held.is(Items.NETHER_STAR)) {
-            if (!level().isClientSide) {
-                var entityId = ForgeRegistries.ENTITY_TYPES.getKey(getType());
-
-                if (entityId == null) {
-                    return InteractionResult.FAIL;
-                }
-
-                ItemStack soul = SoulItem.create(
-                        ModItems.SOUL.get(),
-                        entityId
-                );
-
-                if (!player.getInventory().add(soul)) {
-                    player.drop(soul, false);
-                }
-
-                discard();
-            }
-
-            return InteractionResult.sidedSuccess(level().isClientSide);
         }
 
         if (hand != InteractionHand.MAIN_HAND) {
