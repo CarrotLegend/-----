@@ -3,6 +3,7 @@ package com.carrot123.yixiangshouronglu.registry;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.gene.recipe.ChimeraRecipe;
 import net.minecraft.world.item.crafting.*;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.*;
 
 public final class ModGeneRecipes {
@@ -13,4 +14,9 @@ public final class ModGeneRecipes {
     });
     public static final RegistryObject<RecipeSerializer<ChimeraRecipe>> CHIMERA_SERIALIZER = SERIALIZERS.register("chimera_modification", ChimeraRecipe.Serializer::new);
     private ModGeneRecipes() {}
+
+    public static void register(IEventBus bus) {
+        TYPES.register(bus);
+        SERIALIZERS.register(bus);
+    }
 }

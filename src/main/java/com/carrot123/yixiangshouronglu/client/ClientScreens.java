@@ -61,8 +61,8 @@ public final class ClientScreens {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             MenuScreens.register(ModMenus.CARROT_KING_SHOP.get(), CarrotKingShopScreen::new);
-            MenuScreens.register(ModMenus.CONTAINMENT_DEVICE.get(), ContainmentDeviceScreen::new);
             MenuScreens.register(ModMenus.GENE_SYNTHESIZER.get(), GeneSynthesizerScreen::new);
+            MenuScreens.register(ModMenus.BIOLOGICAL_CONTAINMENT_DEVICE.get(), BiologicalContainmentDeviceScreen::new);
             MenuScreens.register(ModMenus.GENE_RESEARCH_TABLE.get(), GeneResearchTableScreen::new);
             MenuScreens.register(ModMenus.GENE_MODIFICATION_CHAMBER.get(), GeneModificationScreen::new);
             MenuScreens.register(

@@ -1,6 +1,10 @@
 package com.carrot123.yixiangshouronglu.registry;
 
 import com.carrot123.yixiangshouronglu.gene.research.GeneResearchRegistry;
+import com.carrot123.yixiangshouronglu.item.GeneExtractorItem;
+import com.carrot123.yixiangshouronglu.item.GeneFragmentItem;
+import com.carrot123.yixiangshouronglu.item.ResearchResultItem;
+import com.carrot123.yixiangshouronglu.item.BiologicalContainmentDeviceItem;
 import com.carrot123.yixiangshouronglu.item.GeneModifierItem;
 
 import net.minecraft.world.item.BlockItem;
@@ -20,8 +24,6 @@ import com.carrot123.yixiangshouronglu.item.MobContainerItem;
 import com.carrot123.yixiangshouronglu.item.FinalKnellItem;
 import com.carrot123.yixiangshouronglu.item.SoulGuidingLanternItem;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
-import com.carrot123.yixiangshouronglu.item.BiologicalResearchItem;
-import com.carrot123.yixiangshouronglu.item.ContainmentDeviceItem;
 import com.carrot123.yixiangshouronglu.item.WendigoEyeItem;
 import com.carrot123.yixiangshouronglu.item.WendigoSightItem;
 import com.carrot123.yixiangshouronglu.item.ContainmentExtractItem;
@@ -38,9 +40,6 @@ import net.minecraftforge.registries.RegistryObject;
 public final class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AnomalousContainmentChronicles.MOD_ID);
     public static final RegistryObject<Item> CONTAINMENT_CHAMBER = ITEMS.register("containment_chamber", () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> BIOLOGICAL_RESEARCH_SAMPLE = ITEMS.register("biological_research_sample", () -> new BiologicalResearchItem(false));
-    public static final RegistryObject<Item> BIOLOGICAL_RESEARCH_RESULT = ITEMS.register("biological_research_result", () -> new BiologicalResearchItem(true));
-    public static final RegistryObject<Item> CONTAINMENT_DEVICE = ITEMS.register("containment_device", ContainmentDeviceItem::new);
     public static final RegistryObject<Item> SOUL = ITEMS.register("soul", () -> new SoulItem(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> LEGENDARY_CARROT_KING_SPAWN_EGG = ITEMS.register("legendary_carrot_king_spawn_egg", () -> new ForgeSpawnEggItem(ModEntities.LEGENDARY_CARROT_KING, 0xE9943F, 0x79B56C, new Item.Properties()));
     public static final RegistryObject<Item> LEGENDARY_CARROT_KING_SUMMONER = ITEMS.register("legendary_carrot_king_summoner", () -> new LegendaryCarrotKingSummonerItem(new Item.Properties().stacksTo(1)));
@@ -65,7 +64,10 @@ public final class ModItems {
     public static final RegistryObject<Item> AMETHYST_CRAB_LURE = ITEMS.register("amethyst_crab_lure", () -> new AmethystCrabLureBlock(ModBlocks.AMETHYST_CRAB_LURE.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SEDATIVE_MEAT = ITEMS.register("sedative_meat", () -> new Item(new Item.Properties().stacksTo(64).rarity(Rarity.UNCOMMON)));
 
-    public static final RegistryObject<Item> GENE_MODULE = ITEMS.register("gene_module", () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> GENE_EXTRACTOR = ITEMS.register("gene_extractor", GeneExtractorItem::new);
+    public static final RegistryObject<Item> GENE_FRAGMENT = ITEMS.register("gene_fragment", GeneFragmentItem::new);
+    public static final RegistryObject<Item> RESEARCH_RESULT = ITEMS.register("research_result", ResearchResultItem::new);
+    public static final RegistryObject<Item> BIOLOGICAL_CONTAINMENT_DEVICE = ITEMS.register("biological_containment_device", BiologicalContainmentDeviceItem::new);
     public static final RegistryObject<Item> GENE_SYNTHESIZER = ITEMS.register("gene_synthesizer", () -> new BlockItem(ModBlocks.GENE_SYNTHESIZER.get(), new Item.Properties()));
     public static final RegistryObject<Item> GENE_RESEARCH_TABLE = ITEMS.register("gene_research_table", () -> new BlockItem(ModBlocks.GENE_RESEARCH_TABLE.get(), new Item.Properties()));
     public static final RegistryObject<Item> GENE_MODIFIER_FROST = ITEMS.register("gene_modifier_frost", () -> new GeneModifierItem(new Item.Properties().stacksTo(64).rarity(Rarity.RARE), GeneResearchRegistry.FROST));

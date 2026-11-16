@@ -1,7 +1,6 @@
 package com.carrot123.yixiangshouronglu.block;
 
 import com.carrot123.yixiangshouronglu.block.entity.GeneSynthesizerBlockEntity;
-import com.carrot123.yixiangshouronglu.gene.GeneCapability;
 import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

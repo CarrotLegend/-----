@@ -6,6 +6,7 @@ import com.carrot123.yixiangshouronglu.menu.ContainmentChamberMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
@@ -14,12 +15,14 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
     private static final int TAB_WIDTH = 64;
     private static final int TAB_HEIGHT = 20;
 
+    private static final ResourceLocation CHEST_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
+
     public ContainmentChamberScreen(ContainmentChamberMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
-        imageWidth = 176;
-        imageHeight = 193;
-        inventoryLabelX = 8;
-        inventoryLabelY = 99;
+        imageWidth = ContainmentChamberMenu.PANEL_WIDTH;
+        imageHeight = ContainmentChamberMenu.PANEL_HEIGHT;
+        inventoryLabelX = ContainmentChamberMenu.PLAYER_X;
+        inventoryLabelY = ContainmentChamberMenu.PLAYER_Y - 11;
     }
 
     @Override
@@ -30,8 +33,9 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
         graphics.fill(x, y, x + imageWidth, y + imageHeight, 0xF018202B);
         graphics.fill(x + 1, y + 1, x + imageWidth - 1, y + 2, 0xFFB69C6B);
         graphics.fill(x + 1, y + imageHeight - 3, x + imageWidth - 1, y + imageHeight - 2, 0xFFB69C6B);
-        graphics.fill(x + 7, y + 34, x + imageWidth - 7, y + 76, 0xFF101722);
-        graphics.fill(x + 7, y + 96, x + imageWidth - 7, y + 97, 0xFF786B55);
+        int workBottom = menu.getPage() == ContainmentChamberMenu.PAGE_PRODUCTION ? 124 : 76;
+        graphics.fill(x + 7, y + 34, x + imageWidth - 7, y + workBottom, 0xFF101722);
+        graphics.fill(x + 7, y + 139, x + imageWidth - 7, y + 140, 0xFF786B55);
 
         if (menu.getPage() == ContainmentChamberMenu.PAGE_EXTRACTION) {
             renderExtractionSlots(graphics, x, y);
@@ -44,18 +48,20 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
         } else {
             for (int index = 0; index < menu.getUnlockedOutputs(); index++) {
                 var slot = menu.getSlot(index);
-                drawSpecialSlot(graphics, x + slot.x - 1, y + slot.y - 1);
+                graphics.blit(CHEST_TEXTURE, x + slot.x - 1, y + slot.y - 1, 7, 17, 18, 18);
             }
         }
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                drawInventorySlot(graphics, x + 7 + column * 18, y + 109 + row * 18);
+                drawInventorySlot(graphics, x + ContainmentChamberMenu.PLAYER_X - 1 + column * 18,
+                        y + ContainmentChamberMenu.PLAYER_Y - 1 + row * 18);
             }
         }
 
         for (int column = 0; column < 9; column++) {
-            drawInventorySlot(graphics, x + 7 + column * 18, y + 167);
+            drawInventorySlot(graphics, x + ContainmentChamberMenu.PLAYER_X - 1 + column * 18,
+                    y + ContainmentChamberMenu.HOTBAR_Y - 1);
         }
 
         if (menu.getPage() == ContainmentChamberMenu.PAGE_EXTRACTION) {
@@ -80,11 +86,11 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
         } else {
             label = Component.translatable(key + "no_production");
         }
-        graphics.drawCenteredString(font, label, x + imageWidth / 2, y + 79, 0xFFE5C994);
+        graphics.drawCenteredString(font, label, x + imageWidth / 2, y + 125, 0xFFE5C994);
         if (pending || interval > 0) {
             int width = pending ? 100 : Math.max(0, Math.min(100, menu.getProgress() * 100 / interval));
-            graphics.fill(x + 38, y + 89, x + 138, y + 94, 0xFF353C48);
-            graphics.fill(x + 38, y + 89, x + 38 + width, y + 94, 0xFFC6A363);
+            graphics.fill(x + (imageWidth - 100) / 2, y + 134, x + (imageWidth + 100) / 2, y + 138, 0xFF353C48);
+            graphics.fill(x + (imageWidth - 100) / 2, y + 134, x + (imageWidth - 100) / 2 + width, y + 138, 0xFFC6A363);
         }
     }
 
@@ -259,7 +265,7 @@ public final class ContainmentChamberScreen extends AbstractContainerScreen<Cont
                 : SoulItem.getEntityName(menu.getEntityId());
 
         graphics.drawCenteredString(font, entity, imageWidth / 2, 15, 0xFFF1D59D);
-        graphics.drawString(font, playerInventoryTitle, 8, 99, 0xFFDBDDE2, false);
+        graphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFFDBDDE2, false);
     }
 
     @Override

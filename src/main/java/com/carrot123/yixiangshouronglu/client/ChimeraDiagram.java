@@ -15,12 +15,6 @@ public final class ChimeraDiagram {
         }
     }
 
-    public static boolean onProgressLines(int x, int y) {
-        int dx = Math.abs(x - 133);
-        int dy = Math.abs(y - 63);
-        return dx + dy > 18 && dx < 72 && Math.abs(dy * 81 - dx * 28) <= 324;
-    }
-
     public static void diamond(GuiGraphics graphics, int x, int y) {
         for (int row = -17; row <= 17; row++) {
             int half = 17 - Math.abs(row);

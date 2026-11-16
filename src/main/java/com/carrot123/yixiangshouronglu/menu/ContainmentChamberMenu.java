@@ -26,7 +26,15 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
     public static final int PAGE_UPGRADE = 2;
     private static final int HOTBAR_START = SLOT_COUNT + 27;
     private static final int MENU_END = HOTBAR_START + 9;
-    private static final int[] OUTPUT_X = {70, 88, 106, 52, 124};
+    public static final int PANEL_WIDTH = 196;
+    public static final int PANEL_HEIGHT = 238;
+    private static final int OUTPUT_COLUMNS = 10;
+    private static final int SLOT_PITCH = 18;
+    private static final int OUTPUT_X = (PANEL_WIDTH - OUTPUT_COLUMNS * SLOT_PITCH) / 2 + 1;
+    private static final int OUTPUT_Y = 35;
+    public static final int PLAYER_X = (PANEL_WIDTH - 9 * SLOT_PITCH) / 2 + 1;
+    public static final int PLAYER_Y = 152;
+    public static final int HOTBAR_Y = PLAYER_Y + 58;
 
     private final Container container;
     private final ContainerData data;
@@ -68,7 +76,8 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
         container.startOpen(inventory.player);
 
         for (int index = 0; index < MAX_OUTPUTS; index++) {
-            addSlot(new ChamberSlot(index, OUTPUT_X[index], PAGE_PRODUCTION));
+            addSlot(new ChamberSlot(index, OUTPUT_X + index % OUTPUT_COLUMNS * SLOT_PITCH,
+                    OUTPUT_Y + index / OUTPUT_COLUMNS * SLOT_PITCH, PAGE_PRODUCTION));
         }
         addSlot(new ChamberSlot(EXTRACTION_INPUT, 51, PAGE_EXTRACTION));
         addSlot(new ChamberSlot(EXTRACTION_OUTPUT, 111, PAGE_EXTRACTION));
@@ -81,14 +90,14 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
                 addSlot(new Slot(
                         inventory,
                         column + row * 9 + 9,
-                        8 + column * 18,
-                        110 + row * 18
+                        PLAYER_X + column * SLOT_PITCH,
+                        PLAYER_Y + row * SLOT_PITCH
                 ));
             }
         }
 
         for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(inventory, column, 8 + column * 18, 168));
+            addSlot(new Slot(inventory, column, PLAYER_X + column * SLOT_PITCH, HOTBAR_Y));
         }
 
         addDataSlots(data);
@@ -277,13 +286,12 @@ public final class ContainmentChamberMenu extends AbstractContainerMenu {
             if (!getItem().is(ModItems.CAPACITY_UPGRADE.get())) {
                 return true;
             }
-            int capacity = BASE_OUTPUTS;
-            for (int index = FIRST_UPGRADE; index < SLOT_COUNT; index++) {
-                if (container.getItem(index).is(ModItems.CAPACITY_UPGRADE.get())) {
-                    capacity++;
+            for (int index = getUnlockedOutputs() - OUTPUTS_PER_UPGRADE; index < getUnlockedOutputs(); index++) {
+                if (!container.getItem(index).isEmpty()) {
+                    return false;
                 }
             }
-            return capacity > MAX_OUTPUTS || container.getItem(getUnlockedOutputs() - 1).isEmpty();
+            return true;
         }
 
         @Override

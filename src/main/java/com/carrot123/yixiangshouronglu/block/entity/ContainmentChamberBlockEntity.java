@@ -37,12 +37,13 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
     public static final int EXTRACT_COST_MB = 100;
     public static final int EXTRACT_TIME = 20;
 
-    public static final int BASE_OUTPUTS = 2;
-    public static final int MAX_OUTPUTS = 5;
+    public static final int BASE_OUTPUTS = 10;
+    public static final int OUTPUTS_PER_UPGRADE = 5;
+    public static final int UPGRADE_COUNT = 8;
+    public static final int MAX_OUTPUTS = BASE_OUTPUTS + OUTPUTS_PER_UPGRADE * UPGRADE_COUNT;
     public static final int EXTRACTION_INPUT = MAX_OUTPUTS;
     public static final int EXTRACTION_OUTPUT = EXTRACTION_INPUT + 1;
     public static final int FIRST_UPGRADE = EXTRACTION_OUTPUT + 1;
-    public static final int UPGRADE_COUNT = 8;
     public static final int SLOT_COUNT = FIRST_UPGRADE + UPGRADE_COUNT;
     public static final int DATA_COUNT = 7;
 
@@ -135,7 +136,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
         for (int slot = 0; slot < upgrades.size(); slot++) {
             ItemStack upgrade = slot == changedSlot ? replacement : upgrades.get(slot);
             if (upgrade.is(ModItems.CAPACITY_UPGRADE.get())) {
-                count++;
+                count += OUTPUTS_PER_UPGRADE;
             }
         }
         return Math.min(MAX_OUTPUTS, count);

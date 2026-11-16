@@ -7,7 +7,6 @@ import com.carrot123.yixiangshouronglu.network.GeneResearchNetwork;
 import com.carrot123.yixiangshouronglu.network.ShopNetwork;
 import com.carrot123.yixiangshouronglu.network.LanternNetwork;
 import com.carrot123.yixiangshouronglu.shop.PlayerShopData;
-import com.carrot123.yixiangshouronglu.gene.PlayerGenes;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import com.carrot123.yixiangshouronglu.registry.ModGeneRecipes;
 import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
@@ -35,9 +34,7 @@ public final class AnomalousContainmentChronicles {
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModMenus.MENUS.register(modBus);
         ModCreativeTabs.CREATIVE_TABS.register(modBus);
-        ModGeneRecipes.TYPES.register(modBus);
-        ModGeneRecipes.SERIALIZERS.register(modBus);
-        modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerGenes.class));
+        ModGeneRecipes.register(modBus);
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerGeneResearch.class));
         modBus.addListener((RegisterCapabilitiesEvent event) -> event.register(PlayerShopData.class));
         ShopNetwork.register();

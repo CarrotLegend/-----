@@ -49,9 +49,7 @@ public final class ChamberProduction {
                 .create(PARAMETERS);
         try {
             return table.getRandomItems(params).stream()
-                    .filter(stack -> !stack.isEmpty() && !stack.is(ModItems.SOUL.get())
-                            && !stack.is(ModItems.BIOLOGICAL_RESEARCH_SAMPLE.get())
-                            && !stack.is(ModItems.BIOLOGICAL_RESEARCH_RESULT.get()))
+                    .filter(stack -> !stack.isEmpty() && !stack.is(ModItems.SOUL.get()))
                     .map(ItemStack::copy)
                     .toList();
         } catch (RuntimeException exception) {

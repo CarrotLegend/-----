@@ -1,5 +1,6 @@
 package com.carrot123.yixiangshouronglu.registry;
 
+
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -43,8 +44,10 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.SEDATIVE_MEAT.get());
                                 output.accept(ModItems.EXTRACTOR.get());
                                 output.accept(ModItems.GENE_SYNTHESIZER.get());
-                                output.accept(ModItems.BIOLOGICAL_RESEARCH_SAMPLE.get());
-                                output.accept(ModItems.CONTAINMENT_DEVICE.get());
+                                output.accept(ModItems.GENE_EXTRACTOR.get());
+                                output.accept(ModItems.GENE_FRAGMENT.get());
+                                output.accept(ModItems.RESEARCH_RESULT.get());
+                                output.accept(ModItems.BIOLOGICAL_CONTAINMENT_DEVICE.get());
                                 output.accept(ModItems.GENE_RESEARCH_TABLE.get());
                                 output.accept(ModItems.GENE_MODIFIER_HEALTH.get());
                                 output.accept(ModItems.GENE_MODIFIER_ATTACK.get());

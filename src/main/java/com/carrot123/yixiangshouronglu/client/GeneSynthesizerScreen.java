@@ -4,7 +4,6 @@ import com.carrot123.yixiangshouronglu.gene.GeneTime;
 import com.carrot123.yixiangshouronglu.block.entity.GeneSynthesizerBlockEntity;
 import com.carrot123.yixiangshouronglu.menu.GeneSynthesizerMenu;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.Rect2i;
 import com.carrot123.yixiangshouronglu.gene.recipe.ChimeraRecipe;
 
 import static com.carrot123.yixiangshouronglu.menu.GeneSynthesizerMenu.*;
@@ -12,59 +11,75 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class GeneSynthesizerScreen extends GeneScreen<GeneSynthesizerMenu> {
-    private int tabWidth;
+    private static final Component RESEARCH = Component.translatable("gui.yixiangshouronglu.biological_research_page");
+    private static final Component CHIMERA = Component.translatable("gui.yixiangshouronglu.chimera_page");
+    private static final int TAB_Y = 4;
+    private static final int TAB_HEIGHT = 17;
 
-    public GeneSynthesizerScreen(GeneSynthesizerMenu menu, Inventory inventory, Component title) { super(menu, inventory, title, 266, 210); }
-    @Override protected int extraHorizontalSpace() { return 2 * (tabWidth() + 4); }
+    public GeneSynthesizerScreen(GeneSynthesizerMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title, 266, 210);
+    }
 
     @Override protected void widgets() {
-        tabWidth = tabWidth();
     }
+
     @Override protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         panel(graphics);
-        boolean chimera = menu.page() == PAGE_CHIMERA;
-        if (chimera) {
+        drawTab(graphics, RESEARCH_PAGE, RESEARCH);
+        drawTab(graphics, CHIMERA_PAGE, CHIMERA);
+        if (menu.page() == CHIMERA_PAGE) {
             drawChimera(graphics);
         } else {
-            slot(graphics, 45, 54, 0xFF445968);
-            slot(graphics, 205, 54, 0xFF445968);
-            int width = 116 * Math.max(0, Math.min(menu.researchProgress(), GeneSynthesizerBlockEntity.RESEARCH_DURATION))
-                    / GeneSynthesizerBlockEntity.RESEARCH_DURATION;
-            graphics.fill(leftPos + 74, topPos + 57, leftPos + 192, topPos + 67, 0xFF263B47);
-            graphics.fill(leftPos + 75, topPos + 58, leftPos + 75 + width, topPos + 66, 0xFF60CCD4);
+            drawResearch(graphics);
         }
         for (int row = 0; row < 3; row++) { for (int col = 0; col < 9; col++) { slot(graphics, 51 + col * 18, 121 + row * 18, 0xFF334958); } }
         for (int col = 0; col < 9; col++) { slot(graphics, 51 + col * 18, 179, 0xFF334958); }
-        for (int page = 0; page < 2; page++) {
-            Rect2i area = tab(page);
-            boolean selected = menu.page() == page;
-            boolean hovered = area.contains(mouseX, mouseY);
-            int x = area.getX();
-            int y = area.getY();
-            graphics.fill(x, y, x + tabWidth, y + 20, selected ? 0xFFE5C994 : 0xFF786B55);
-            graphics.fill(x + 1, y + 1, x + tabWidth - 1, y + 19,
-                    selected ? 0xFF292F3A : hovered ? 0xFF353C48 : 0xFF18202B);
-            graphics.drawCenteredString(font, tabLabel(page), x + tabWidth / 2, y + 6,
-                    selected ? 0xFFF1D59D : hovered ? 0xFFE5C994 : 0xFFDBDDE2);
-        }
     }
+
     @Override protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        graphics.drawString(font, title, 8, 7, 0xE4F1FA, false);
-        if (menu.page() == PAGE_CHIMERA) {
-            graphics.drawCenteredString(font, Component.translatable("gene.yixiangshouronglu.progress",
-                    GeneTime.seconds(menu.chimeraProgress()), GeneTime.totalSeconds(ChimeraRecipe.DURATION)), 133, 108, 0xFFAAB9C8);
-            if (!menu.chimeraMatched()) {
-                graphics.drawCenteredString(font, Component.translatable("gui.yixiangshouronglu.chimera_no_match"),
-                        133, 83, 0xFFAAB9C8);
-            }
+        if (menu.page() == RESEARCH_PAGE) {
             return;
         }
-        if (!menu.researchInput().isEmpty()) {
-            graphics.drawCenteredString(font, menu.researchInput().getHoverName(), 133, 36, 0xFFE4F1FA);
-        }
         graphics.drawCenteredString(font, Component.translatable("gene.yixiangshouronglu.progress",
-                GeneTime.seconds(menu.researchProgress()), GeneTime.totalSeconds(GeneSynthesizerBlockEntity.RESEARCH_DURATION)),
-                133, 82, 0xFFAAB9C8);
+                GeneTime.seconds(menu.chimeraProgress()), GeneTime.totalSeconds(ChimeraRecipe.DURATION)), 133, 108, 0xFFAAB9C8);
+        if (!menu.chimeraMatched()) {
+            graphics.drawCenteredString(font, Component.translatable("gui.yixiangshouronglu.chimera_no_match"),
+                    133, 83, 0xFFAAB9C8);
+        }
+    }
+
+    private void drawResearch(GuiGraphics graphics) {
+        slot(graphics, RESEARCH_INPUT_X, RESEARCH_Y, 0xFF445968);
+        slot(graphics, RESEARCH_OUTPUT_X, RESEARCH_Y, 0xFF445968);
+        int width = 72 * Math.max(0, Math.min(menu.researchProgress(), GeneSynthesizerBlockEntity.RESEARCH_DURATION))
+                / GeneSynthesizerBlockEntity.RESEARCH_DURATION;
+        graphics.fill(leftPos + 96, topPos + 60, leftPos + 170, topPos + 64, 0xFF263B47);
+        if (width > 0) {
+            graphics.fill(leftPos + 97, topPos + 61, leftPos + 97 + width, topPos + 63, 0xFF60CCD4);
+        }
+    }
+
+    private int tabX(int page) { return 8 + page * 125; }
+
+    private void drawTab(GuiGraphics graphics, int page, Component label) {
+        int x = leftPos + tabX(page);
+        int y = topPos + TAB_Y;
+        boolean selected = menu.page() == page;
+        graphics.fill(x, y, x + 120, y + TAB_HEIGHT, selected ? 0xFF304E59 : 0xFF192835);
+        graphics.drawCenteredString(font, label, x + 60, y + 5, selected ? 0xFF8DE6EC : 0xFFD1DFE8);
+    }
+
+    @Override protected boolean clickScaled(double x, double y, int button) {
+        if (button == 0 && y >= topPos + TAB_Y && y < topPos + TAB_Y + TAB_HEIGHT) {
+            for (int page = RESEARCH_PAGE; page <= CHIMERA_PAGE; page++) {
+                int start = leftPos + tabX(page);
+                if (x >= start && x < start + 120) {
+                    minecraft.gameMode.handleInventoryButtonClick(menu.containerId, page);
+                    return true;
+                }
+            }
+        }
+        return super.clickScaled(x, y, button);
     }
 
     private void drawChimera(GuiGraphics graphics) {
@@ -79,41 +94,4 @@ public final class GeneSynthesizerScreen extends GeneScreen<GeneSynthesizerMenu>
         ChimeraDiagram.diamond(graphics, centerX, centerY);
     }
 
-    private Component tabLabel(int page) {
-        return Component.translatable(page == PAGE_RESEARCH ? "gui.yixiangshouronglu.biological_research_tab" : "gui.yixiangshouronglu.chimera_tab");
-    }
-
-    private int tabWidth() {
-        return Math.max(84, Math.max(font.width(tabLabel(0)), font.width(tabLabel(1))) + 8);
-    }
-
-    private boolean tabsOnTop() {
-        return width - leftPos - imageWidth < tabWidth + 3 && leftPos < tabWidth + 3;
-    }
-
-    private Rect2i tab(int page) {
-        if (tabsOnTop()) {
-            return new Rect2i(leftPos + 8 + page * (tabWidth + 3), Math.max(0, topPos - 21), tabWidth, 20);
-        }
-        int x = width - leftPos - imageWidth >= tabWidth + 3 ? leftPos + imageWidth + 3 : leftPos - tabWidth - 3;
-        return new Rect2i(x, topPos + 12 + page * 24, tabWidth, 20);
-    }
-
-    public Rect2i scaledTab(int page) {
-        Rect2i area = tab(page);
-        return new Rect2i(Math.round(area.getX() * guiScale()), Math.round(area.getY() * guiScale()),
-                Math.round(area.getWidth() * guiScale()), Math.round(area.getHeight() * guiScale()));
-    }
-
-    @Override protected boolean clickScaled(double x, double y, int button) {
-        if (button == 0) {
-            for (int page = 0; page < 2; page++) {
-                if (tab(page).contains((int) x, (int) y)) {
-                    minecraft.gameMode.handleInventoryButtonClick(menu.containerId, PAGE_BUTTON + page);
-                    return true;
-                }
-            }
-        }
-        return super.clickScaled(x, y, button);
-    }
 }

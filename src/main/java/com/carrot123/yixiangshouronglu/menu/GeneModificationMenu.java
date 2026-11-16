@@ -2,8 +2,8 @@ package com.carrot123.yixiangshouronglu.menu;
 
 import com.carrot123.yixiangshouronglu.block.entity.GeneModificationChamberBlockEntity;
 import com.carrot123.yixiangshouronglu.registry.ModBlocks;
-import com.carrot123.yixiangshouronglu.registry.ModItems;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
+import com.carrot123.yixiangshouronglu.item.GeneFragmentItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
@@ -11,21 +11,18 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public final class GeneModificationMenu extends AbstractContainerMenu {
-    public static final int GENES = 0;
-    public static final int LIMBS = 1;
-    public static final int GENE_SLOTS = 8;
-    public static final int INVENTORY_X = 51;
-    public static final int INVENTORY_Y = 106;
+    public static final int PANEL_WIDTH = 396;
+    public static final int PANEL_HEIGHT = 272;
+    public static final int INVENTORY_X = (PANEL_WIDTH - 9 * 18) / 2 + 1;
+    public static final int INVENTORY_Y = 194;
     private static final int SIZE = GeneModificationChamberBlockEntity.SIZE;
     private final BlockPos pos;
     private final Player owner;
     private final GeneModificationChamberBlockEntity chamber;
-    private final DataSlot page = DataSlot.standalone();
 
     public GeneModificationMenu(int id, Inventory inventory, FriendlyByteBuf buffer) {
         this(id, inventory, buffer.readBlockPos(), null);
@@ -40,14 +37,21 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
         this.pos = pos;
         this.chamber = chamber;
         owner = inventory.player;
-        SimpleContainer contents = chamber == null ? new SimpleContainer(SIZE) : chamber.inventory();
+        SimpleContainer contents = chamber == null ? new SimpleContainer(SIZE) {
+            @Override public boolean canPlaceItem(int slot, ItemStack stack) {
+                return GeneFragmentItem.sourceType(stack) != null;
+            }
+        } : chamber.inventory();
         for (int index = 0; index < SIZE; index++) {
-            int slotPage = index < GENE_SLOTS ? GENES : LIMBS;
             addSlot(new Slot(contents, index, slotX(index), slotY(index)) {
-                @Override public boolean isActive() { return page() == slotPage; }
-                @Override public boolean mayPickup(Player player) { return isActive(); }
-                @Override public boolean mayPlace(ItemStack stack) {
-                    return isActive() && !stack.is(ModItems.GENE_MODULE.get());
+                @Override
+                public int getMaxStackSize() {
+                    return 1;
+                }
+
+                @Override
+                public boolean mayPlace(ItemStack stack) {
+                    return container.canPlaceItem(getContainerSlot(), stack);
                 }
             });
         }
@@ -57,18 +61,25 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
         for (int index = 0; index < 9; index++) {
             addSlot(new Slot(inventory, index, INVENTORY_X + index * 18, INVENTORY_Y + 58));
         }
-        addDataSlot(page);
+    }
+
+    public static final int REGION_COUNT = 6;
+
+    public static int firstSlot(int region) {
+        return region == 0 ? 0 : 1 + (region - 1) * 4;
+    }
+
+    public static int region(int index) {
+        return index == 0 ? 0 : 1 + (index - 1) / 4;
     }
 
     public static int slotX(int index) {
-        return index < GENE_SLOTS ? 31 + index * 27 : 62 + (index - GENE_SLOTS) % 2 * 108;
+        return 162 + (index - firstSlot(region(index))) * 18;
     }
 
     public static int slotY(int index) {
-        return index < GENE_SLOTS ? 33 + index % 2 * 39 : 34 + (index - GENE_SLOTS) / 2 * 31;
+        return 32 + region(index) * 24;
     }
-
-    public int page() { return page.get(); }
 
     @Override public boolean stillValid(Player player) {
         return player == owner && player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64
@@ -76,29 +87,14 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
                 && (chamber == null || player.level().getBlockEntity(pos) == chamber);
     }
 
-    @Override public boolean clickMenuButton(Player player, int button) {
-        if (chamber == null || !stillValid(player) || (button != GENES && button != LIMBS)) {
-            return false;
-        }
-        resetQuickCraft();
-        page.set(button);
-        broadcastChanges();
-        return true;
-    }
-
     @Override public void clicked(int index, int button, ClickType type, Player player) {
-        if (stillValid(player) && (index < 0 || index < slots.size() && getSlot(index).isActive())) {
+        if (stillValid(player) && (index == -999 || (index >= 0 && index < slots.size()))) {
             super.clicked(index, button, type, player);
         }
     }
 
-    @Override public boolean canDragTo(Slot slot) { return slot.isActive() && super.canDragTo(slot); }
-    @Override public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
-        return slot.isActive() && super.canTakeItemForPickAll(stack, slot);
-    }
-
     @Override public ItemStack quickMoveStack(Player player, int index) {
-        if (!stillValid(player) || index < 0 || index >= slots.size() || !getSlot(index).isActive()) {
+        if (!stillValid(player) || index < 0 || index >= slots.size()) {
             return ItemStack.EMPTY;
         }
         Slot slot = getSlot(index);
@@ -107,15 +103,10 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         }
         ItemStack original = stack.copy();
-        if (index < SIZE) {
-            if (!moveItemStackTo(stack, SIZE, slots.size(), true)) {
-                return ItemStack.EMPTY;
-            }
-        } else {
-            if (stack.is(ModItems.GENE_MODULE.get())
-                    || !moveItemStackTo(stack, page() == GENES ? 0 : GENE_SLOTS, page() == GENES ? GENE_SLOTS : SIZE, false)) {
-                return ItemStack.EMPTY;
-            }
+        boolean moved = index < SIZE ? moveItemStackTo(stack, SIZE, slots.size(), true)
+                : moveItemStackTo(stack, 0, SIZE, false);
+        if (!moved) {
+            return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) {
             slot.set(ItemStack.EMPTY);

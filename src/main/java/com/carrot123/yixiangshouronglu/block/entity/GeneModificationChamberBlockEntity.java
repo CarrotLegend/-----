@@ -1,5 +1,6 @@
 package com.carrot123.yixiangshouronglu.block.entity;
 
+import com.carrot123.yixiangshouronglu.item.GeneFragmentItem;
 import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
 import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -18,9 +19,17 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class GeneModificationChamberBlockEntity extends BlockEntity implements MenuProvider {
-    public static final int SIZE = 12;
+    public static final int SIZE = 21;
 
     private final SimpleContainer inventory = new SimpleContainer(SIZE) {
+        @Override public int getMaxStackSize() {
+            return 1;
+        }
+
+        @Override public boolean canPlaceItem(int slot, ItemStack stack) {
+            return GeneFragmentItem.sourceType(stack) != null;
+        }
+
         @Override public void setChanged() {
             super.setChanged();
             GeneModificationChamberBlockEntity.this.setChanged();
@@ -48,13 +57,13 @@ public final class GeneModificationChamberBlockEntity extends BlockEntity implem
         for (int i = 0; i < SIZE; i++) {
             items.set(i, inventory.getItem(i));
         }
-        ContainerHelper.saveAllItems(data, items);
+        data.put("GeneFragments", ContainerHelper.saveAllItems(new CompoundTag(), items));
     }
 
     @Override public void load(CompoundTag data) {
         super.load(data);
         NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(data, items);
+        ContainerHelper.loadAllItems(data.getCompound("GeneFragments"), items);
         for (int i = 0; i < SIZE; i++) {
             inventory.setItem(i, items.get(i));
         }
