@@ -3,6 +3,8 @@ package com.carrot123.yixiangshouronglu.registry;
 import com.carrot123.yixiangshouronglu.gene.research.GeneResearchRegistry;
 import com.carrot123.yixiangshouronglu.item.GeneExtractorItem;
 import com.carrot123.yixiangshouronglu.item.GeneFragmentItem;
+import com.carrot123.yixiangshouronglu.item.BiologicalCleaverItem;
+import com.carrot123.yixiangshouronglu.item.BiologicalGeneModuleItem;
 import com.carrot123.yixiangshouronglu.item.ResearchResultItem;
 import com.carrot123.yixiangshouronglu.item.BiologicalContainmentDeviceItem;
 import com.carrot123.yixiangshouronglu.item.GeneModifierItem;
@@ -66,6 +68,8 @@ public final class ModItems {
 
     public static final RegistryObject<Item> GENE_EXTRACTOR = ITEMS.register("gene_extractor", GeneExtractorItem::new);
     public static final RegistryObject<Item> GENE_FRAGMENT = ITEMS.register("gene_fragment", GeneFragmentItem::new);
+    public static final RegistryObject<Item> BIOLOGICAL_GENE_MODULE = ITEMS.register("biological_gene_module", BiologicalGeneModuleItem::new);
+    public static final RegistryObject<Item> BIOLOGICAL_CLEAVER = ITEMS.register("biological_cleaver", BiologicalCleaverItem::new);
     public static final RegistryObject<Item> RESEARCH_RESULT = ITEMS.register("research_result", ResearchResultItem::new);
     public static final RegistryObject<Item> BIOLOGICAL_CONTAINMENT_DEVICE = ITEMS.register("biological_containment_device", BiologicalContainmentDeviceItem::new);
     public static final RegistryObject<Item> GENE_SYNTHESIZER = ITEMS.register("gene_synthesizer", () -> new BlockItem(ModBlocks.GENE_SYNTHESIZER.get(), new Item.Properties()));

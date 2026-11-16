@@ -1,6 +1,6 @@
 package com.carrot123.yixiangshouronglu.block.entity;
 
-import com.carrot123.yixiangshouronglu.item.GeneFragmentItem;
+import com.carrot123.yixiangshouronglu.gene.PlayerGeneModules;
 import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
 import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -19,15 +19,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class GeneModificationChamberBlockEntity extends BlockEntity implements MenuProvider {
-    public static final int SIZE = 21;
+    public static final int SIZE = PlayerGeneModules.SIZE;
 
     private final SimpleContainer inventory = new SimpleContainer(SIZE) {
         @Override public int getMaxStackSize() {
             return 1;
-        }
-
-        @Override public boolean canPlaceItem(int slot, ItemStack stack) {
-            return GeneFragmentItem.sourceType(stack) != null;
         }
 
         @Override public void setChanged() {
@@ -38,10 +34,6 @@ public final class GeneModificationChamberBlockEntity extends BlockEntity implem
 
     public GeneModificationChamberBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.GENE_MODIFICATION_CHAMBER.get(), pos, state);
-    }
-
-    public SimpleContainer inventory() {
-        return inventory;
     }
 
     public void dropInventory() {

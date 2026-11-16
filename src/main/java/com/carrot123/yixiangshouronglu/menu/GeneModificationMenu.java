@@ -3,9 +3,11 @@ package com.carrot123.yixiangshouronglu.menu;
 import com.carrot123.yixiangshouronglu.block.entity.GeneModificationChamberBlockEntity;
 import com.carrot123.yixiangshouronglu.registry.ModBlocks;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
-import com.carrot123.yixiangshouronglu.item.GeneFragmentItem;
+import com.carrot123.yixiangshouronglu.event.BiologicalGeneModuleEffects;
+import com.carrot123.yixiangshouronglu.gene.PlayerGeneModules;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -37,11 +39,7 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
         this.pos = pos;
         this.chamber = chamber;
         owner = inventory.player;
-        SimpleContainer contents = chamber == null ? new SimpleContainer(SIZE) {
-            @Override public boolean canPlaceItem(int slot, ItemStack stack) {
-                return GeneFragmentItem.sourceType(stack) != null;
-            }
-        } : chamber.inventory();
+        SimpleContainer contents = chamber == null ? new SimpleContainer(SIZE) : PlayerGeneModules.get(owner).slots();
         for (int index = 0; index < SIZE; index++) {
             addSlot(new Slot(contents, index, slotX(index), slotY(index)) {
                 @Override
@@ -51,7 +49,7 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
 
                 @Override
                 public boolean mayPlace(ItemStack stack) {
-                    return container.canPlaceItem(getContainerSlot(), stack);
+                    return PlayerGeneModules.accepts(getContainerSlot(), stack);
                 }
             });
         }
@@ -90,6 +88,9 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
     @Override public void clicked(int index, int button, ClickType type, Player player) {
         if (stillValid(player) && (index == -999 || (index >= 0 && index < slots.size()))) {
             super.clicked(index, button, type, player);
+            if (type != ClickType.QUICK_MOVE && player instanceof ServerPlayer serverPlayer) {
+                BiologicalGeneModuleEffects.refresh(serverPlayer);
+            }
         }
     }
 
@@ -114,6 +115,9 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
             slot.setChanged();
         }
         slot.onTake(player, stack);
+        if (player instanceof ServerPlayer serverPlayer) {
+            BiologicalGeneModuleEffects.refresh(serverPlayer);
+        }
         return original;
     }
 }

@@ -6,6 +6,7 @@ import com.carrot123.yixiangshouronglu.registry.ModEntities;
 import com.carrot123.yixiangshouronglu.registry.ModFluids;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
+import com.github.L_Ender.cataclysm.client.render.entity.RendererNull;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -29,6 +30,7 @@ public final class ClientScreens {
 
     @SubscribeEvent
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.GENE_THUNDERBOLT.get(), RendererNull::new);
         event.registerEntityRenderer(ModEntities.LEGENDARY_CARROT_KING.get(), LegendaryCarrotKingRenderer::new);
         event.registerBlockEntityRenderer(
                 ModBlockEntities.CONTAINMENT_CHAMBER.get(),

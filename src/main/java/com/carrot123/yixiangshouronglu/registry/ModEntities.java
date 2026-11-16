@@ -3,6 +3,7 @@ package com.carrot123.yixiangshouronglu.registry;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.entity.TenaciousShieldEntity;
+import com.carrot123.yixiangshouronglu.entity.GeneThunderboltEntity;
 import com.carrot123.yixiangshouronglu.entity.ShadowDemonEntity;
 import com.carrot123.yixiangshouronglu.entity.YoungEnderDragonEntity;
 import com.carrot123.yixiangshouronglu.entity.LegendaryCarrotKingEntity;
@@ -47,6 +48,12 @@ public final class ModEntities {
     public static final RegistryObject<EntityType<LegendaryCarrotKingEntity>> LEGENDARY_CARROT_KING = ENTITIES.register("legendary_carrot_king",
             () -> EntityType.Builder.of(LegendaryCarrotKingEntity::new, MobCategory.CREATURE).sized(0.6F, 1.8F)
                     .clientTrackingRange(10).build(AnomalousContainmentChronicles.MOD_ID + ":legendary_carrot_king"));
+
+    public static final RegistryObject<EntityType<GeneThunderboltEntity>> GENE_THUNDERBOLT =
+            ENTITIES.register("gene_thunderbolt",
+                    () -> EntityType.Builder.of(GeneThunderboltEntity::new, MobCategory.MISC)
+                            .sized(0.6F, 1.8F).clientTrackingRange(8).updateInterval(1).noSave().noSummon()
+                            .build(AnomalousContainmentChronicles.MOD_ID + ":gene_thunderbolt"));
 
     private ModEntities() {
     }

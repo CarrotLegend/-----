@@ -1,28 +1,21 @@
 package com.carrot123.yixiangshouronglu.item;
 
-import com.mojang.logging.LogUtils;
-import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import org.slf4j.Logger;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 public final class GeneExtractorItem extends Item {
-    private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MAX_TAG_DEPTH = 64;
     private static final int MAX_TAG_BYTES = 16 * 1024;
     private static final String MESSAGE = "message.yixiangshouronglu.gene_extractor.";
@@ -37,8 +30,7 @@ public final class GeneExtractorItem extends Item {
         }
         float health = target.getHealth();
         float maxHealth = target.getMaxHealth();
-        ResourceLocation id = ForgeRegistries.ENTITY_TYPES.getKey(target.getType());
-        if (id == null || !Float.isFinite(health) || !Float.isFinite(maxHealth) || health <= 0 || maxHealth <= 0) {
+        if (!Float.isFinite(health) || !Float.isFinite(maxHealth) || health <= 0 || maxHealth <= 0) {
             feedback(player, "invalid_data");
             return;
         }
@@ -47,20 +39,8 @@ public final class GeneExtractorItem extends Item {
             return;
         }
 
-        ItemStack fragment = new ItemStack(ModItems.GENE_FRAGMENT.get());
-        try {
-            CompoundTag data = GeneFragmentItem.sourceData(id, target.saveWithoutId(new CompoundTag()));
-            if (!isSafeSnapshot(data)) {
-                feedback(player, "invalid_data");
-                return;
-            }
-            fragment.setTag(data);
-            if (GeneFragmentItem.sourceType(fragment) == null) {
-                feedback(player, "invalid_data");
-                return;
-            }
-        } catch (RuntimeException | StackOverflowError exception) {
-            LOGGER.warn("Could not serialize a gene fragment for {}", id, exception);
+        ItemStack fragment = GeneFragmentItem.capture(target);
+        if (fragment.isEmpty()) {
             feedback(player, "invalid_data");
             return;
         }

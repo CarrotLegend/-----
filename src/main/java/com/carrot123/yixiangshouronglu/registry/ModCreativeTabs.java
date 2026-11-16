@@ -1,5 +1,8 @@
 package com.carrot123.yixiangshouronglu.registry;
 
+import com.carrot123.yixiangshouronglu.gene.BiologicalGene;
+import com.carrot123.yixiangshouronglu.item.BiologicalGeneModuleItem;
+
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import net.minecraft.core.registries.Registries;
@@ -46,6 +49,10 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.GENE_SYNTHESIZER.get());
                                 output.accept(ModItems.GENE_EXTRACTOR.get());
                                 output.accept(ModItems.GENE_FRAGMENT.get());
+                                for (BiologicalGene gene : BiologicalGene.values()) {
+                                    output.accept(BiologicalGeneModuleItem.displayStack(gene));
+                                }
+                                output.accept(ModItems.BIOLOGICAL_CLEAVER.get());
                                 output.accept(ModItems.RESEARCH_RESULT.get());
                                 output.accept(ModItems.BIOLOGICAL_CONTAINMENT_DEVICE.get());
                                 output.accept(ModItems.GENE_RESEARCH_TABLE.get());

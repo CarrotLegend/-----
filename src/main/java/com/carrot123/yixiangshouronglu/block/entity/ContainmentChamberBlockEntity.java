@@ -1,5 +1,8 @@
 package com.carrot123.yixiangshouronglu.block.entity;
 
+import com.carrot123.yixiangshouronglu.item.BiologicalGeneModuleItem;
+import com.carrot123.yixiangshouronglu.item.GeneFragmentItem;
+
 import com.carrot123.yixiangshouronglu.item.ContainmentExtractItem;
 import com.carrot123.yixiangshouronglu.item.SoulItem;
 import com.carrot123.yixiangshouronglu.menu.ContainmentChamberMenu;
@@ -322,6 +325,11 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
             extractionAccumulationTicks = 0;
         }
 
+        if (extractionInput.is(ModItems.GENE_FRAGMENT.get())) {
+            synthesizeModule();
+            return;
+        }
+
         boolean usingExtractor = extractionInput.is(ModItems.EXTRACTOR.get());
         ItemStack result = ItemStack.EMPTY;
         int inputCount = 1;
@@ -375,6 +383,29 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
         storeExtraction(result);
         extractionProgress = 0;
+    }
+
+    private void synthesizeModule() {
+        if (extractStoredMb < EXTRACT_COST_MB || !extractionOutput.isEmpty()) {
+            return;
+        }
+        if (extractionProgress == 0 && GeneFragmentItem.sourceType(extractionInput) == null) {
+            return;
+        }
+        if (++extractionProgress < EXTRACT_TIME) {
+            return;
+        }
+        ItemStack result = BiologicalGeneModuleItem.fromFragment(extractionInput);
+        extractionProgress = 0;
+        if (result.isEmpty()) {
+            return;
+        }
+        extractStoredMb -= EXTRACT_COST_MB;
+        extractionInput.shrink(1);
+        if (extractionInput.isEmpty()) {
+            extractionInput = ItemStack.EMPTY;
+        }
+        storeExtraction(result);
     }
 
     private boolean canStoreExtraction(ItemStack result) {
@@ -627,7 +658,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
     }
 
     public static boolean acceptsExtraction(String entityId, ItemStack stack) {
-        return !entityId.isEmpty() && (stack.is(ModItems.EXTRACTOR.get())
+        return !entityId.isEmpty() && (stack.is(ModItems.EXTRACTOR.get()) || GeneFragmentItem.sourceType(stack) != null
                 || (stack.is(ModItems.CONTAINMENT_EXTRACT.get())
                 && ChamberSpecialProducts.forInput(entityId, ContainmentExtractItem.getEntityId(stack)) != null));
     }
