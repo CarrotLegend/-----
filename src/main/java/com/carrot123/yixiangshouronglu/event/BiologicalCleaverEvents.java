@@ -102,13 +102,12 @@ public final class BiologicalCleaverEvents {
         var player = event.getPlayer();
         var menu = player.containerMenu;
         var slot = event.getSlot();
-        ItemStack sword = event.getCarriedItem();
-        ItemStack cleaver = event.getStackedOnItem();
+        ItemStack sword = event.getStackedOnItem();
+        ItemStack cleaver = event.getCarriedItem();
         if (event.getClickAction() != ClickAction.SECONDARY || player.isSpectator()
                 || (player.isCreative() && menu == player.inventoryMenu)
                 || slot.container != player.getInventory() || !slot.isActive() || !slot.mayPickup(player)
-                || !slot.mayPlace(cleaver) || slot.index < 0 || slot.index >= menu.slots.size()
-                || menu.getSlot(slot.index) != slot || slot.getItem() != cleaver
+                || !slot.mayPlace(cleaver) || !menu.slots.contains(slot) || slot.getItem() != cleaver
                 || !cleaver.is(ModItems.BIOLOGICAL_CLEAVER.get()) || cleaver.getCount() != 1
                 || sword.isEmpty() || !(sword.getItem() instanceof SwordItem)
                 || sword.is(ModItems.BIOLOGICAL_CLEAVER.get())
