@@ -5,52 +5,95 @@ import com.carrot123.yixiangshouronglu.item.BiologicalCleaverItem;
 import com.carrot123.yixiangshouronglu.item.GeneFragmentItem;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.event.ItemStackedOnOtherEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
+
 @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID)
 public final class BiologicalCleaverEvents {
     private static final String HARVESTED = AnomalousContainmentChronicles.MOD_ID + ":CleaverHarvested";
+    private static final double HARVEST_RANGE = 8.0;
+    private static final Map<LivingEntity, ItemStack> PENDING_DROPS = Collections.synchronizedMap(new WeakHashMap<>());
 
     private BiologicalCleaverEvents() {}
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void harvest(LivingDeathEvent event) {
         var target = event.getEntity();
-        var source = event.getSource();
-        if (target instanceof Player || target.level().isClientSide || !source.is(DamageTypes.PLAYER_ATTACK)
-                || !(source.getEntity() instanceof ServerPlayer player) || source.getDirectEntity() != player
-                || !player.getMainHandItem().is(ModItems.BIOLOGICAL_CLEAVER.get())
+        if (target instanceof Player || !(target.level() instanceof ServerLevel level)) {
+            return;
+        }
+        PENDING_DROPS.remove(target);
+        if (event.isCanceled() || !level.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)
                 || target.getPersistentData().getBoolean(HARVESTED)) {
             return;
         }
-        ItemStack fragment = GeneFragmentItem.capture(target);
-        if (fragment.isEmpty()) {
+        ServerPlayer player;
+        if (event.getSource().getEntity() instanceof ServerPlayer sourcePlayer) {
+            player = sourcePlayer;
+        } else if (target.getKillCredit() instanceof ServerPlayer creditedPlayer) {
+            player = creditedPlayer;
+        } else {
+            player = nearestCleaverHolder(level, target);
+        }
+        if (player == null || !holdsCleaver(player, level)) {
             return;
         }
-        target.getPersistentData().putBoolean(HARVESTED, true);
-        var inventory = player.getInventory();
-        int slot = inventory.getSlotWithRemainingSpace(fragment);
-        if (slot < 0) {
-            slot = inventory.getFreeSlot();
+        ItemStack fragment = GeneFragmentItem.capture(target);
+        if (!fragment.isEmpty()) {
+            PENDING_DROPS.put(target, fragment);
         }
-        if (slot < 0) {
-            player.drop(fragment, false);
-        } else {
-            inventory.add(slot, fragment);
-            if (!fragment.isEmpty()) {
-                player.drop(fragment, false);
+    }
+
+    private static boolean holdsCleaver(ServerPlayer player, ServerLevel level) {
+        return player.serverLevel() == level && player.isAlive() && !player.isSpectator()
+                && player.getMainHandItem().is(ModItems.BIOLOGICAL_CLEAVER.get());
+    }
+
+    private static ServerPlayer nearestCleaverHolder(ServerLevel level, LivingEntity target) {
+        ServerPlayer nearest = null;
+        double nearestDistance = HARVEST_RANGE * HARVEST_RANGE;
+        for (ServerPlayer player : level.players()) {
+            if (!holdsCleaver(player, level)) {
+                continue;
             }
+            double distance = player.distanceToSqr(target);
+            if (distance <= nearestDistance && (nearest == null || distance < nearestDistance)) {
+                nearest = player;
+                nearestDistance = distance;
+            }
+        }
+        return nearest;
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void addFragmentDrop(LivingDropsEvent event) {
+        var target = event.getEntity();
+        ItemStack fragment = PENDING_DROPS.remove(target);
+        if (event.isCanceled() || fragment == null || target.getPersistentData().getBoolean(HARVESTED)) {
+            return;
+        }
+        var drop = new ItemEntity(target.level(), target.getX(), target.getY(), target.getZ(), fragment);
+        drop.setDefaultPickUpDelay();
+        if (event.getDrops().add(drop)) {
+            target.getPersistentData().putBoolean(HARVESTED, true);
         }
     }
 

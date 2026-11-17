@@ -3,6 +3,7 @@ package com.carrot123.yixiangshouronglu;
 import com.carrot123.yixiangshouronglu.gene.research.GeneResearchRegistry;
 import com.carrot123.yixiangshouronglu.gene.research.PlayerGeneResearch;
 import com.carrot123.yixiangshouronglu.network.GeneResearchNetwork;
+import com.carrot123.yixiangshouronglu.network.GeneSkillNetwork;
 
 import com.carrot123.yixiangshouronglu.network.ShopNetwork;
 import com.carrot123.yixiangshouronglu.network.LanternNetwork;
@@ -14,6 +15,7 @@ import com.carrot123.yixiangshouronglu.registry.ModBlockEntities;
 import com.carrot123.yixiangshouronglu.registry.ModBlocks;
 import com.carrot123.yixiangshouronglu.registry.ModCreativeTabs;
 import com.carrot123.yixiangshouronglu.registry.ModEntities;
+import com.carrot123.yixiangshouronglu.registry.ModEffects;
 import com.carrot123.yixiangshouronglu.registry.ModFluids;
 import com.carrot123.yixiangshouronglu.registry.ModFeatures;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
@@ -31,6 +33,7 @@ public final class AnomalousContainmentChronicles {
 
         ModBlocks.BLOCKS.register(modBus);
         ModEntities.ENTITIES.register(modBus);
+        ModEffects.EFFECTS.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModMenus.MENUS.register(modBus);
@@ -42,6 +45,7 @@ public final class AnomalousContainmentChronicles {
         ShopNetwork.register();
         LanternNetwork.register();
         GeneResearchNetwork.register();
+        GeneSkillNetwork.register();
         GeneResearchRegistry.registerDefaults();
         ModFluids.FLUID_TYPES.register(modBus);
         ModFluids.FLUIDS.register(modBus);

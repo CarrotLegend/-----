@@ -49,7 +49,7 @@ public final class GeneModificationMenu extends AbstractContainerMenu {
 
                 @Override
                 public boolean mayPlace(ItemStack stack) {
-                    return PlayerGeneModules.accepts(getContainerSlot(), stack);
+                    return PlayerGeneModules.accepts(contents, getContainerSlot(), stack);
                 }
             });
         }

@@ -8,6 +8,7 @@
   "mixins": [
     "NearestAttackableTargetGoalAccess",
     "TargetingConditionsAccess",
+    "LivingEntityEffectAccess",
     "DungeonsLibsAbilityHelperMixin"
   ],
   "injectors": {

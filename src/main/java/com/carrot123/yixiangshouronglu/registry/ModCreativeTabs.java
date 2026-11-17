@@ -50,7 +50,10 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.GENE_EXTRACTOR.get());
                                 output.accept(ModItems.GENE_FRAGMENT.get());
                                 for (BiologicalGene gene : BiologicalGene.values()) {
-                                    output.accept(BiologicalGeneModuleItem.displayStack(gene));
+                                    var display = BiologicalGeneModuleItem.displayStack(gene);
+                                    if (!display.isEmpty()) {
+                                        output.accept(display);
+                                    }
                                 }
                                 output.accept(ModItems.BIOLOGICAL_CLEAVER.get());
                                 output.accept(ModItems.RESEARCH_RESULT.get());

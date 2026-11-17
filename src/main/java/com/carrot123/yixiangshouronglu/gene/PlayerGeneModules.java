@@ -23,18 +23,25 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID)
 public final class PlayerGeneModules {
     public static final int SIZE = 21;
     private static final Capability<PlayerGeneModules> TYPE = CapabilityManager.get(new CapabilityToken<>() {});
     private final SimpleContainer slots = new SimpleContainer(SIZE);
-    private final EnumMap<BiologicalGene, Integer> active = new EnumMap<>(BiologicalGene.class);
+    private final EnumSet<BiologicalGene> active = EnumSet.noneOf(BiologicalGene.class);
     private long shockReadyAt;
     private int rageStacks;
     private long rageExpiresAt;
     private int waterTicks;
+    private UUID skyTarget;
+    private int skyHits;
+    private long skyReadyAt;
+    private long fallenEndsAt;
+    private long fallenReadyAt;
+    private long annihilationReadyAt;
 
     public static PlayerGeneModules get(Player player) {
         return player.getCapability(TYPE).orElseThrow(() -> new IllegalStateException("Missing player gene modules"));
@@ -44,9 +51,20 @@ public final class PlayerGeneModules {
         return slots;
     }
 
-    public static boolean accepts(int slot, ItemStack stack) {
+    public static boolean accepts(SimpleContainer contents, int slot, ItemStack stack) {
         BiologicalGene gene = BiologicalGeneModuleItem.gene(stack);
-        return gene != null ? gene.allowsSlot(slot) : GeneFragmentItem.sourceType(stack) != null;
+        if (gene == null) {
+            return GeneFragmentItem.sourceType(stack) != null;
+        }
+        if (!gene.allowsSlot(slot)) {
+            return false;
+        }
+        for (int index = 0; index < SIZE; index++) {
+            if (index != slot && BiologicalGeneModuleItem.gene(contents.getItem(index)) == gene) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void recount() {
@@ -54,7 +72,7 @@ public final class PlayerGeneModules {
         for (int slot = 0; slot < SIZE; slot++) {
             BiologicalGene gene = BiologicalGeneModuleItem.gene(slots.getItem(slot));
             if (gene != null && gene.allowsSlot(slot)) {
-                active.merge(gene, 1, Integer::sum);
+                active.add(gene);
             }
         }
         if (count(BiologicalGene.CURSED_MUSCLE_FIBERS) == 0) {
@@ -63,10 +81,70 @@ public final class PlayerGeneModules {
         if (count(BiologicalGene.ABYSSAL_CIRCULATION) == 0) {
             waterTicks = 0;
         }
+        if (count(BiologicalGene.SKY_STORM_CORE) == 0) {
+            clearSkyCombo();
+        }
+        if (count(BiologicalGene.FALLEN_COMBAT_NERVES) == 0) {
+            endFallenForm();
+        }
     }
 
     public int count(BiologicalGene gene) {
-        return active.getOrDefault(gene, 0);
+        return active.contains(gene) ? 1 : 0;
+    }
+
+    public boolean skyHit(UUID target, long now) {
+        if (now < skyReadyAt) {
+            return false;
+        }
+        if (!target.equals(skyTarget)) {
+            skyTarget = target;
+            skyHits = 0;
+        }
+        if (++skyHits < BiologicalGene.SKY_HITS) {
+            return false;
+        }
+        clearSkyCombo();
+        skyReadyAt = now + BiologicalGene.SKY_COOLDOWN;
+        return true;
+    }
+
+    public void clearSkyCombo() {
+        skyTarget = null;
+        skyHits = 0;
+    }
+
+    public boolean startFallenForm(long now) {
+        if (now < fallenReadyAt || fallenForm(now)) {
+            return false;
+        }
+        fallenEndsAt = now + BiologicalGene.FALLEN_TICKS;
+        fallenReadyAt = now + BiologicalGene.FALLEN_COOLDOWN;
+        return true;
+    }
+
+    public boolean fallenForm(long now) {
+        return now < fallenEndsAt;
+    }
+
+    public boolean expireFallenForm(long now) {
+        if (fallenEndsAt == 0 || fallenForm(now)) {
+            return false;
+        }
+        endFallenForm();
+        return true;
+    }
+
+    public void endFallenForm() {
+        fallenEndsAt = 0;
+    }
+
+    public boolean startAnnihilationCooldown(long now) {
+        if (now < annihilationReadyAt) {
+            return false;
+        }
+        annihilationReadyAt = now + BiologicalGene.ANNIHILATION_COOLDOWN;
+        return true;
     }
 
     public int rageStacks(long gameTime) {
@@ -114,6 +192,9 @@ public final class PlayerGeneModules {
         }
         ContainerHelper.saveAllItems(tag, items);
         tag.putLong("ShockReadyAt", shockReadyAt);
+        tag.putLong("SkyReadyAt", skyReadyAt);
+        tag.putLong("FallenReadyAt", fallenReadyAt);
+        tag.putLong("AnnihilationReadyAt", annihilationReadyAt);
         return tag;
     }
 
@@ -124,6 +205,11 @@ public final class PlayerGeneModules {
             slots.setItem(slot, items.get(slot));
         }
         shockReadyAt = Math.max(0, tag.getLong("ShockReadyAt"));
+        skyReadyAt = Math.max(0, tag.getLong("SkyReadyAt"));
+        fallenReadyAt = Math.max(0, tag.getLong("FallenReadyAt"));
+        annihilationReadyAt = Math.max(0, tag.getLong("AnnihilationReadyAt"));
+        clearSkyCombo();
+        endFallenForm();
         clearRage();
         waterTicks = 0;
         recount();

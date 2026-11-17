@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -32,6 +33,9 @@ public final class BiologicalGeneModuleItem extends Item {
 
     public static ItemStack displayStack(BiologicalGene gene) {
         var source = gene.displaySource();
+        if (!ForgeRegistries.ENTITY_TYPES.containsKey(source)) {
+            return ItemStack.EMPTY;
+        }
         var data = new CompoundTag();
         data.putString("id", source.toString());
         data.putUUID("UUID", new UUID(0, 0));
@@ -125,6 +129,66 @@ public final class BiologicalGeneModuleItem extends Item {
                 line(tooltip, "cold_damage", BiologicalGene.COLD_DAMAGE);
                 line(tooltip, "bolt", BiologicalGene.BOLT_CHANCE_PERCENT);
                 line(tooltip, "bolt_damage", BiologicalGene.BOLT_DAMAGE);
+            }
+            case SKY_STORM_CORE -> {
+                line(tooltip, "all_damage", BiologicalGene.SKY_DAMAGE_PERCENT);
+                line(tooltip, "sky_hits", BiologicalGene.SKY_HITS);
+                line(tooltip, "bolt_damage", BiologicalGene.SKY_BOLT_DAMAGE);
+                line(tooltip, "sky_slow", BiologicalGene.SKY_SLOW_TICKS / 20);
+                line(tooltip, "shock_cooldown", BiologicalGene.SKY_COOLDOWN / 20);
+            }
+            case FALLEN_COMBAT_NERVES -> {
+                line(tooltip, "fallen_key", Component.keybind("key.yixiangshouronglu.fallen_form"));
+                line(tooltip, "attack_speed", BiologicalGene.FALLEN_BONUS_PERCENT);
+                line(tooltip, "all_damage", BiologicalGene.FALLEN_BONUS_PERCENT);
+                line(tooltip, "fallen_life_steal", BiologicalGene.FALLEN_BONUS_PERCENT);
+                line(tooltip, "fallen_duration", BiologicalGene.FALLEN_TICKS / 20);
+                line(tooltip, "shock_cooldown", BiologicalGene.FALLEN_COOLDOWN / 20);
+            }
+            case ANNIHILATION_REACTOR_CORE -> {
+                line(tooltip, "all_damage", BiologicalGene.ANNIHILATION_DAMAGE_PERCENT);
+                line(tooltip, "annihilation_cooldown", BiologicalGene.ANNIHILATION_COOLDOWN / 20);
+                line(tooltip, "annihilation_damage", BiologicalGene.ANNIHILATION_HEALTH_PERCENT);
+            }
+            case ANCHOR_MUSCLE_FIBERS -> {
+                line(tooltip, "anchor_chance", BiologicalGene.ANCHOR_CHANCE_PERCENT);
+                line(tooltip, "anchor_damage", BiologicalGene.ANCHOR_DAMAGE);
+                line(tooltip, "anchor_slow", BiologicalGene.ANCHOR_SLOW_TICKS / 20);
+            }
+            case PRIMORDIAL_ICE_CRYSTALLIZATION -> {
+                line(tooltip, "chill_chance", BiologicalGene.CHILL_CHANCE_PERCENT);
+                line(tooltip, "chill_duration", BiologicalGene.CHILL_TICKS / 20, BiologicalGene.CHILL_STACKS);
+                line(tooltip, "chill_damage", BiologicalGene.CHILL_DAMAGE);
+                line(tooltip, "chill_slow");
+                line(tooltip, "chill_weakness");
+            }
+            case GLANDULAR_REGENERATION -> {
+                line(tooltip, "glandular_poison", BiologicalGene.GLANDULAR_POISON_CHANCE_PERCENT,
+                        BiologicalGene.GLANDULAR_POISON_TICKS / 20);
+                line(tooltip, "glandular_heal", BiologicalGene.GLANDULAR_HEAL);
+            }
+            case SANDSTORM_VISION -> line(tooltip, "crit_chance", BiologicalGene.SANDSTORM_CRIT_PERCENT);
+            case ANCIENT_DRAGON_SPINE -> {
+                line(tooltip, "knockback_resistance", BiologicalGene.ANCIENT_KNOCKBACK_RESISTANCE_PERCENT);
+                line(tooltip, "fall_immunity");
+            }
+            case LAVA_DIGESTION -> {
+                line(tooltip, "fire_immunity");
+                line(tooltip, "burning_attack", BiologicalGene.LAVA_ATTACK_PERCENT);
+            }
+            case ABOMINATION_SPINAL_CORD -> line(tooltip, "abomination_wither", BiologicalGene.ABOMINATION_WITHER_TICKS / 20);
+            case CHORUS_TRANSLOCATION -> {
+                line(tooltip, "movement_speed", BiologicalGene.CHORUS_SPEED_PERCENT);
+                line(tooltip, "dodge_chance", BiologicalGene.CHORUS_DODGE_PERCENT);
+            }
+            case EXTREME_COLD_BREATH -> {
+                line(tooltip, "extreme_cold_chance", BiologicalGene.EXTREME_COLD_CHANCE_PERCENT);
+                line(tooltip, "extreme_cold_damage", BiologicalGene.EXTREME_COLD_DAMAGE_PERCENT);
+            }
+            case SOLAR_RETINA -> {
+                line(tooltip, "crit_chance", BiologicalGene.SOLAR_CRIT_PERCENT);
+                line(tooltip, "solar_beam_chance", BiologicalGene.SOLAR_BEAM_CHANCE_PERCENT);
+                line(tooltip, "solar_beam_damage", BiologicalGene.SOLAR_BEAM_DAMAGE);
             }
             default -> {}
         }
