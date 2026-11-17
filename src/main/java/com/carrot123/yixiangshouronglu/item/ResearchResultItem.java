@@ -14,7 +14,15 @@ public final class ResearchResultItem extends Item {
     }
 
     public static boolean canResearch(ItemStack fragment) {
-        return GeneFragmentItem.sourceType(fragment) != null && validSnapshot(fragment.getTag()) != null;
+        if (GeneFragmentItem.sourceType(fragment) == null) {
+            return false;
+        }
+        CompoundTag snapshot = fragment.getTag().getCompound("EntityData");
+        if (!snapshot.contains("Health", net.minecraft.nbt.Tag.TAG_ANY_NUMERIC)) {
+            return false;
+        }
+        float health = snapshot.getFloat("Health");
+        return Float.isFinite(health) && health >= 0;
     }
 
     public static ItemStack fromFragment(ItemStack fragment) {
@@ -24,7 +32,11 @@ public final class ResearchResultItem extends Item {
         CompoundTag source = fragment.getTag();
         CompoundTag tag = new CompoundTag();
         tag.putString("EntityId", source.getString("EntityId"));
-        tag.put("EntityData", source.getCompound("EntityData").copy());
+        CompoundTag snapshot = source.getCompound("EntityData").copy();
+        if (snapshot.getFloat("Health") == 0) {
+            snapshot.putFloat("Health", 1.0F);
+        }
+        tag.put("EntityData", snapshot);
         ItemStack result = new ItemStack(ModItems.RESEARCH_RESULT.get());
         result.setTag(tag);
         return result;
