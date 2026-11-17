@@ -85,6 +85,8 @@
   "item.yixiangshouronglu.biological_gene_module.spinal_voidization": "Spinal Voidization",
   "item.yixiangshouronglu.biological_gene_module.molten_skeleton": "Molten Skeleton",
   "item.yixiangshouronglu.biological_cleaver": "Biological Cleaver",
+  "tooltip.yixiangshouronglu.biological_gene_module.installation_slot": "Installation Slot: %s",
+  "tooltip.yixiangshouronglu.biological_gene_module.any_region": "Any Enhancement Region",
   "tooltip.yixiangshouronglu.biological_gene_module.armor": "Armor +%s",
   "tooltip.yixiangshouronglu.biological_gene_module.health": "Max Health +%s",
   "tooltip.yixiangshouronglu.biological_gene_module.attack": "Attack Damage +%s",

@@ -83,6 +83,10 @@ public final class BiologicalGeneModuleItem extends Item {
         if (gene == null) {
             return;
         }
+        String regionKey = gene.installationRegionKey();
+        if (regionKey != null) {
+            line(tooltip, "installation_slot", Component.translatable(regionKey));
+        }
         if (gene.armor > 0) {
             line(tooltip, "armor", gene.armor);
         }

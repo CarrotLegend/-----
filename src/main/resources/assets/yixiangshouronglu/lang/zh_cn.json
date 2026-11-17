@@ -85,6 +85,8 @@
   "item.yixiangshouronglu.biological_gene_module.spinal_voidization": "脊髓虚空化",
   "item.yixiangshouronglu.biological_gene_module.molten_skeleton": "熔铸骨骼",
   "item.yixiangshouronglu.biological_cleaver": "生物斩切刀",
+  "tooltip.yixiangshouronglu.biological_gene_module.installation_slot": "佩戴位置：%s",
+  "tooltip.yixiangshouronglu.biological_gene_module.any_region": "任意强化区",
   "tooltip.yixiangshouronglu.biological_gene_module.armor": "护甲值 +%s",
   "tooltip.yixiangshouronglu.biological_gene_module.health": "最大生命值 +%s",
   "tooltip.yixiangshouronglu.biological_gene_module.attack": "攻击伤害 +%s",

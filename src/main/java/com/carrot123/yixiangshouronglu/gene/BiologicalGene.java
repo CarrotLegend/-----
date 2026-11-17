@@ -1,6 +1,8 @@
 package com.carrot123.yixiangshouronglu.gene;
 
+import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 public enum BiologicalGene {
     COMMON("common", null, 0, 20, 0, 2, 1),
@@ -119,5 +121,29 @@ public enum BiologicalGene {
 
     public boolean allowsSlot(int slot) {
         return slot >= firstSlot && slot <= lastSlot;
+    }
+
+    @Nullable
+    public String installationRegionKey() {
+        int finalSlot = PlayerGeneModules.SIZE - 1;
+        if (firstSlot == 0 && lastSlot == finalSlot) {
+            return "tooltip.yixiangshouronglu.biological_gene_module.any_region";
+        }
+        if (firstSlot < 0 || lastSlot < firstSlot || lastSlot > finalSlot) {
+            return null;
+        }
+        int region = GeneModificationMenu.region(firstSlot);
+        if (region != GeneModificationMenu.region(lastSlot)) {
+            return null;
+        }
+        return switch (region) {
+            case 0 -> "screen.yixiangshouronglu.gene_modification.neural";
+            case 1 -> "screen.yixiangshouronglu.gene_modification.bone";
+            case 2 -> "screen.yixiangshouronglu.gene_modification.muscle";
+            case 3 -> "screen.yixiangshouronglu.gene_modification.metabolism";
+            case 4 -> "screen.yixiangshouronglu.gene_modification.energy";
+            case 5 -> "screen.yixiangshouronglu.gene_modification.senses";
+            default -> null;
+        };
     }
 }

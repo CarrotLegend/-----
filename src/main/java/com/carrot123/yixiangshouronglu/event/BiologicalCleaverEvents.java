@@ -102,13 +102,12 @@ public final class BiologicalCleaverEvents {
         var player = event.getPlayer();
         var menu = player.containerMenu;
         var slot = event.getSlot();
-        ItemStack sword = event.getCarriedItem();
-        ItemStack cleaver = event.getStackedOnItem();
+        ItemStack sword = event.getStackedOnItem();
+        ItemStack cleaver = event.getCarriedItem();
         if (event.getClickAction() != ClickAction.SECONDARY || player.isSpectator()
                 || (player.isCreative() && menu == player.inventoryMenu)
                 || slot.container != player.getInventory() || !slot.isActive() || !slot.mayPickup(player)
-                || !slot.mayPlace(cleaver) || slot.index < 0 || slot.index >= menu.slots.size()
-                || menu.getSlot(slot.index) != slot || slot.getItem() != cleaver
+                || !slot.mayPlace(cleaver) || !menu.slots.contains(slot) || !ItemStack.matches(slot.getItem(), cleaver)
                 || !cleaver.is(ModItems.BIOLOGICAL_CLEAVER.get()) || cleaver.getCount() != 1
                 || sword.isEmpty() || !(sword.getItem() instanceof SwordItem)
                 || sword.is(ModItems.BIOLOGICAL_CLEAVER.get())
@@ -116,15 +115,18 @@ public final class BiologicalCleaverEvents {
             return;
         }
         if (!player.level().isClientSide) {
-            if (!menu.stillValid(player) || event.getCarriedSlotAccess().get() != sword
-                    || !BiologicalCleaverItem.upgrade(cleaver)) {
+            var cursor = event.getCarriedSlotAccess();
+            ItemStack actualSword = cursor.get();
+            if (!menu.stillValid(player) || !ItemStack.matches(actualSword, sword)) {
                 return;
             }
-            sword.shrink(1);
-            if (sword.isEmpty()) {
-                event.getCarriedSlotAccess().set(ItemStack.EMPTY);
+            ItemStack upgraded = slot.getItem().copy();
+            if (!BiologicalCleaverItem.upgrade(upgraded)
+                    || !cursor.set(actualSword.getCount() == 1 ? ItemStack.EMPTY
+                    : actualSword.copyWithCount(actualSword.getCount() - 1))) {
+                return;
             }
-            slot.setChanged();
+            slot.set(upgraded);
             player.level().playSound(null, player.blockPosition(), SoundEvents.ANVIL_USE, SoundSource.PLAYERS, 0.7F, 1.2F);
         }
         event.setCanceled(true);

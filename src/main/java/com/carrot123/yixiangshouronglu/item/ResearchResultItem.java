@@ -2,6 +2,7 @@ package com.carrot123.yixiangshouronglu.item;
 
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -14,17 +15,35 @@ public final class ResearchResultItem extends Item {
     }
 
     public static boolean canResearch(ItemStack fragment) {
-        return GeneFragmentItem.sourceType(fragment) != null && validSnapshot(fragment.getTag()) != null;
+        if (GeneFragmentItem.sourceType(fragment) == null) {
+            return false;
+        }
+
+        CompoundTag snapshot = fragment.getTag().getCompound("EntityData");
+        if (!snapshot.contains("Health", Tag.TAG_ANY_NUMERIC)) {
+            return false;
+        }
+
+        float health = snapshot.getFloat("Health");
+        return Float.isFinite(health) && health >= 0;
     }
 
     public static ItemStack fromFragment(ItemStack fragment) {
         if (!canResearch(fragment)) {
             return ItemStack.EMPTY;
         }
+
         CompoundTag source = fragment.getTag();
         CompoundTag tag = new CompoundTag();
         tag.putString("EntityId", source.getString("EntityId"));
-        tag.put("EntityData", source.getCompound("EntityData").copy());
+
+        CompoundTag snapshot = source.getCompound("EntityData").copy();
+        if (snapshot.getFloat("Health") == 0) {
+            snapshot.putFloat("Health", 1.0F);
+        }
+
+        tag.put("EntityData", snapshot);
+
         ItemStack result = new ItemStack(ModItems.RESEARCH_RESULT.get());
         result.setTag(tag);
         return result;
@@ -32,7 +51,8 @@ public final class ResearchResultItem extends Item {
 
     @Nullable
     public static EntityType<?> sourceType(ItemStack stack) {
-        return stack.is(ModItems.RESEARCH_RESULT.get()) && stack.getCount() == 1 ? validSnapshot(stack.getTag()) : null;
+        return stack.is(ModItems.RESEARCH_RESULT.get()) && stack.getCount() == 1
+                ? validSnapshot(stack.getTag()) : null;
     }
 
     @Nullable
@@ -41,15 +61,21 @@ public final class ResearchResultItem extends Item {
         if (type == null || !GeneExtractorItem.isSafeSnapshot(tag)) {
             return null;
         }
-        var snapshot = tag.getCompound("EntityData");
+
+        CompoundTag snapshot = tag.getCompound("EntityData");
         float health = snapshot.getFloat("Health");
-        return snapshot.contains("Health", net.minecraft.nbt.Tag.TAG_ANY_NUMERIC)
+
+        return snapshot.contains("Health", Tag.TAG_ANY_NUMERIC)
                 && Float.isFinite(health) && health > 0 ? type : null;
     }
 
-    @Override public Component getName(ItemStack stack) {
+    @Override
+    public Component getName(ItemStack stack) {
         EntityType<?> type = sourceType(stack);
         return type == null ? super.getName(stack)
-                : Component.translatable("item.yixiangshouronglu.research_result.named", type.getDescription());
+                : Component.translatable(
+                        "item.yixiangshouronglu.research_result.named",
+                        type.getDescription()
+                );
     }
 }

@@ -30,6 +30,7 @@ import java.util.WeakHashMap;
 
 final class LegendaryGeneAttacks {
     private static final ResourceLocation ANCHOR_SOUND = new ResourceLocation("legendary_monsters", "anchor_slam");
+    private static final ResourceLocation ANNIHILATION_SOUND = new ResourceLocation("legendary_monsters", "dimensional_bomb_explode");
     private static final int HURT_IMMUNITY_THRESHOLD = 10;
     private static final DustParticleOptions SUNLIGHT = new DustParticleOptions(new Vector3f(1.0F, 0.78F, 0.15F), 1.15F);
     private static final Map<ServerPlayer, List<Hit>> PENDING = Collections.synchronizedMap(new WeakHashMap<>());
@@ -168,7 +169,21 @@ final class LegendaryGeneAttacks {
             }
         }
         var damageType = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(hit.strike().damage);
-        target.hurt(new DamageSource(damageType, player), damage);
+        var source = new DamageSource(damageType, player);
+        if (hit.strike() == Strike.ANNIHILATION) {
+            float healthBefore = target.getHealth();
+            float absorptionBefore = target.getAbsorptionAmount();
+            var position = target.blockPosition();
+            if (target.hurt(source, damage)
+                    && (target.getHealth() < healthBefore || target.getAbsorptionAmount() < absorptionBefore)) {
+                var sound = ForgeRegistries.SOUND_EVENTS.getValue(ANNIHILATION_SOUND);
+                if (sound != null) {
+                    level.playSound(null, position, sound, SoundSource.PLAYERS, 1.0F, 1.0F);
+                }
+            }
+        } else {
+            target.hurt(source, damage);
+        }
     }
 
     private enum Strike {
