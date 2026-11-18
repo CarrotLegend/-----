@@ -85,6 +85,8 @@
   "item.yixiangshouronglu.biological_gene_module.spinal_voidization": "脊髓虚空化",
   "item.yixiangshouronglu.biological_gene_module.molten_skeleton": "熔铸骨骼",
   "item.yixiangshouronglu.biological_cleaver": "生物斩切刀",
+  "tooltip.yixiangshouronglu.biological_gene_module.installation_slot": "佩戴位置：%s",
+  "tooltip.yixiangshouronglu.biological_gene_module.any_region": "任意强化区",
   "tooltip.yixiangshouronglu.biological_gene_module.armor": "护甲值 +%s",
   "tooltip.yixiangshouronglu.biological_gene_module.health": "最大生命值 +%s",
   "tooltip.yixiangshouronglu.biological_gene_module.attack": "攻击伤害 +%s",
@@ -267,6 +269,10 @@
   "message.yixiangshouronglu.gene_modifier.missing_attribute": "所需强化属性不可用",
   "gui.yixiangshouronglu.chimera_no_match": "无匹配配方",
   "jei.yixiangshouronglu.special_extraction": "特殊提取",
+  "jei.yixiangshouronglu.gene_module_extraction": "基因模块提取",
+  "jei.yixiangshouronglu.gene_fluid": "基因提取液：%s mB",
+  "jei.yixiangshouronglu.contained_soul_required": "需要已收容的灵魂",
+  "jei.yixiangshouronglu.common_module_sources": "普通基因模块也可由没有专属基因的其他生物基因片段制作",
   "jei.yixiangshouronglu.chamber_soul": "收容条件",
   "screen.yixiangshouronglu.chamber.loot_remaining": "%s秒后产出一次",
   "screen.yixiangshouronglu.chamber.loot_blocked": "战利品正在等待输出空间",
@@ -304,5 +310,6 @@
   "item.yixiangshouronglu.research_result.named": "%s的研究结果",
   "item.yixiangshouronglu.biological_containment_device": "生物收容仪",
   "gui.yixiangshouronglu.biological_research_page": "生物研究",
-  "gui.yixiangshouronglu.chimera_page": "奇美拉改造"
+  "gui.yixiangshouronglu.chimera_page": "奇美拉改造",
+  "item.yixiangshouronglu.containment_chamber": "收容室"
 }

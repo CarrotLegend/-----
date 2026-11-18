@@ -20,6 +20,7 @@ import com.carrot123.yixiangshouronglu.registry.ModFluids;
 import com.carrot123.yixiangshouronglu.registry.ModFeatures;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
 import com.carrot123.yixiangshouronglu.registry.ModMenus;
+import com.carrot123.yixiangshouronglu.event.GeneJumpEvents;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -34,6 +35,8 @@ public final class AnomalousContainmentChronicles {
         ModBlocks.BLOCKS.register(modBus);
         ModEntities.ENTITIES.register(modBus);
         ModEffects.EFFECTS.register(modBus);
+        GeneJumpEvents.ATTRIBUTES.register(modBus);
+        modBus.addListener(GeneJumpEvents::addPlayerAttribute);
         ModItems.ITEMS.register(modBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModMenus.MENUS.register(modBus);

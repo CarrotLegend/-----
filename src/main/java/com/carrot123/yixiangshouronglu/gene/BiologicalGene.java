@@ -28,7 +28,28 @@ public enum BiologicalGene {
     CARAPACE_OSSIFICATION("carapace_ossification", "legendary_monsters:shulker_mimic", 1, 4, 8, 0, 0),
     THOUSAND_FORGED_MUSCLE("thousand_forged_muscle", "mowziesmobs:ferrous_wroughtnaut", 5, 8, 8, 0, 8),
     EXTREME_COLD_BREATH("extreme_cold_breath", "mowziesmobs:frostmaw", 13, 16, 0, 0, 0),
-    SOLAR_RETINA("solar_retina", "mowziesmobs:umvuthi", 17, 20, 0, 0, 0);
+    SOLAR_RETINA("solar_retina", "mowziesmobs:umvuthi", 17, 20, 0, 0, 0),
+    INCINERATION_GLAND("incineration_gland", "iceandfire:fire_dragon", 13, 16, 0, 0, 0),
+    FREEZING_GLAND("freezing_gland", "iceandfire:ice_dragon", 13, 16, 0, 0, 0),
+    LIGHTNING_CHAIN_GLAND("lightning_chain_gland", "iceandfire:lightning_dragon", 13, 16, 0, 0, 0),
+    UNDYING_BODY("undying_body", "mutantmonsters:mutant_zombie", 9, 12, 0, 10, 0),
+    PRECISION_MUSCLE_FIBERS("precision_muscle_fibers", "mutantmonsters:mutant_skeleton", 5, 8, 0, 0, 0),
+    EXPLOSIVE_GLAND("explosive_gland", "mutantmonsters:mutant_creeper", 13, 16, 0, 0, 0),
+    ENDER_SYNAPSE("ender_synapse", "mutantmonsters:mutant_enderman", 0, 0, 0, 0, 0),
+    FROST_CORE_RETINA("frost_core_retina", "mutantmonsters:mutant_snow_golem", 17, 20, 0, 0, 0),
+    COMBAT_NERVES("combat_nerves", "mutantmore:mutant_wither_skeleton", 17, 20, 0, 0, 0),
+    BLAZING_MUSCLES("blazing_muscles", "mutantmore:mutant_blaze", 5, 8, 0, 0, 0),
+    DIMENSIONAL_CALCIFIED_CARAPACE("dimensional_calcified_carapace", "mutantmore:mutant_shulker", 1, 4, 8, 20, 0),
+    QUICKSAND_METABOLISM("quicksand_metabolism", "mutantmore:mutant_husk", 9, 12, 0, 10, 0),
+    HOGLIN_MUSCLE_BUNDLES("hoglin_muscle_bundles", "mutantmore:mutant_hoglin", 5, 8, 0, 20, 6),
+    FROZEN_CIRCULATORY_TISSUE("frozen_circulatory_tissue", "mutantmore:mutant_frozen_zombie", 9, 12, 0, 8, 0),
+    PLANT_MUSCLE_FIBERS("plant_muscle_fibers", "mutantmore:mutant_jungle_zombie", 5, 8, 0, 0, 5),
+    ARACHNID_APONEUROSIS("arachnid_aponeurosis", "mutantmonsters:spider_pig", 5, 8, 0, 0, 0);
+
+    public static final int BLAZING_MUSCLES_BURN_SECONDS = 4;
+    public static final float BLAZING_MUSCLES_BURN_DAMAGE = 1.0F;
+
+    public static final int SEARING_TICKS = 100;
 
     public static final int VOID_CHANCE_PERCENT = 8;
     public static final int VOID_REDUCTION_PERCENT = 20;

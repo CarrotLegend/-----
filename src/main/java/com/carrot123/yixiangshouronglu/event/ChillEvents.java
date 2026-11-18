@@ -54,21 +54,27 @@ public final class ChillEvents {
             state.putLong("NextDamageAt", time(level) + 20);
         }
         target.getPersistentData().put(STATE, state);
+        forceApply(target, next, source);
+        refreshModifiers(target, next);
+    }
+
+    static void forceApply(LivingEntity target, MobEffectInstance next, ServerPlayer source) {
+        var effect = next.getEffect();
         target.forceAddEffect(next, source);
-        if (target.getEffect(chill) != next) {
+        if (target.getEffect(effect) != next) {
             var access = (LivingEntityEffectAccess) target;
-            if (target.getActiveEffectsMap().put(chill, next) == null) {
+            if (target.getActiveEffectsMap().put(effect, next) == null) {
                 access.acc$onEffectAdded(next, source);
             } else {
                 access.acc$onEffectUpdated(next, true, source);
             }
         }
-        refreshModifiers(target, next);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void allowChill(MobEffectEvent.Applicable event) {
-        if (event.getEffectInstance().getEffect() == ModEffects.CHILL.get()) {
+        var effect = event.getEffectInstance().getEffect();
+        if (effect == ModEffects.CHILL.get() || effect == ModEffects.SEARING_BURN.get()) {
             event.setResult(event.getEntity().isAlive() ? Event.Result.ALLOW : Event.Result.DENY);
         }
     }

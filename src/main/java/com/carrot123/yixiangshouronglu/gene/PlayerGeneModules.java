@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 
 @Mod.EventBusSubscriber(modid = AnomalousContainmentChronicles.MOD_ID)
 public final class PlayerGeneModules {
@@ -42,9 +43,17 @@ public final class PlayerGeneModules {
     private long fallenEndsAt;
     private long fallenReadyAt;
     private long annihilationReadyAt;
+    private long chainReadyAt;
+    private long leapEndsAt;
+    private BooleanSupplier reservedLeap;
 
     public static PlayerGeneModules get(Player player) {
         return player.getCapability(TYPE).orElseThrow(() -> new IllegalStateException("Missing player gene modules"));
+    }
+
+    @Nullable
+    public static PlayerGeneModules getIfPresent(Player player) {
+        return player.getCapability(TYPE).orElse(null);
     }
 
     public SimpleContainer slots() {
@@ -74,6 +83,9 @@ public final class PlayerGeneModules {
             if (gene != null && gene.allowsSlot(slot)) {
                 active.add(gene);
             }
+        }
+        if (count(BiologicalGene.ENDER_SYNAPSE) == 0) {
+            clearLeap();
         }
         if (count(BiologicalGene.CURSED_MUSCLE_FIBERS) == 0) {
             clearRage();
@@ -176,6 +188,40 @@ public final class PlayerGeneModules {
         return true;
     }
 
+    public boolean chainReady(long now) {
+        return now >= chainReadyAt;
+    }
+
+    public void startChainCooldown(long now) {
+        chainReadyAt = now + 160;
+    }
+
+    public void empowerLeap(long now) {
+        reservedLeap = null;
+        leapEndsAt = now + 100;
+    }
+
+    public boolean leapActive(long now) {
+        settleLeap(now);
+        return now < leapEndsAt;
+    }
+
+    public void settleLeap(long now) {
+        if (now >= leapEndsAt || reservedLeap != null && reservedLeap.getAsBoolean()) {
+            clearLeap();
+        }
+        reservedLeap = null;
+    }
+
+    public void reserveLeap(BooleanSupplier successful) {
+        reservedLeap = successful;
+    }
+
+    public void clearLeap() {
+        reservedLeap = null;
+        leapEndsAt = 0;
+    }
+
     public boolean startShockCooldown(long gameTime) {
         if (gameTime < shockReadyAt) {
             return false;
@@ -191,6 +237,7 @@ public final class PlayerGeneModules {
             items.set(slot, slots.getItem(slot));
         }
         ContainerHelper.saveAllItems(tag, items);
+        tag.putLong("ChainReadyAt", chainReadyAt);
         tag.putLong("ShockReadyAt", shockReadyAt);
         tag.putLong("SkyReadyAt", skyReadyAt);
         tag.putLong("FallenReadyAt", fallenReadyAt);
@@ -204,6 +251,8 @@ public final class PlayerGeneModules {
         for (int slot = 0; slot < SIZE; slot++) {
             slots.setItem(slot, items.get(slot));
         }
+        clearLeap();
+        chainReadyAt = Math.max(0, tag.getLong("ChainReadyAt"));
         shockReadyAt = Math.max(0, tag.getLong("ShockReadyAt"));
         skyReadyAt = Math.max(0, tag.getLong("SkyReadyAt"));
         fallenReadyAt = Math.max(0, tag.getLong("FallenReadyAt"));

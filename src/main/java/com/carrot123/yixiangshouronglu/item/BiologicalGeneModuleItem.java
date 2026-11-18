@@ -194,6 +194,61 @@ public final class BiologicalGeneModuleItem extends Item {
                 line(tooltip, "solar_beam_chance", BiologicalGene.SOLAR_BEAM_CHANCE_PERCENT);
                 line(tooltip, "solar_beam_damage", BiologicalGene.SOLAR_BEAM_DAMAGE);
             }
+            case INCINERATION_GLAND -> {
+                line(tooltip, "burn_proc");
+                line(tooltip, "burn_damage");
+                line(tooltip, "burn_cap");
+            }
+            case FREEZING_GLAND -> {
+                line(tooltip, "freeze_proc");
+            }
+            case LIGHTNING_CHAIN_GLAND -> {
+                line(tooltip, "chain_proc");
+                line(tooltip, "chain_first");
+                line(tooltip, "chain_range");
+                line(tooltip, "chain_jump");
+                line(tooltip, "shock_cooldown", 8);
+            }
+            case UNDYING_BODY -> {
+                line(tooltip, "undying_regen");
+            }
+            case PRECISION_MUSCLE_FIBERS -> {
+                line(tooltip, "bow_damage");
+            }
+            case EXPLOSIVE_GLAND -> {
+                line(tooltip, "burst_proc");
+                line(tooltip, "burst_damage");
+                line(tooltip, "burst_terrain");
+            }
+            case ENDER_SYNAPSE -> {
+                line(tooltip, "movement_speed", 10);
+                line(tooltip, "dodge_chance", 5);
+                line(tooltip, "leap_key", Component.keybind("key.yixiangshouronglu.fallen_form"));
+                line(tooltip, "leap_range");
+                line(tooltip, "leap_attack");
+            }
+            case FROST_CORE_RETINA -> {
+                line(tooltip, "crit_chance", 10);
+                line(tooltip, "frost_damage");
+            }
+            case COMBAT_NERVES -> {
+                line(tooltip, "combat_nerves_block");
+                line(tooltip, "combat_nerves_immunity");
+            }
+            case BLAZING_MUSCLES -> {
+                line(tooltip, "blazing_muscles_ignite");
+                line(tooltip, "blazing_muscles_fire_immune");
+            }
+            case QUICKSAND_METABOLISM -> line(tooltip, "quicksand_hunger");
+            case FROZEN_CIRCULATORY_TISSUE -> line(tooltip, "frozen_circulation_bonus");
+            case PLANT_MUSCLE_FIBERS -> {
+                line(tooltip, "plant_reach");
+                line(tooltip, "plant_slow");
+            }
+            case ARACHNID_APONEUROSIS -> {
+                line(tooltip, "movement_speed", 15);
+                line(tooltip, "arachnid_jump");
+            }
             default -> {}
         }
     }

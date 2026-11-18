@@ -23,7 +23,7 @@ public final class GeneSkillNetwork {
                     var packet = context.get();
                     var player = packet.getSender();
                     if (player != null) {
-                        packet.enqueueWork(() -> BiologicalGeneModuleEffects.activateFallenForm(player));
+                        packet.enqueueWork(() -> BiologicalGeneModuleEffects.activateSkill(player));
                     }
                     packet.setPacketHandled(true);
                 }, Optional.of(NetworkDirection.PLAY_TO_SERVER));

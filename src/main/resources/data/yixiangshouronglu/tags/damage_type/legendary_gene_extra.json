@@ -1,6 +1,11 @@
 {
   "replace": false,
   "values": [
+    "yixiangshouronglu:blazing_muscles",
+    "yixiangshouronglu:blazing_muscles_immune",
+    "yixiangshouronglu:searing_burn",
+    "yixiangshouronglu:chain_lightning",
+    "yixiangshouronglu:gene_burst",
     "yixiangshouronglu:sky_storm_strike",
     "yixiangshouronglu:annihilation_strike",
     "yixiangshouronglu:anchor_strike",

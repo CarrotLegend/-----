@@ -4,6 +4,7 @@ import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.entity.GeneThunderboltEntity;
 import com.carrot123.yixiangshouronglu.gene.BiologicalGene;
 import com.carrot123.yixiangshouronglu.gene.PlayerGeneModules;
+import com.carrot123.yixiangshouronglu.registry.ModEffects;
 import com.github.L_Ender.cataclysm.init.ModEffect;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -23,15 +24,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -57,8 +61,12 @@ public final class BiologicalGeneModuleEffects {
     private BiologicalGeneModuleEffects() {}
 
     public static void refresh(ServerPlayer player) {
-        var modules = PlayerGeneModules.get(player);
+        var modules = PlayerGeneModules.getIfPresent(player);
+        if (modules == null) {
+            return;
+        }
         modules.recount();
+        MutantGeneSkills.regeneration(player, modules.count(BiologicalGene.UNDYING_BODY) > 0);
         LegendaryGeneAttacks.discardUnequipped(player, modules);
         refreshFallenForm(player, modules);
         refreshLavaDigestion(player, modules.count(BiologicalGene.LAVA_DIGESTION) > 0);
@@ -67,6 +75,16 @@ public final class BiologicalGeneModuleEffects {
             update(player, gene, Attributes.ARMOR, gene.armor, count);
             update(player, gene, Attributes.MAX_HEALTH, gene.health, count);
             update(player, gene, Attributes.ATTACK_DAMAGE, gene.attack, count);
+        }
+        var plant = BiologicalGene.PLANT_MUSCLE_FIBERS;
+        update(player, plant, ForgeMod.ENTITY_REACH.get(), 1, modules.count(plant));
+        var arachnid = BiologicalGene.ARACHNID_APONEUROSIS;
+        int arachnidCount = modules.count(arachnid);
+        updatePercent(player, arachnid, Attributes.MOVEMENT_SPEED, 15, arachnidCount);
+        update(player, arachnid, GeneJumpEvents.JUMP_HEIGHT.get(), arachnidCount * 0.25,
+                AttributeModifier.Operation.MULTIPLY_TOTAL);
+        if (modules.count(BiologicalGene.QUICKSAND_METABOLISM) > 0) {
+            player.removeEffect(MobEffects.HUNGER);
         }
         var war = BiologicalGene.WAR_INSTINCT;
         update(player, war, ForgeRegistries.ATTRIBUTES.getValue(CRIT_CHANCE),
@@ -84,6 +102,11 @@ public final class BiologicalGeneModuleEffects {
         updatePercent(player, chorus, Attributes.MOVEMENT_SPEED, BiologicalGene.CHORUS_SPEED_PERCENT, modules.count(chorus));
         update(player, chorus, ForgeRegistries.ATTRIBUTES.getValue(DODGE_CHANCE),
                 BiologicalGene.CHORUS_DODGE_PERCENT / 100.0, modules.count(chorus));
+        var ender = BiologicalGene.ENDER_SYNAPSE;
+        updatePercent(player, ender, Attributes.MOVEMENT_SPEED, 10, modules.count(ender));
+        update(player, ender, ForgeRegistries.ATTRIBUTES.getValue(DODGE_CHANCE), 0.05, modules.count(ender));
+        var frost = BiologicalGene.FROST_CORE_RETINA;
+        update(player, frost, ForgeRegistries.ATTRIBUTES.getValue(CRIT_CHANCE), 0.10, modules.count(frost));
         var thunder = BiologicalGene.THUNDER_CORE;
         update(player, thunder, ForgeRegistries.ATTRIBUTES.getValue(COLD_DAMAGE),
                 BiologicalGene.COLD_DAMAGE, modules.count(thunder));
@@ -155,10 +178,17 @@ public final class BiologicalGeneModuleEffects {
                 amount, AttributeModifier.Operation.MULTIPLY_TOTAL, false);
     }
 
-    public static void activateFallenForm(ServerPlayer player) {
-        var modules = PlayerGeneModules.get(player);
-        if (!player.isAlive() || player.hasDisconnected() || player.isSpectator()
-                || modules.count(BiologicalGene.FALLEN_COMBAT_NERVES) == 0
+    public static void activateSkill(ServerPlayer player) {
+        if (!player.isAlive() || player.isRemoved()
+                || player.hasDisconnected() || player.isSpectator()) {
+            return;
+        }
+        var modules = PlayerGeneModules.getIfPresent(player);
+        if (modules != null && modules.count(BiologicalGene.ENDER_SYNAPSE) > 0) {
+            MutantGeneSkills.leap(player, modules, gameTime(player));
+            return;
+        }
+        if (modules == null || modules.count(BiologicalGene.FALLEN_COMBAT_NERVES) == 0
                 || !modules.startFallenForm(gameTime(player))) {
             return;
         }
@@ -179,7 +209,11 @@ public final class BiologicalGeneModuleEffects {
     @SubscribeEvent
     public static void dimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            PlayerGeneModules.get(player).clearSkyCombo();
+            var modules = PlayerGeneModules.getIfPresent(player);
+            if (modules != null) {
+                modules.clearLeap();
+                modules.clearSkyCombo();
+            }
             LegendaryGeneAttacks.discard(player);
         }
         restore(event);
@@ -200,11 +234,14 @@ public final class BiologicalGeneModuleEffects {
     }
 
     private static void clearLegendaryCombat(ServerPlayer player) {
-        var modules = PlayerGeneModules.get(player);
-        modules.clearSkyCombo();
-        modules.endFallenForm();
-        refreshFallenForm(player, modules);
-        refreshLavaDigestion(player, false);
+        var modules = PlayerGeneModules.getIfPresent(player);
+        if (modules != null) {
+            modules.clearSkyCombo();
+            modules.clearLeap();
+            modules.endFallenForm();
+            refreshFallenForm(player, modules);
+            refreshLavaDigestion(player, false);
+        }
         LegendaryGeneAttacks.discard(player);
     }
 
@@ -216,12 +253,21 @@ public final class BiologicalGeneModuleEffects {
 
     @SubscribeEvent
     public static void tick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player)) {
+        if (event.phase != TickEvent.Phase.END
+                || !(event.player instanceof ServerPlayer player)
+                || !player.isAlive()
+                || player.isRemoved()
+                || player.hasDisconnected()) {
             return;
         }
-        var modules = PlayerGeneModules.get(player);
+        var modules = PlayerGeneModules.getIfPresent(player);
+        if (modules == null) {
+            return;
+        }
         long now = gameTime(player);
         modules.rageStacks(now);
+        MutantGeneSkills.regeneration(player, modules.count(BiologicalGene.UNDYING_BODY) > 0);
+        modules.settleLeap(now);
         if (modules.count(BiologicalGene.LAVA_DIGESTION) > 0) {
             refreshLavaDigestion(player, true);
         }
@@ -240,7 +286,10 @@ public final class BiologicalGeneModuleEffects {
         if (!(event.getEntity() instanceof ServerPlayer player) || event.getAmount() <= 0) {
             return;
         }
-        var modules = PlayerGeneModules.get(player);
+        var modules = PlayerGeneModules.getIfPresent(player);
+        if (modules == null) {
+            return;
+        }
         var source = event.getSource();
         if ((modules.count(BiologicalGene.ANCIENT_DRAGON_SPINE) > 0 && source.is(DamageTypes.FALL))
                 || (modules.count(BiologicalGene.LAVA_DIGESTION) > 0
@@ -249,10 +298,58 @@ public final class BiologicalGeneModuleEffects {
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void combatNerves(LivingAttackEvent event) {
+        if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayer player) || !player.isAlive()
+                || player.isRemoved() || !Float.isFinite(event.getAmount()) || event.getAmount() <= 0) {
+            return;
+        }
+        var modules = PlayerGeneModules.getIfPresent(player);
+        if (modules == null || modules.count(BiologicalGene.COMBAT_NERVES) == 0) {
+            return;
+        }
+        var source = event.getSource();
+        if (source.is(MODULE_EXTRA) || source.is(LAVA_SHOCK) || source.is(GeneThunderboltEntity.DAMAGE)
+                || source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return;
+        }
+        var direct = source.getDirectEntity();
+        var owner = source.getEntity() == null && direct instanceof Projectile projectile
+                ? projectile.getOwner() : source.getEntity();
+        boolean melee = direct == owner && isDirectAttack(source);
+        boolean projectileHit = direct instanceof Projectile || source.is(DamageTypeTags.IS_PROJECTILE) || source.is(RANGED_ATTACK);
+        if ((melee || projectileHit) && owner instanceof LivingEntity attacker
+                && isHostileAttack(player, attacker) && roll(player, 12)) {
+            event.setCanceled(true);
+            player.serverLevel().playSound(null, player.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 1, 1);
+        }
+    }
+
+    private static boolean isHostileAttack(ServerPlayer target, LivingEntity attacker) {
+        if (attacker instanceof Player player) {
+            return player != target && player.isAlive() && !player.isRemoved() && !player.isSpectator()
+                    && player.level() == target.level() && !player.isAlliedTo(target) && player.canHarmPlayer(target);
+        }
+        return MutantGeneSkills.enemy(target, attacker);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void preventHunger(MobEffectEvent.Applicable event) {
+        if (event.getEffectInstance().getEffect() == MobEffects.HUNGER && event.getEntity() instanceof ServerPlayer player) {
+            var modules = PlayerGeneModules.getIfPresent(player);
+            if (modules != null && modules.count(BiologicalGene.QUICKSAND_METABOLISM) > 0) {
+                event.setResult(Event.Result.DENY);
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void beforePlayerAttack(AttackEntityEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player
-                && PlayerGeneModules.get(player).count(BiologicalGene.LAVA_DIGESTION) > 0) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        var modules = PlayerGeneModules.getIfPresent(player);
+        if (modules != null && modules.count(BiologicalGene.LAVA_DIGESTION) > 0) {
             refreshLavaDigestion(player, true);
         }
     }
@@ -281,7 +378,10 @@ public final class BiologicalGeneModuleEffects {
         if (source.is(LAVA_SHOCK) || source.is(GeneThunderboltEntity.DAMAGE) || source.is(MODULE_EXTRA)) {
             return;
         }
-        var modules = PlayerGeneModules.get(player);
+        var modules = PlayerGeneModules.getIfPresent(player);
+        if (modules == null) {
+            return;
+        }
         long now = gameTime(player);
         boolean ranged = source.getDirectEntity() instanceof Projectile
                 || source.is(DamageTypeTags.IS_PROJECTILE) || source.is(RANGED_ATTACK);
@@ -303,9 +403,22 @@ public final class BiologicalGeneModuleEffects {
         }
         if (active && ranged) {
             bonus += modules.count(BiologicalGene.WAR_INSTINCT) * BiologicalGene.RANGED_DAMAGE_PERCENT;
+            if (MutantGeneSkills.bowArrow(source.getDirectEntity())) {
+                bonus += modules.count(BiologicalGene.PRECISION_MUSCLE_FIBERS) * 20;
+            }
         }
         if (bonus > 0) {
             event.setAmount(event.getAmount() * (1 + bonus / 100.0F));
+        }
+        if (active && player.isAlive() && MutantGeneSkills.attackable(player, target)) {
+            if (modules.count(BiologicalGene.FROZEN_CIRCULATORY_TISSUE) > 0 && target.hasEffect(ModEffects.CHILL.get())) {
+                event.setAmount(event.getAmount() * 1.45F);
+            }
+            if (modules.leapActive(now)) {
+                event.setAmount(event.getAmount() * 2);
+                modules.reserveLeap(() -> !event.isCanceled() && event.getAmount() > 0);
+            }
+            LegendaryGeneAttacks.onElementalHit(player, target, modules, now, event);
         }
         if (!active) {
             return;
@@ -365,7 +478,10 @@ public final class BiologicalGeneModuleEffects {
     }
 
     private static void applyIncoming(LivingDamageEvent event, ServerPlayer player, DamageSource source) {
-        var modules = PlayerGeneModules.get(player);
+        var modules = PlayerGeneModules.getIfPresent(player);
+        if (modules == null) {
+            return;
+        }
         if (modules.count(BiologicalGene.SPINAL_VOIDIZATION) > 0
                 && player.getRandom().nextInt(100) < BiologicalGene.VOID_CHANCE_PERCENT) {
             event.setAmount(event.getAmount() * (1 - BiologicalGene.VOID_REDUCTION_PERCENT / 100.0F));
@@ -382,6 +498,10 @@ public final class BiologicalGeneModuleEffects {
                     && roll(player, BiologicalGene.CHILL_CHANCE_PERCENT)) {
                 ChillEvents.apply(attacker, player);
             }
+        }
+        if (!source.is(MODULE_EXTRA) && !source.is(LAVA_SHOCK) && !source.is(GeneThunderboltEntity.DAMAGE)
+                && modules.count(BiologicalGene.EXPLOSIVE_GLAND) > 0 && roll(player, 15)) {
+            LegendaryGeneAttacks.burst(player, event, gameTime(player));
         }
         if (modules.count(BiologicalGene.MOLTEN_SKELETON) == 0
                 || !(source.getDirectEntity() instanceof LivingEntity attacker)

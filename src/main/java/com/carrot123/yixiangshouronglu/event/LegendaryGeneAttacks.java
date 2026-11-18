@@ -11,6 +11,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import com.carrot123.yixiangshouronglu.registry.ModEffects;
+import java.util.Comparator;
+import java.util.HashSet;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -78,6 +82,64 @@ final class LegendaryGeneAttacks {
         }
     }
 
+    static void onElementalHit(ServerPlayer player, LivingEntity target, PlayerGeneModules modules,
+                               long now, LivingDamageEvent event) {
+        if (modules.count(BiologicalGene.BLAZING_MUSCLES) > 0) {
+            schedule(player, target, Strike.BLAZING_MUSCLES, now, 0, event);
+        }
+        if (modules.count(BiologicalGene.PLANT_MUSCLE_FIBERS) > 0 && player.getRandom().nextInt(100) < 5) {
+            schedule(player, target, Strike.PLANT_SLOW, now, 0, event);
+        }
+        if (modules.count(BiologicalGene.FROST_CORE_RETINA) > 0 && target.hasEffect(ModEffects.CHILL.get())) {
+            schedule(player, target, Strike.FROST, now + delayUntilHurtWindowEnds(target), 20, event);
+        }
+        if (modules.count(BiologicalGene.INCINERATION_GLAND) > 0 && player.getRandom().nextInt(100) < 25) {
+            schedule(player, target, Strike.BURN, now, 0, event);
+        }
+        if (modules.count(BiologicalGene.FREEZING_GLAND) > 0 && player.getRandom().nextInt(100) < 25) {
+            schedule(player, target, Strike.CHILL, now, 0, event);
+        }
+        if (modules.count(BiologicalGene.LIGHTNING_CHAIN_GLAND) > 0 && modules.chainReady(now)) {
+            schedule(player, target, Strike.CHAIN_ROLL, now, 0, event);
+        }
+    }
+
+    static void burst(ServerPlayer player, LivingDamageEvent event, long now) {
+        schedule(player, player, Strike.BURST_SOUND, now, 0, event);
+        for (var target : player.serverLevel().getEntitiesOfClass(LivingEntity.class,
+                player.getBoundingBox().inflate(3), entity -> player.distanceToSqr(entity) <= 9
+                        && MutantGeneSkills.enemy(player, entity))) {
+            schedule(player, target, Strike.BURST, now, 8, event);
+        }
+    }
+
+    private static void chain(ServerPlayer player, LivingEntity target, DamageSource source) {
+        var level = player.serverLevel();
+        var visited = new HashSet<UUID>();
+        var origin = player.getEyePosition();
+        for (int segment = 0; segment < 3; segment++) {
+            var end = target.getBoundingBox().getCenter();
+            int steps = Math.max(1, Math.min(32, (int) (origin.distanceTo(end) * 3)));
+            for (int step = 1; step <= steps; step++) {
+                var point = origin.lerp(end, (double) step / steps);
+                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 1, 0, 0, 0, 0);
+            }
+            if (!target.hurt(source, segment == 0 ? 8 : 6) || segment == 2) {
+                return;
+            }
+            visited.add(target.getUUID());
+            var previous = target;
+            origin = end;
+            target = level.getEntitiesOfClass(LivingEntity.class, previous.getBoundingBox().inflate(6),
+                            entity -> !visited.contains(entity.getUUID()) && previous.distanceToSqr(entity) <= 36
+                                    && MutantGeneSkills.enemy(player, entity))
+                    .stream().min(Comparator.comparingDouble(entity -> previous.distanceToSqr(entity))).orElse(null);
+            if (target == null) {
+                return;
+            }
+        }
+    }
+
     private static int delayUntilHurtWindowEnds(LivingEntity target) {
         return Math.max(1, target.invulnerableTime - HURT_IMMUNITY_THRESHOLD + 1);
     }
@@ -138,6 +200,38 @@ final class LegendaryGeneAttacks {
             }
         }
         var level = player.serverLevel();
+        long now = level.getServer().overworld().getGameTime();
+        if (hit.strike() == Strike.BURST_SOUND) {
+            level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 1, 1);
+            return;
+        }
+        if (hit.strike().elemental && !MutantGeneSkills.attackable(player, target)) {
+            return;
+        }
+        if (hit.strike() == Strike.BLAZING_MUSCLES) {
+            BlazingMusclesEvents.ignite(player, target, now);
+            return;
+        }
+        if (hit.strike() == Strike.PLANT_SLOW) {
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 4), player);
+            return;
+        }
+        if (hit.strike() == Strike.BURN) {
+            SearingBurnEvents.apply(player, target, now);
+            return;
+        }
+        if (hit.strike() == Strike.CHILL) {
+            ChillEvents.apply(target, player);
+            return;
+        }
+        if (hit.strike() == Strike.CHAIN_ROLL) {
+            var modules = PlayerGeneModules.getIfPresent(player);
+            if (modules != null && modules.chainReady(now) && player.getRandom().nextInt(100) < 20) {
+                modules.startChainCooldown(now);
+                schedule(player, target, Strike.CHAIN, now + delayUntilHurtWindowEnds(target), 8);
+            }
+            return;
+        }
         if (hit.strike() == Strike.SKY) {
             var lightning = EntityType.LIGHTNING_BOLT.create(level);
             if (lightning != null) {
@@ -170,7 +264,11 @@ final class LegendaryGeneAttacks {
         }
         var damageType = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(hit.strike().damage);
         var source = new DamageSource(damageType, player);
-        if (hit.strike() == Strike.ANNIHILATION) {
+        if (hit.strike() == Strike.CHAIN) {
+            chain(player, target, source);
+        } else if (hit.strike() == Strike.BURST) {
+            MutantGeneSkills.burstDamage(target, source, damage);
+        } else if (hit.strike() == Strike.ANNIHILATION) {
             float healthBefore = target.getHealth();
             float absorptionBefore = target.getAbsorptionAmount();
             var position = target.blockPosition();
@@ -191,14 +289,30 @@ final class LegendaryGeneAttacks {
         ANNIHILATION(BiologicalGene.ANNIHILATION_REACTOR_CORE, "annihilation_strike"),
         ANCHOR(BiologicalGene.ANCHOR_MUSCLE_FIBERS, "anchor_strike"),
         EXTREME_COLD(BiologicalGene.EXTREME_COLD_BREATH, "extreme_cold_breath"),
-        SOLAR(BiologicalGene.SOLAR_RETINA, "solar_beam");
+        SOLAR(BiologicalGene.SOLAR_RETINA, "solar_beam"),
+        BURN(BiologicalGene.INCINERATION_GLAND, "searing_burn", true),
+        CHILL(BiologicalGene.FREEZING_GLAND, "chill", true),
+        CHAIN_ROLL(BiologicalGene.LIGHTNING_CHAIN_GLAND, "chain_lightning", true),
+        CHAIN(BiologicalGene.LIGHTNING_CHAIN_GLAND, "chain_lightning", true),
+        BURST_SOUND(BiologicalGene.EXPLOSIVE_GLAND, "gene_burst", true),
+        BURST(BiologicalGene.EXPLOSIVE_GLAND, "gene_burst", true),
+        FROST(BiologicalGene.FROST_CORE_RETINA, "extreme_cold_breath", true),
+        BLAZING_MUSCLES(BiologicalGene.BLAZING_MUSCLES, null, true),
+        PLANT_SLOW(BiologicalGene.PLANT_MUSCLE_FIBERS, null, true);
 
         private final BiologicalGene gene;
         private final ResourceKey<DamageType> damage;
 
+        private final boolean elemental;
+
         Strike(BiologicalGene gene, String damage) {
+            this(gene, damage, false);
+        }
+
+        Strike(BiologicalGene gene, String damage, boolean elemental) {
+            this.elemental = elemental;
             this.gene = gene;
-            this.damage = ResourceKey.create(Registries.DAMAGE_TYPE,
+            this.damage = damage == null ? null : ResourceKey.create(Registries.DAMAGE_TYPE,
                     new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, damage));
         }
     }

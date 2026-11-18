@@ -12,6 +12,9 @@ public final class ModEffects {
             DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, AnomalousContainmentChronicles.MOD_ID);
     public static final RegistryObject<MobEffect> CHILL = EFFECTS.register("chill", ChillEffect::new);
 
+    public static final RegistryObject<MobEffect> SEARING_BURN = EFFECTS.register("searing_burn",
+            () -> new MobEffect(MobEffectCategory.HARMFUL, 0xE65C21) {});
+
     private ModEffects() {}
 
     private static final class ChillEffect extends MobEffect {

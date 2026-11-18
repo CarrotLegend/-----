@@ -85,6 +85,8 @@
   "item.yixiangshouronglu.biological_gene_module.spinal_voidization": "Spinal Voidization",
   "item.yixiangshouronglu.biological_gene_module.molten_skeleton": "Molten Skeleton",
   "item.yixiangshouronglu.biological_cleaver": "Biological Cleaver",
+  "tooltip.yixiangshouronglu.biological_gene_module.installation_slot": "Installation Slot: %s",
+  "tooltip.yixiangshouronglu.biological_gene_module.any_region": "Any Enhancement Region",
   "tooltip.yixiangshouronglu.biological_gene_module.armor": "Armor +%s",
   "tooltip.yixiangshouronglu.biological_gene_module.health": "Max Health +%s",
   "tooltip.yixiangshouronglu.biological_gene_module.attack": "Attack Damage +%s",
@@ -266,6 +268,10 @@
   "message.yixiangshouronglu.gene_modifier.missing_attribute": "The required attribute is unavailable",
   "gui.yixiangshouronglu.chimera_no_match": "No matching recipe",
   "jei.yixiangshouronglu.special_extraction": "Special Extraction",
+  "jei.yixiangshouronglu.gene_module_extraction": "Gene Module Extraction",
+  "jei.yixiangshouronglu.gene_fluid": "Gene Fluid: %s mB",
+  "jei.yixiangshouronglu.contained_soul_required": "Requires a Contained Soul",
+  "jei.yixiangshouronglu.common_module_sources": "Common Gene Modules can also be made from fragments of other mobs without a special gene.",
   "jei.yixiangshouronglu.chamber_soul": "Required Soul",
   "screen.yixiangshouronglu.chamber.loot_remaining": "Next production in %s s",
   "screen.yixiangshouronglu.chamber.loot_blocked": "Loot waiting for output space",
@@ -303,5 +309,6 @@
   "item.yixiangshouronglu.research_result.named": "%s Research Result",
   "item.yixiangshouronglu.biological_containment_device": "Biological Containment Device",
   "gui.yixiangshouronglu.biological_research_page": "Biological Research",
-  "gui.yixiangshouronglu.chimera_page": "Chimera Modification"
+  "gui.yixiangshouronglu.chimera_page": "Chimera Modification",
+  "item.yixiangshouronglu.containment_chamber": "Containment Chamber"
 }
