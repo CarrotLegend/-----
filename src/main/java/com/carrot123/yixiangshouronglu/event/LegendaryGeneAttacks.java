@@ -3,6 +3,7 @@ package com.carrot123.yixiangshouronglu.event;
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
 import com.carrot123.yixiangshouronglu.gene.BiologicalGene;
 import com.carrot123.yixiangshouronglu.gene.PlayerGeneModules;
+import com.carrot123.yixiangshouronglu.network.GeneSkillNetwork;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -119,11 +120,7 @@ final class LegendaryGeneAttacks {
         var origin = player.getEyePosition();
         for (int segment = 0; segment < 3; segment++) {
             var end = target.getBoundingBox().getCenter();
-            int steps = Math.max(1, Math.min(32, (int) (origin.distanceTo(end) * 3)));
-            for (int step = 1; step <= steps; step++) {
-                var point = origin.lerp(end, (double) step / steps);
-                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 1, 0, 0, 0, 0);
-            }
+            GeneSkillNetwork.sendChainArc(level, origin, end);
             if (!target.hurt(source, segment == 0 ? 8 : 6) || segment == 2) {
                 return;
             }

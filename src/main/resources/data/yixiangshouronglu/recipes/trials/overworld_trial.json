@@ -1,0 +1,27 @@
+{
+  "type": "gateways:gate_recipe",
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "gateways"
+    }
+  ],
+  "pattern": [
+    "BBB",
+    "BFB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:grass_block"
+    },
+    "F": {
+      "item": "yixiangshouronglu:overworld_dimension_fragment"
+    }
+  },
+  "result": {
+    "item": "gateways:gate_pearl",
+    "count": 1
+  },
+  "gateway": "yixiangshouronglu:overworld_trial"
+}

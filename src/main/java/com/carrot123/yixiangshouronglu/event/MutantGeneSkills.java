@@ -129,6 +129,9 @@ public final class MutantGeneSkills {
     }
 
     static void leap(ServerPlayer player, PlayerGeneModules modules, long now) {
+        if (!modules.canTeleportWithEnderSynapse(now)) {
+            return;
+        }
         var level = player.serverLevel();
         var eye = player.getEyePosition();
         var end = player.pick(16, 1, false).getLocation();
@@ -161,7 +164,7 @@ public final class MutantGeneSkills {
                 player.stopRiding();
                 player.connection.teleport(dest.x, dest.y, dest.z, target.yBodyRot, player.getXRot());
                 player.fallDistance = 0;
-                modules.empowerLeap(now);
+                modules.completeEnderTeleport(now);
                 level.playSound(null, pos, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1, 1);
                 level.sendParticles(ParticleTypes.PORTAL, dest.x, dest.y + 1, dest.z, 16, 0.3, 0.5, 0.3, 0.1);
                 return;

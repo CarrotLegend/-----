@@ -83,6 +83,36 @@ public final class ModItems {
     public static final RegistryObject<Item> ETERNAL_SPRING_BUCKET = ITEMS.register("eternal_spring_bucket", () -> new BucketItem(ModFluids.ETERNAL_SPRING, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
     public static final RegistryObject<Item> BOTTLED_ETERNAL_SPRING = ITEMS.register("bottled_eternal_spring", () -> new BottledEternalSpringItem(new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> MADNESS_MASK = ITEMS.register("madness_mask", () -> new MadnessMaskItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+
+    public static final RegistryObject<Item> OVERWORLD_DIMENSION_FRAGMENT = ITEMS.register("overworld_dimension_fragment",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> NETHER_DIMENSION_FRAGMENT = ITEMS.register("nether_dimension_fragment",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> END_DIMENSION_FRAGMENT = ITEMS.register("end_dimension_fragment",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> DRAGON_NEST_DIMENSION_FRAGMENT = ITEMS.register("dragon_nest_dimension_fragment",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> SCULK_DIMENSION_FRAGMENT = ITEMS.register("sculk_dimension_fragment",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> WASTELAND_DIMENSION_FRAGMENT = ITEMS.register("wasteland_dimension_fragment",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> TWILIGHT_DIMENSION_FRAGMENT = ITEMS.register("twilight_dimension_fragment",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> OVERWORLD_DIMENSION_CORE = ITEMS.register("overworld_dimension_core",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> NETHER_DIMENSION_CORE = ITEMS.register("nether_dimension_core",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> END_DIMENSION_CORE = ITEMS.register("end_dimension_core",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> DRAGON_NEST_DIMENSION_CORE = ITEMS.register("dragon_nest_dimension_core",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> SCULK_DIMENSION_CORE = ITEMS.register("sculk_dimension_core",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> WASTELAND_DIMENSION_CORE = ITEMS.register("wasteland_dimension_core",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final RegistryObject<Item> TWILIGHT_DIMENSION_CORE = ITEMS.register("twilight_dimension_core",
+            () -> new Item(new Item.Properties().stacksTo(64)));
+
     private ModItems() {
     }
 }

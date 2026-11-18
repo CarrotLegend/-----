@@ -44,6 +44,7 @@ public final class PlayerGeneModules {
     private long fallenReadyAt;
     private long annihilationReadyAt;
     private long chainReadyAt;
+    private long enderTeleportReadyAt;
     private long leapEndsAt;
     private BooleanSupplier reservedLeap;
 
@@ -196,7 +197,12 @@ public final class PlayerGeneModules {
         chainReadyAt = now + 160;
     }
 
-    public void empowerLeap(long now) {
+    public boolean canTeleportWithEnderSynapse(long now) {
+        return now >= enderTeleportReadyAt;
+    }
+
+    public void completeEnderTeleport(long now) {
+        enderTeleportReadyAt = now + BiologicalGene.ENDER_TELEPORT_COOLDOWN;
         reservedLeap = null;
         leapEndsAt = now + 100;
     }
@@ -238,6 +244,7 @@ public final class PlayerGeneModules {
         }
         ContainerHelper.saveAllItems(tag, items);
         tag.putLong("ChainReadyAt", chainReadyAt);
+        tag.putLong("EnderTeleportReadyAt", enderTeleportReadyAt);
         tag.putLong("ShockReadyAt", shockReadyAt);
         tag.putLong("SkyReadyAt", skyReadyAt);
         tag.putLong("FallenReadyAt", fallenReadyAt);
@@ -253,6 +260,7 @@ public final class PlayerGeneModules {
         }
         clearLeap();
         chainReadyAt = Math.max(0, tag.getLong("ChainReadyAt"));
+        enderTeleportReadyAt = Math.max(0, tag.getLong("EnderTeleportReadyAt"));
         shockReadyAt = Math.max(0, tag.getLong("ShockReadyAt"));
         skyReadyAt = Math.max(0, tag.getLong("SkyReadyAt"));
         fallenReadyAt = Math.max(0, tag.getLong("FallenReadyAt"));

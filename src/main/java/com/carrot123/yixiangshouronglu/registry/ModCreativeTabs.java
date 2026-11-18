@@ -68,6 +68,20 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.ETERNAL_SPRING_BUCKET.get());
                                 output.accept(ModItems.BOTTLED_ETERNAL_SPRING.get());
                                 output.accept(ModItems.MADNESS_MASK.get());
+                                output.accept(ModItems.OVERWORLD_DIMENSION_FRAGMENT.get());
+                                output.accept(ModItems.NETHER_DIMENSION_FRAGMENT.get());
+                                output.accept(ModItems.END_DIMENSION_FRAGMENT.get());
+                                output.accept(ModItems.DRAGON_NEST_DIMENSION_FRAGMENT.get());
+                                output.accept(ModItems.SCULK_DIMENSION_FRAGMENT.get());
+                                output.accept(ModItems.WASTELAND_DIMENSION_FRAGMENT.get());
+                                output.accept(ModItems.TWILIGHT_DIMENSION_FRAGMENT.get());
+                                output.accept(ModItems.OVERWORLD_DIMENSION_CORE.get());
+                                output.accept(ModItems.NETHER_DIMENSION_CORE.get());
+                                output.accept(ModItems.END_DIMENSION_CORE.get());
+                                output.accept(ModItems.DRAGON_NEST_DIMENSION_CORE.get());
+                                output.accept(ModItems.SCULK_DIMENSION_CORE.get());
+                                output.accept(ModItems.WASTELAND_DIMENSION_CORE.get());
+                                output.accept(ModItems.TWILIGHT_DIMENSION_CORE.get());
                             })
                             .build()
             );

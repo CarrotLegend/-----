@@ -226,6 +226,7 @@ public final class BiologicalGeneModuleItem extends Item {
                 line(tooltip, "leap_key", Component.keybind("key.yixiangshouronglu.fallen_form"));
                 line(tooltip, "leap_range");
                 line(tooltip, "leap_attack");
+                line(tooltip, "shock_cooldown", BiologicalGene.ENDER_TELEPORT_COOLDOWN / 20);
             }
             case FROST_CORE_RETINA -> {
                 line(tooltip, "crit_chance", 10);

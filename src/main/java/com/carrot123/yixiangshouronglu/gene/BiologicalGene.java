@@ -47,6 +47,7 @@ public enum BiologicalGene {
     ARACHNID_APONEUROSIS("arachnid_aponeurosis", "mutantmonsters:spider_pig", 5, 8, 0, 0, 0);
 
     public static final int BLAZING_MUSCLES_BURN_SECONDS = 4;
+    public static final int ENDER_TELEPORT_COOLDOWN = 600;
     public static final float BLAZING_MUSCLES_BURN_DAMAGE = 1.0F;
 
     public static final int SEARING_TICKS = 100;
