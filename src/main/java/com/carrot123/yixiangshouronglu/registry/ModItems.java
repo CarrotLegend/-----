@@ -20,6 +20,8 @@ import com.carrot123.yixiangshouronglu.item.DragonNestTeleporterItem;
 import com.carrot123.yixiangshouronglu.item.ExemptionShieldItem;
 import com.carrot123.yixiangshouronglu.item.LegendaryCarrotKingSummonerItem;
 import com.carrot123.yixiangshouronglu.item.MadnessMaskItem;
+import com.carrot123.yixiangshouronglu.item.NocturnalChimeraItem;
+import com.carrot123.yixiangshouronglu.item.UndyingChimeraItem;
 import com.carrot123.yixiangshouronglu.item.PanaceaItem;
 import com.carrot123.yixiangshouronglu.item.ChamberUpgradeItem;
 import com.carrot123.yixiangshouronglu.item.MobContainerItem;
@@ -112,6 +114,9 @@ public final class ModItems {
             () -> new Item(new Item.Properties().stacksTo(64)));
     public static final RegistryObject<Item> TWILIGHT_DIMENSION_CORE = ITEMS.register("twilight_dimension_core",
             () -> new Item(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> NOCTURNAL_CHIMERA = ITEMS.register("nocturnal_chimera", NocturnalChimeraItem::new);
+    public static final RegistryObject<Item> UNDYING_CHIMERA = ITEMS.register("undying_chimera", UndyingChimeraItem::new);
 
     private ModItems() {
     }

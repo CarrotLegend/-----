@@ -1,0 +1,29 @@
+{
+  "type": "yixiangshouronglu:chimera_modification",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mutantmonsters"
+    }
+  ],
+  "inputs": [
+    {
+      "gene_source": "minecraft:spider",
+      "count": 1
+    },
+    {
+      "gene_source": "mutantmonsters:spider_pig",
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:spider_eye"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "yixiangshouronglu:nocturnal_chimera",
+    "count": 1
+  }
+}

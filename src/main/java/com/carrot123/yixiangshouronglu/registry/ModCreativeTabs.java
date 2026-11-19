@@ -47,6 +47,8 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.SEDATIVE_MEAT.get());
                                 output.accept(ModItems.EXTRACTOR.get());
                                 output.accept(ModItems.GENE_SYNTHESIZER.get());
+                                output.accept(ModItems.NOCTURNAL_CHIMERA.get());
+                                output.accept(ModItems.UNDYING_CHIMERA.get());
                                 output.accept(ModItems.GENE_EXTRACTOR.get());
                                 output.accept(ModItems.GENE_FRAGMENT.get());
                                 for (BiologicalGene gene : BiologicalGene.values()) {

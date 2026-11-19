@@ -1,10 +1,13 @@
 package com.carrot123.yixiangshouronglu.event;
 
 import com.carrot123.yixiangshouronglu.AnomalousContainmentChronicles;
+import com.carrot123.yixiangshouronglu.gene.BiologicalGene;
 import com.carrot123.yixiangshouronglu.gene.PlayerGeneModules;
+import com.carrot123.yixiangshouronglu.item.UndyingChimeraItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -65,28 +68,104 @@ public final class MutantGeneSkills {
         }
     }
 
-    private static final Map<ServerPlayer, MobEffectInstance> REGENERATION = new WeakHashMap<>();
+    private static final Map<ServerPlayer, Regeneration> REGENERATION = new WeakHashMap<>();
     private static final ThreadLocal<LivingEntity> BURST_TARGET = new ThreadLocal<>();
 
-    static void regeneration(ServerPlayer player, boolean equipped) {
+    static void regeneration(ServerPlayer player, boolean undyingBody) {
+        maintainRegeneration(player, UndyingChimeraItem.isEquipped(player) ? 1 : undyingBody ? 0 : -1);
+    }
+
+    public static void onUndyingChimeraChanged(ServerPlayer player, boolean equipped) {
+        var modules = PlayerGeneModules.getIfPresent(player);
+        boolean undyingBody = modules != null && modules.count(BiologicalGene.UNDYING_BODY) > 0;
+        maintainRegeneration(player, equipped ? 1 : undyingBody ? 0 : -1);
+    }
+
+    static void releaseRegeneration(ServerPlayer player) {
+        maintainRegeneration(player, -1);
+    }
+
+    private static void maintainRegeneration(ServerPlayer player, int amplifier) {
+        if (!player.isAlive() || player.isRemoved()) {
+            REGENERATION.remove(player);
+            return;
+        }
         var current = player.getEffect(MobEffects.REGENERATION);
-        if (!equipped || !player.isAlive()) {
-            var supplied = REGENERATION.remove(player);
-            if (supplied != null && supplied == current) {
+        var lease = REGENERATION.get(player);
+        boolean owned = lease != null && lease.supplied() == current;
+        boolean sameSupply = owned && current.getAmplifier() == amplifier && current.getDuration() > 1;
+        if (sameSupply && !lease.externalChanged()) {
+            return;
+        }
+        long now = player.serverLevel().getServer().overworld().getGameTime();
+        var external = owned ? lease.externalAt(now) : current;
+        if (amplifier < 0 || external != null && external.getAmplifier() >= amplifier) {
+            REGENERATION.remove(player);
+            if (owned && external == null) {
                 player.removeEffect(MobEffects.REGENERATION);
+            } else if (owned) {
+                player.forceAddEffect(external, null);
             }
-        } else if (current == null) {
-            var supplied = new MobEffectInstance(MobEffects.REGENERATION, 50, 0, true, false);
-            if (player.addEffect(supplied)) {
-                REGENERATION.put(player, supplied);
-            }
+            return;
+        }
+        int duration = sameSupply ? current.getDuration() : (50 >> amplifier) + 1;
+        var supplied = new MobEffectInstance(MobEffects.REGENERATION, duration, amplifier, true, false);
+        CompoundTag savedExternal = external == null ? null : external.save(new CompoundTag());
+        if (savedExternal != null) {
+            var savedSupply = supplied.save(new CompoundTag());
+            savedSupply.put("HiddenEffect", savedExternal.copy());
+            supplied = MobEffectInstance.load(savedSupply);
+        }
+        player.forceAddEffect(supplied, null);
+        if (player.getEffect(MobEffects.REGENERATION) == supplied) {
+            REGENERATION.put(player, new Regeneration(supplied, savedExternal, now, false));
         }
     }
 
     @SubscribeEvent
     public static void externalRegeneration(MobEffectEvent.Added event) {
         if (event.getEntity() instanceof ServerPlayer player && event.getEffectInstance().getEffect() == MobEffects.REGENERATION) {
-            REGENERATION.remove(player);
+            var lease = REGENERATION.get(player);
+            if (lease == null || lease.supplied() != event.getOldEffectInstance()) {
+                return;
+            }
+            long now = player.serverLevel().getServer().overworld().getGameTime();
+            var external = lease.externalAt(now);
+            var added = event.getEffectInstance();
+            if (external == null) {
+                external = MobEffectInstance.load(added.save(new CompoundTag()));
+            } else {
+                external.update(added);
+            }
+            REGENERATION.put(player, new Regeneration(lease.supplied(), external.save(new CompoundTag()), now, true));
+        }
+    }
+
+    private record Regeneration(MobEffectInstance supplied, CompoundTag external, long capturedAt, boolean externalChanged) {
+        private MobEffectInstance externalAt(long now) {
+            if (external == null) {
+                return null;
+            }
+            var remaining = ageEffect(external.copy(), Math.max(0, now - capturedAt));
+            return remaining == null ? null : MobEffectInstance.load(remaining);
+        }
+
+        private static CompoundTag ageEffect(CompoundTag effect, long elapsed) {
+            CompoundTag hidden = effect.contains("HiddenEffect", 10)
+                    ? ageEffect(effect.getCompound("HiddenEffect"), elapsed) : null;
+            if (hidden == null) {
+                effect.remove("HiddenEffect");
+            } else {
+                effect.put("HiddenEffect", hidden);
+            }
+            int duration = effect.getInt("Duration");
+            if (duration != -1) {
+                if (duration <= elapsed) {
+                    return hidden;
+                }
+                effect.putInt("Duration", (int) (duration - elapsed));
+            }
+            return effect;
         }
     }
 

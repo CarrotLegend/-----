@@ -1,5 +1,6 @@
 package com.carrot123.yixiangshouronglu.gene.recipe;
 
+import com.carrot123.yixiangshouronglu.item.BiologicalGeneModuleItem;
 import com.carrot123.yixiangshouronglu.item.ContainmentExtractItem;
 import com.carrot123.yixiangshouronglu.registry.ModGeneRecipes;
 import com.carrot123.yixiangshouronglu.registry.ModItems;
@@ -23,8 +24,16 @@ import java.util.ArrayList;
 public final class ChimeraRecipe implements Recipe<Container> {
     public static final int DURATION = 60;
     private static final int INPUT_SLOTS = 4;
-    public record Input(Ingredient ingredient, int count, @Nullable ResourceLocation extractEntity) {
+    public record Input(Ingredient ingredient, int count, @Nullable ResourceLocation extractEntity,
+                        @Nullable ResourceLocation geneSource) {
+        public Input(Ingredient ingredient, int count, @Nullable ResourceLocation extractEntity) {
+            this(ingredient, count, extractEntity, null);
+        }
+
         boolean matches(ItemStack stack) {
+            if (geneSource != null) {
+                return geneSource.equals(BiologicalGeneModuleItem.validatedSource(stack));
+            }
             if (extractEntity != null) {
                 return stack.getCount() >= count && stack.is(ModItems.CONTAINMENT_EXTRACT.get())
                         && extractEntity.toString().equals(ContainmentExtractItem.getEntityId(stack));
@@ -33,6 +42,10 @@ public final class ChimeraRecipe implements Recipe<Container> {
         }
 
         public List<ItemStack> displayStacks() {
+            if (geneSource != null) {
+                ItemStack stack = BiologicalGeneModuleItem.displayStackForSource(geneSource);
+                return stack.isEmpty() ? List.of() : List.of(stack);
+            }
             if (extractEntity != null) {
                 ItemStack stack = ContainmentExtractItem.create(extractEntity.toString());
                 return stack.isEmpty() ? List.of() : List.of(stack.copyWithCount(count));
@@ -113,6 +126,15 @@ public final class ChimeraRecipe implements Recipe<Container> {
             for (JsonElement element : materials) {
                 JsonObject input = GsonHelper.convertToJsonObject(element, "input");
                 int count = count(input);
+                if (input.has("gene_source")) {
+                    ResourceLocation source = ResourceLocation.tryParse(GsonHelper.getAsString(input, "gene_source"));
+                    if (input.has("ingredient") || input.has("extract_entity") || count != 1 || source == null
+                            || BiologicalGeneModuleItem.validatedSource(BiologicalGeneModuleItem.displayStackForSource(source)) == null) {
+                        throw new JsonSyntaxException("Invalid or unavailable chimera gene source: " + input.get("gene_source"));
+                    }
+                    inputs.add(new Input(Ingredient.of(ModItems.BIOLOGICAL_GENE_MODULE.get()), count, null, source));
+                    continue;
+                }
                 if (input.has("extract_entity")) {
                     ResourceLocation entity = ResourceLocation.tryParse(
                             SoulEntityUtil.normalizeExtractEntityId(GsonHelper.getAsString(input, "extract_entity")));

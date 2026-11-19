@@ -21,6 +21,7 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -31,6 +32,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -55,6 +57,7 @@ public final class BiologicalGeneModuleEffects {
     private static final ResourceLocation COLD_DAMAGE = new ResourceLocation("attributeslib", "cold_damage");
     private static final ResourceLocation DODGE_CHANCE = new ResourceLocation("attributeslib", "dodge_chance");
     private static final ResourceLocation LIFE_STEAL = new ResourceLocation("attributeslib", "life_steal");
+    private static final ResourceLocation INCINERATOR = new ResourceLocation("cataclysm", "the_incinerator");
     private static final TagKey<DamageType> MODULE_EXTRA = TagKey.create(Registries.DAMAGE_TYPE,
             new ResourceLocation(AnomalousContainmentChronicles.MOD_ID, "legendary_gene_extra"));
 
@@ -70,12 +73,15 @@ public final class BiologicalGeneModuleEffects {
         LegendaryGeneAttacks.discardUnequipped(player, modules);
         refreshFallenForm(player, modules);
         refreshLavaDigestion(player, modules.count(BiologicalGene.LAVA_DIGESTION) > 0);
+        refreshIncinerator(player, modules.count(BiologicalGene.SOULFIRE_REACTOR_CORE) > 0);
         for (BiologicalGene gene : BiologicalGene.values()) {
             int count = modules.count(gene);
             update(player, gene, Attributes.ARMOR, gene.armor, count);
             update(player, gene, Attributes.MAX_HEALTH, gene.health, count);
             update(player, gene, Attributes.ATTACK_DAMAGE, gene.attack, count);
         }
+        var incineration = BiologicalGene.INCINERATION_GLAND;
+        updatePercent(player, incineration, Attributes.ATTACK_DAMAGE, 24, modules.count(incineration));
         var plant = BiologicalGene.PLANT_MUSCLE_FIBERS;
         update(player, plant, ForgeMod.ENTITY_REACH.get(), 1, modules.count(plant));
         var arachnid = BiologicalGene.ARACHNID_APONEUROSIS;
@@ -137,6 +143,13 @@ public final class BiologicalGeneModuleEffects {
 
     private static void update(ServerPlayer player, BiologicalGene gene, Attribute attribute, double amount,
                                AttributeModifier.Operation operation, boolean permanent) {
+        if (attribute != null) {
+            update(player, attribute, amount, operation, permanent, gene.id + "/" + attribute.getDescriptionId());
+        }
+    }
+
+    private static void update(ServerPlayer player, Attribute attribute, double amount,
+                               AttributeModifier.Operation operation, boolean permanent, String modifierPath) {
         if (attribute == null) {
             return;
         }
@@ -144,7 +157,7 @@ public final class BiologicalGeneModuleEffects {
         if (instance == null) {
             return;
         }
-        String key = AnomalousContainmentChronicles.MOD_ID + ":gene_modules/" + gene.id + "/" + attribute.getDescriptionId();
+        String key = AnomalousContainmentChronicles.MOD_ID + ":gene_modules/" + modifierPath;
         UUID uuid = UUID.nameUUIDFromBytes(key.getBytes(StandardCharsets.UTF_8));
         var current = instance.getModifier(uuid);
         if (current != null && current.getAmount() == amount
@@ -174,8 +187,15 @@ public final class BiologicalGeneModuleEffects {
     private static void refreshLavaDigestion(ServerPlayer player, boolean equipped) {
         double amount = equipped && player.isAlive() && player.isOnFire()
                 ? BiologicalGene.LAVA_ATTACK_PERCENT / 100.0 : 0;
-        update(player, BiologicalGene.LAVA_DIGESTION, Attributes.ATTACK_DAMAGE,
-                amount, AttributeModifier.Operation.MULTIPLY_TOTAL, false);
+        update(player, Attributes.ATTACK_DAMAGE, amount, AttributeModifier.Operation.MULTIPLY_TOTAL,
+                false, "lava_digestion/burning_attack");
+    }
+
+    private static void refreshIncinerator(ServerPlayer player, boolean equipped) {
+        boolean active = equipped && player.isAlive()
+                && INCINERATOR.equals(ForgeRegistries.ITEMS.getKey(player.getMainHandItem().getItem()));
+        update(player, Attributes.ATTACK_DAMAGE, active ? 1.0 : 0.0,
+                AttributeModifier.Operation.MULTIPLY_TOTAL, false, "soulfire_reactor_core/incinerator_attack");
     }
 
     public static void activateSkill(ServerPlayer player) {
@@ -222,6 +242,7 @@ public final class BiologicalGeneModuleEffects {
     @SubscribeEvent
     public static void logout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            MutantGeneSkills.releaseRegeneration(player);
             clearLegendaryCombat(player);
         }
     }
@@ -229,6 +250,7 @@ public final class BiologicalGeneModuleEffects {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void death(LivingDeathEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            MutantGeneSkills.releaseRegeneration(player);
             clearLegendaryCombat(player);
         }
     }
@@ -242,6 +264,7 @@ public final class BiologicalGeneModuleEffects {
             refreshFallenForm(player, modules);
             refreshLavaDigestion(player, false);
         }
+        refreshIncinerator(player, false);
         LegendaryGeneAttacks.discard(player);
     }
 
@@ -261,12 +284,12 @@ public final class BiologicalGeneModuleEffects {
             return;
         }
         var modules = PlayerGeneModules.getIfPresent(player);
+        MutantGeneSkills.regeneration(player, modules != null && modules.count(BiologicalGene.UNDYING_BODY) > 0);
         if (modules == null) {
             return;
         }
         long now = gameTime(player);
         modules.rageStacks(now);
-        MutantGeneSkills.regeneration(player, modules.count(BiologicalGene.UNDYING_BODY) > 0);
         modules.settleLeap(now);
         if (modules.count(BiologicalGene.LAVA_DIGESTION) > 0) {
             refreshLavaDigestion(player, true);
@@ -344,13 +367,26 @@ public final class BiologicalGeneModuleEffects {
     }
 
     @SubscribeEvent
+    public static void onMainHandChanged(LivingEquipmentChangeEvent event) {
+        if (event.getSlot() == EquipmentSlot.MAINHAND && event.getEntity() instanceof ServerPlayer player) {
+            var modules = PlayerGeneModules.getIfPresent(player);
+            if (modules != null) {
+                refreshIncinerator(player, modules.count(BiologicalGene.SOULFIRE_REACTOR_CORE) > 0);
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void beforePlayerAttack(AttackEntityEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
         var modules = PlayerGeneModules.getIfPresent(player);
-        if (modules != null && modules.count(BiologicalGene.LAVA_DIGESTION) > 0) {
-            refreshLavaDigestion(player, true);
+        if (modules != null) {
+            refreshIncinerator(player, modules.count(BiologicalGene.SOULFIRE_REACTOR_CORE) > 0);
+            if (modules.count(BiologicalGene.LAVA_DIGESTION) > 0) {
+                refreshLavaDigestion(player, true);
+            }
         }
     }
 

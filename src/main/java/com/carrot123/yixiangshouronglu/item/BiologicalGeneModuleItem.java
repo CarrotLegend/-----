@@ -32,7 +32,10 @@ public final class BiologicalGeneModuleItem extends Item {
     }
 
     public static ItemStack displayStack(BiologicalGene gene) {
-        var source = gene.displaySource();
+        return displayStackForSource(gene.displaySource());
+    }
+
+    public static ItemStack displayStackForSource(ResourceLocation source) {
         if (!ForgeRegistries.ENTITY_TYPES.containsKey(source)) {
             return ItemStack.EMPTY;
         }
@@ -40,6 +43,11 @@ public final class BiologicalGeneModuleItem extends Item {
         data.putString("id", source.toString());
         data.putUUID("UUID", new UUID(0, 0));
         return create(source, data);
+    }
+
+    @Nullable
+    public static ResourceLocation validatedSource(ItemStack stack) {
+        return gene(stack) == null ? null : ResourceLocation.tryParse(stack.getTag().getString("SourceEntityId"));
     }
 
     private static ItemStack create(ResourceLocation source, CompoundTag snapshot) {
@@ -107,6 +115,7 @@ public final class BiologicalGeneModuleItem extends Item {
         }
         switch (gene) {
             case SOULFIRE_REACTOR_CORE -> {
+                line(tooltip, "incinerator_attack", 100);
                 line(tooltip, "all_damage", BiologicalGene.SOULFIRE_DAMAGE_PERCENT);
                 line(tooltip, "blazing_brand", BiologicalGene.BRAND_CHANCE_PERCENT, BiologicalGene.BRAND_TICKS / 20);
                 line(tooltip, "burning_damage", BiologicalGene.BURNING_DAMAGE_PERCENT);
@@ -195,6 +204,7 @@ public final class BiologicalGeneModuleItem extends Item {
                 line(tooltip, "solar_beam_damage", BiologicalGene.SOLAR_BEAM_DAMAGE);
             }
             case INCINERATION_GLAND -> {
+                line(tooltip, "attack_percent", 24);
                 line(tooltip, "burn_proc");
                 line(tooltip, "burn_damage");
                 line(tooltip, "burn_cap");

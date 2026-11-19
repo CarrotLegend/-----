@@ -1,4 +1,13 @@
 {
+  "item.yixiangshouronglu.undying_chimera": "Undying Chimera",
+  "tooltip.yixiangshouronglu.undying_chimera.regeneration": "Grants Regeneration II",
+  "tooltip.yixiangshouronglu.biological_gene_module.attack_percent": "Attack Damage +%s%%",
+  "tooltip.yixiangshouronglu.biological_gene_module.incinerator_attack": "Attack Damage +%s%% while holding The Incinerator in the main hand",
+  "item.yixiangshouronglu.nocturnal_chimera": "Nocturnal Chimera",
+  "curios.identifier.chimera_modification": "Chimera Modification",
+  "tooltip.yixiangshouronglu.nocturnal_chimera.night_vision": "Grants Night Vision",
+  "tooltip.yixiangshouronglu.nocturnal_chimera.fall_immunity": "Immune to fall damage",
+  "jei.yixiangshouronglu.gene_source": "Gene Source: %s",
   "yixiangshouronglu.overworld_trial": "Overworld Dimension Trial Gateway",
   "yixiangshouronglu.nether_trial": "Nether Dimension Trial Gateway",
   "yixiangshouronglu.end_trial": "End Dimension Trial Gateway",

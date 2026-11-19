@@ -338,11 +338,8 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
             if (extractStoredMb >= EXTRACT_COST_MB) {
                 result = ContainmentExtractItem.create(entityId);
             }
-        } else if (extractionInput.is(ModItems.CONTAINMENT_EXTRACT.get())) {
-            ChamberSpecialProducts.Recipe recipe = ChamberSpecialProducts.forInput(
-                    entityId,
-                    ContainmentExtractItem.getEntityId(extractionInput)
-            );
+        } else {
+            ChamberSpecialProducts.Recipe recipe = ChamberSpecialProducts.forInput(entityId, extractionInput);
 
             if (recipe != null && extractionInput.getCount() >= recipe.inputCount()) {
                 result = recipe.result();
@@ -659,8 +656,7 @@ public final class ContainmentChamberBlockEntity extends BlockEntity implements 
 
     public static boolean acceptsExtraction(String entityId, ItemStack stack) {
         return !entityId.isEmpty() && (stack.is(ModItems.EXTRACTOR.get()) || GeneFragmentItem.sourceType(stack) != null
-                || (stack.is(ModItems.CONTAINMENT_EXTRACT.get())
-                && ChamberSpecialProducts.forInput(entityId, ContainmentExtractItem.getEntityId(stack)) != null));
+                || ChamberSpecialProducts.forInput(entityId, stack) != null);
     }
 
     public NonNullList<ItemStack> drainContents() {

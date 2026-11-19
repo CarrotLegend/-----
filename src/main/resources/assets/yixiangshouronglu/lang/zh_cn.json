@@ -1,4 +1,13 @@
 {
+  "item.yixiangshouronglu.undying_chimera": "不死奇美拉",
+  "tooltip.yixiangshouronglu.undying_chimera.regeneration": "提供生命恢复Ⅱ",
+  "tooltip.yixiangshouronglu.biological_gene_module.attack_percent": "攻击伤害 +%s%%",
+  "tooltip.yixiangshouronglu.biological_gene_module.incinerator_attack": "手持炎葬时，攻击伤害 +%s%%",
+  "item.yixiangshouronglu.nocturnal_chimera": "夜行奇美拉",
+  "curios.identifier.chimera_modification": "奇美拉改造",
+  "tooltip.yixiangshouronglu.nocturnal_chimera.night_vision": "提供夜视",
+  "tooltip.yixiangshouronglu.nocturnal_chimera.fall_immunity": "免疫摔落伤害",
+  "jei.yixiangshouronglu.gene_source": "基因来源：%s",
   "yixiangshouronglu.overworld_trial": "主世界维度试炼传送门",
   "yixiangshouronglu.nether_trial": "下界维度试炼传送门",
   "yixiangshouronglu.end_trial": "末地维度试炼传送门",

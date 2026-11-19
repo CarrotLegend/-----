@@ -27,12 +27,15 @@ import mezz.jei.api.gui.inputs.IJeiInputHandler;
 import mezz.jei.api.gui.inputs.IJeiUserInput;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.advanced.ISimpleRecipeManagerPlugin;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.registration.IAdvancedRegistration;
 import mezz.jei.api.registration.IExtraIngredientRegistration;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
@@ -71,6 +74,8 @@ public final class GeneJeiPlugin implements IModPlugin {
     private List<ChimeraRecipe> chimeraRecipes = List.of();
     private final java.util.Set<ChimeraRecipe> indexedChimera = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
     private final Set<ResourceLocation> indexedExtracts = new HashSet<>();
+    private final Set<ResourceLocation> indexedGeneSources = new HashSet<>();
+    private List<ModuleExtraction> commonExtractions = List.of();
     private IJeiRuntime runtime;
 
     @Override public ResourceLocation getPluginUid() { return new ResourceLocation("yixiangshouronglu", "genes"); }
@@ -93,8 +98,34 @@ public final class GeneJeiPlugin implements IModPlugin {
             return context == UidContext.Recipe ? BiologicalGene.fromSource(source).id : source.toString();
         });
         registration.registerSubtypeInterpreter(ModItems.BIOLOGICAL_GENE_MODULE.get(), (stack, context) -> {
-            var gene = BiologicalGeneModuleItem.gene(stack);
-            return gene == null ? IIngredientSubtypeInterpreter.NONE : gene.id;
+            var source = BiologicalGeneModuleItem.validatedSource(stack);
+            return source == null ? IIngredientSubtypeInterpreter.NONE : source.toString();
+        });
+    }
+
+    @Override public void registerAdvanced(IAdvancedRegistration registration) {
+        registration.addTypedRecipeManagerPlugin(MODULE_EXTRACTION, new ISimpleRecipeManagerPlugin<ModuleExtraction>() {
+            @Override public boolean isHandledInput(ITypedIngredient<?> input) {
+                return false;
+            }
+
+            @Override public boolean isHandledOutput(ITypedIngredient<?> output) {
+                var source = output.getItemStack().map(BiologicalGeneModuleItem::validatedSource).orElse(null);
+                return source != null && !source.equals(BiologicalGene.COMMON.displaySource())
+                        && BiologicalGene.fromSource(source) == BiologicalGene.COMMON;
+            }
+
+            @Override public List<ModuleExtraction> getRecipesForInput(ITypedIngredient<?> input) {
+                return List.of();
+            }
+
+            @Override public List<ModuleExtraction> getRecipesForOutput(ITypedIngredient<?> output) {
+                return isHandledOutput(output) ? commonExtractions : List.of();
+            }
+
+            @Override public List<ModuleExtraction> getAllRecipes() {
+                return List.of();
+            }
         });
     }
 
@@ -115,7 +146,9 @@ public final class GeneJeiPlugin implements IModPlugin {
         indexedChimera.addAll(chimeraRecipes);
         registration.addRecipes(CHIMERA, chimeraRecipes);
         registration.addRecipes(EXTRACTION, ChamberSpecialProducts.availableRules());
-        registration.addRecipes(MODULE_EXTRACTION, moduleExtractions());
+        var extractions = moduleExtractions();
+        commonExtractions = extractions.stream().filter(recipe -> recipe.gene() == BiologicalGene.COMMON).toList();
+        registration.addRecipes(MODULE_EXTRACTION, extractions);
     }
 
     @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
@@ -134,7 +167,7 @@ public final class GeneJeiPlugin implements IModPlugin {
 
     @Override public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
-        indexExtracts(chimeraRecipes);
+        indexChimeraIngredients(chimeraRecipes);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -144,6 +177,7 @@ public final class GeneJeiPlugin implements IModPlugin {
         chimeraRecipes = List.of();
         indexedChimera.clear();
         indexedExtracts.clear();
+        indexedGeneSources.clear();
     }
 
     @SubscribeEvent public void recipesUpdated(RecipesUpdatedEvent event) {
@@ -155,19 +189,28 @@ public final class GeneJeiPlugin implements IModPlugin {
             manager.addRecipes(CHIMERA, next.stream().filter(indexedChimera::add).toList());
             manager.unhideRecipes(CHIMERA, next);
             chimeraRecipes = next;
-            indexExtracts(next);
+            indexChimeraIngredients(next);
         }
     }
 
-    private void indexExtracts(List<ChimeraRecipe> recipes) {
-        List<ItemStack> stacks = recipes.stream()
+    private void indexChimeraIngredients(List<ChimeraRecipe> recipes) {
+        List<ItemStack> stacks = new ArrayList<>();
+        recipes.stream()
                 .flatMap(recipe -> recipe.inputs().stream())
                 .map(ChimeraRecipe.Input::extractEntity)
                 .filter(Objects::nonNull)
                 .filter(indexedExtracts::add)
                 .map(entity -> ContainmentExtractItem.create(entity.toString()))
                 .filter(stack -> !stack.isEmpty())
-                .toList();
+                .forEach(stacks::add);
+        recipes.stream().flatMap(recipe -> recipe.inputs().stream())
+                .map(ChimeraRecipe.Input::geneSource)
+                .filter(Objects::nonNull)
+                .filter(source -> !source.equals(BiologicalGene.fromSource(source).displaySource()))
+                .filter(indexedGeneSources::add)
+                .map(BiologicalGeneModuleItem::displayStackForSource)
+                .filter(stack -> !stack.isEmpty())
+                .forEach(stacks::add);
         if (!stacks.isEmpty()) {
             runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, stacks);
         }
@@ -219,8 +262,15 @@ public final class GeneJeiPlugin implements IModPlugin {
             builder.setShapeless();
             for (int index = 0; index < recipe.inputs().size(); index++) {
                 var input = recipe.inputs().get(index);
-                builder.addSlot(RecipeIngredientRole.INPUT, 9 + index % 2 * 113, 8 + index / 2 * 39)
+                var slot = builder.addSlot(RecipeIngredientRole.INPUT, 9 + index % 2 * 113, 8 + index / 2 * 39)
                         .setStandardSlotBackground().addItemStacks(input.displayStacks());
+                if (input.geneSource() != null) {
+                    var entity = ForgeRegistries.ENTITY_TYPES.getValue(input.geneSource());
+                    if (entity != null) {
+                        slot.addTooltipCallback((view, tooltip) -> tooltip.add(Component.translatable(
+                                "jei.yixiangshouronglu.gene_source", entity.getDescription())));
+                    }
+                }
             }
             var level = Minecraft.getInstance().level;
             if (level != null) {
@@ -240,10 +290,12 @@ public final class GeneJeiPlugin implements IModPlugin {
     private static final class ExtractionCategory implements IRecipeCategory<ChamberSpecialProducts.Rule> {
         private final IDrawable background;
         private final IDrawable icon;
+        private final IDrawable arrow;
 
         private ExtractionCategory(IGuiHelper helper) {
             background = helper.createBlankDrawable(150, 61);
             icon = helper.createDrawableItemStack(new ItemStack(ModItems.CONTAINMENT_CHAMBER.get()));
+            arrow = helper.getRecipeArrow();
         }
 
         @Override public RecipeType<ChamberSpecialProducts.Rule> getRecipeType() { return EXTRACTION; }
@@ -259,13 +311,13 @@ public final class GeneJeiPlugin implements IModPlugin {
             builder.addSlot(RecipeIngredientRole.CATALYST, 13, 25).setStandardSlotBackground()
                     .addItemStack(SoulItem.create(ModItems.SOUL.get(), new ResourceLocation(rule.chamber())));
             builder.addSlot(RecipeIngredientRole.INPUT, 64, 25).setStandardSlotBackground()
-                    .addItemStack(ContainmentExtractItem.create(rule.input()).copyWithCount(recipe.inputCount()));
+                    .addItemStack(rule.inputStack());
             builder.addSlot(RecipeIngredientRole.OUTPUT, 120, 25).setOutputSlotBackground().addItemStack(recipe.result());
         }
 
         @Override public void draw(ChamberSpecialProducts.Rule rule, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
             graphics.drawString(Minecraft.getInstance().font, Component.translatable("jei.yixiangshouronglu.chamber_soul"), 5, 8, 0x777777, false);
-            graphics.fill(85, 30, 112, 35, 0xFFE1B65A);
+            arrow.draw(graphics, 88, 25);
             drawTime(graphics, 20, 49);
         }
     }
