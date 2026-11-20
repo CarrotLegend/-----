@@ -49,12 +49,16 @@ public final class ModCreativeTabs {
                                 output.accept(ModItems.GENE_SYNTHESIZER.get());
                                 output.accept(ModItems.NOCTURNAL_CHIMERA.get());
                                 output.accept(ModItems.UNDYING_CHIMERA.get());
+                                output.accept(ModItems.BLOODTHIRSTY_CHIMERA.get());
+                                output.accept(ModItems.GLUTTONOUS_CHIMERA.get());
                                 output.accept(ModItems.GENE_EXTRACTOR.get());
                                 output.accept(ModItems.GENE_FRAGMENT.get());
                                 for (BiologicalGene gene : BiologicalGene.values()) {
-                                    var display = BiologicalGeneModuleItem.displayStack(gene);
-                                    if (!display.isEmpty()) {
-                                        output.accept(display);
+                                    for (var source : gene.displaySources()) {
+                                        var display = BiologicalGeneModuleItem.displayStackForSource(source, gene);
+                                        if (!display.isEmpty()) {
+                                            output.accept(display);
+                                        }
                                     }
                                 }
                                 output.accept(ModItems.BIOLOGICAL_CLEAVER.get());

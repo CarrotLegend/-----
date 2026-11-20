@@ -1,0 +1,35 @@
+{
+  "type": "yixiangshouronglu:chimera_modification",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "hardtodestroyreptile"
+    }
+  ],
+  "inputs": [
+    {
+      "extract_entity": "hardtodestroyreptile:the_hard_to_destroy_reptile_small",
+      "count": 2
+    },
+    {
+      "extract_entity": "minecraft:pig",
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "tag": "yixiangshouronglu:raw_meats"
+      },
+      "count": 16
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:carrot"
+      },
+      "count": 16
+    }
+  ],
+  "result": {
+    "item": "yixiangshouronglu:gluttonous_chimera",
+    "count": 1
+  }
+}

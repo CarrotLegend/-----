@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  D",
+    " D ",
+    "NW "
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "W": {
+      "item": "cataclysm:witherite_ingot"
+    }
+  },
+  "result": {
+    "item": "yixiangshouronglu:biological_cleaver",
+    "count": 1
+  }
+}

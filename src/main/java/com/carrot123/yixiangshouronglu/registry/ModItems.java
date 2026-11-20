@@ -22,6 +22,8 @@ import com.carrot123.yixiangshouronglu.item.LegendaryCarrotKingSummonerItem;
 import com.carrot123.yixiangshouronglu.item.MadnessMaskItem;
 import com.carrot123.yixiangshouronglu.item.NocturnalChimeraItem;
 import com.carrot123.yixiangshouronglu.item.UndyingChimeraItem;
+import com.carrot123.yixiangshouronglu.item.BloodthirstyChimeraItem;
+import com.carrot123.yixiangshouronglu.item.GluttonousChimeraItem;
 import com.carrot123.yixiangshouronglu.item.PanaceaItem;
 import com.carrot123.yixiangshouronglu.item.ChamberUpgradeItem;
 import com.carrot123.yixiangshouronglu.item.MobContainerItem;
@@ -117,6 +119,8 @@ public final class ModItems {
 
     public static final RegistryObject<Item> NOCTURNAL_CHIMERA = ITEMS.register("nocturnal_chimera", NocturnalChimeraItem::new);
     public static final RegistryObject<Item> UNDYING_CHIMERA = ITEMS.register("undying_chimera", UndyingChimeraItem::new);
+    public static final RegistryObject<Item> BLOODTHIRSTY_CHIMERA = ITEMS.register("bloodthirsty_chimera", BloodthirstyChimeraItem::new);
+    public static final RegistryObject<Item> GLUTTONOUS_CHIMERA = ITEMS.register("gluttonous_chimera", GluttonousChimeraItem::new);
 
     private ModItems() {
     }

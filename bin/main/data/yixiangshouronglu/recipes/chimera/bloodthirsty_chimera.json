@@ -1,0 +1,40 @@
+{
+  "type": "yixiangshouronglu:chimera_modification",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "cataclysm"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mutantmonsters"
+    }
+  ],
+  "inputs": [
+    {
+      "extract_entity": "cataclysm:the_leviathan",
+      "count": 1
+    },
+    {
+      "gene_source": "mutantmonsters:mutant_zombie",
+      "gene_type": "undying_body",
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:rotten_flesh"
+      },
+      "count": 16
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:diamond"
+      },
+      "count": 16
+    }
+  ],
+  "result": {
+    "item": "yixiangshouronglu:bloodthirsty_chimera",
+    "count": 1
+  }
+}

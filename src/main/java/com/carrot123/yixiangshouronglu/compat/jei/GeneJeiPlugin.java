@@ -74,8 +74,7 @@ public final class GeneJeiPlugin implements IModPlugin {
     private List<ChimeraRecipe> chimeraRecipes = List.of();
     private final java.util.Set<ChimeraRecipe> indexedChimera = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
     private final Set<ResourceLocation> indexedExtracts = new HashSet<>();
-    private final Set<ResourceLocation> indexedGeneSources = new HashSet<>();
-    private List<ModuleExtraction> commonExtractions = List.of();
+    private final Set<String> indexedGeneSources = new HashSet<>();
     private IJeiRuntime runtime;
 
     @Override public ResourceLocation getPluginUid() { return new ResourceLocation("yixiangshouronglu", "genes"); }
@@ -95,32 +94,40 @@ public final class GeneJeiPlugin implements IModPlugin {
             if (source == null) {
                 return IIngredientSubtypeInterpreter.NONE;
             }
-            return context == UidContext.Recipe ? BiologicalGene.fromSource(source).id : source.toString();
+            return source.toString();
         });
         registration.registerSubtypeInterpreter(ModItems.BIOLOGICAL_GENE_MODULE.get(), (stack, context) -> {
             var source = BiologicalGeneModuleItem.validatedSource(stack);
-            return source == null ? IIngredientSubtypeInterpreter.NONE : source.toString();
+            var gene = BiologicalGeneModuleItem.gene(stack);
+            return source == null || gene == null ? IIngredientSubtypeInterpreter.NONE : gene.id + ":" + source;
         });
     }
 
     @Override public void registerAdvanced(IAdvancedRegistration registration) {
         registration.addTypedRecipeManagerPlugin(MODULE_EXTRACTION, new ISimpleRecipeManagerPlugin<ModuleExtraction>() {
             @Override public boolean isHandledInput(ITypedIngredient<?> input) {
-                return false;
+                var type = input.getItemStack().map(GeneFragmentItem::sourceType).orElse(null);
+                var source = type == null ? null : ForgeRegistries.ENTITY_TYPES.getKey(type);
+                return isAdditionalCommonSource(source);
             }
 
             @Override public boolean isHandledOutput(ITypedIngredient<?> output) {
                 var source = output.getItemStack().map(BiologicalGeneModuleItem::validatedSource).orElse(null);
-                return source != null && !source.equals(BiologicalGene.COMMON.displaySource())
-                        && BiologicalGene.fromSource(source) == BiologicalGene.COMMON;
+                return isAdditionalCommonSource(source)
+                        && output.getItemStack().map(BiologicalGeneModuleItem::gene).orElse(null) == BiologicalGene.COMMON;
             }
 
             @Override public List<ModuleExtraction> getRecipesForInput(ITypedIngredient<?> input) {
-                return List.of();
+                if (!isHandledInput(input)) {
+                    return List.of();
+                }
+                var type = GeneFragmentItem.sourceType(input.getItemStack().orElse(ItemStack.EMPTY));
+                return List.of(moduleExtraction(ForgeRegistries.ENTITY_TYPES.getKey(type)));
             }
 
             @Override public List<ModuleExtraction> getRecipesForOutput(ITypedIngredient<?> output) {
-                return isHandledOutput(output) ? commonExtractions : List.of();
+                return isHandledOutput(output) ? List.of(moduleExtraction(BiologicalGeneModuleItem.validatedSource(
+                        output.getItemStack().orElse(ItemStack.EMPTY)))) : List.of();
             }
 
             @Override public List<ModuleExtraction> getAllRecipes() {
@@ -147,7 +154,6 @@ public final class GeneJeiPlugin implements IModPlugin {
         registration.addRecipes(CHIMERA, chimeraRecipes);
         registration.addRecipes(EXTRACTION, ChamberSpecialProducts.availableRules());
         var extractions = moduleExtractions();
-        commonExtractions = extractions.stream().filter(recipe -> recipe.gene() == BiologicalGene.COMMON).toList();
         registration.addRecipes(MODULE_EXTRACTION, extractions);
     }
 
@@ -204,12 +210,10 @@ public final class GeneJeiPlugin implements IModPlugin {
                 .filter(stack -> !stack.isEmpty())
                 .forEach(stacks::add);
         recipes.stream().flatMap(recipe -> recipe.inputs().stream())
-                .map(ChimeraRecipe.Input::geneSource)
-                .filter(Objects::nonNull)
-                .filter(source -> !source.equals(BiologicalGene.fromSource(source).displaySource()))
-                .filter(indexedGeneSources::add)
-                .map(BiologicalGeneModuleItem::displayStackForSource)
-                .filter(stack -> !stack.isEmpty())
+                .filter(input -> input.geneSource() != null)
+                .flatMap(input -> input.displayStacks().stream())
+                .filter(stack -> indexedGeneSources.add(stack.getTag().getString("GeneType") + ":"
+                        + stack.getTag().getString("SourceEntityId")))
                 .forEach(stacks::add);
         if (!stacks.isEmpty()) {
             runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, stacks);
@@ -225,20 +229,29 @@ public final class GeneJeiPlugin implements IModPlugin {
     private static List<ModuleExtraction> moduleExtractions() {
         List<ModuleExtraction> recipes = new ArrayList<>();
         for (BiologicalGene gene : BiologicalGene.values()) {
-            var source = gene.displaySource();
-            if (!ForgeRegistries.ENTITY_TYPES.containsKey(source)) {
-                continue;
-            }
-            var snapshot = new CompoundTag();
-            snapshot.putUUID("UUID", new UUID(0, 0));
-            var fragment = new ItemStack(ModItems.GENE_FRAGMENT.get());
-            fragment.setTag(GeneFragmentItem.sourceData(source, snapshot));
-            var module = BiologicalGeneModuleItem.fromFragment(fragment);
-            if (!module.isEmpty() && BiologicalGeneModuleItem.gene(module) == gene) {
-                recipes.add(new ModuleExtraction(gene, fragment, module));
+            for (var source : gene.displaySources()) {
+                if (ForgeRegistries.ENTITY_TYPES.containsKey(source)) {
+                    var extraction = moduleExtraction(source);
+                    if (!extraction.module().isEmpty() && BiologicalGeneModuleItem.gene(extraction.module()) == gene) {
+                        recipes.add(extraction);
+                    }
+                }
             }
         }
         return recipes;
+    }
+
+    private static boolean isAdditionalCommonSource(ResourceLocation source) {
+        return source != null && !source.equals(BiologicalGene.COMMON.displaySource())
+                && BiologicalGene.fromSource(source) == BiologicalGene.COMMON;
+    }
+
+    private static ModuleExtraction moduleExtraction(ResourceLocation source) {
+        var snapshot = new CompoundTag();
+        snapshot.putUUID("UUID", new UUID(0, 0));
+        var fragment = new ItemStack(ModItems.GENE_FRAGMENT.get());
+        fragment.setTag(GeneFragmentItem.sourceData(source, snapshot));
+        return new ModuleExtraction(BiologicalGene.fromSource(source), fragment, BiologicalGeneModuleItem.fromFragment(fragment));
     }
 
     private record ModuleExtraction(BiologicalGene gene, ItemStack fragment, ItemStack module) {}

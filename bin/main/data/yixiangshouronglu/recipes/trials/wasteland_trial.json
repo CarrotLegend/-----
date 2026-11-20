@@ -1,0 +1,31 @@
+{
+  "type": "gateways:gate_recipe",
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "gateways"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "radiation_zone_reborn"
+    }
+  ],
+  "pattern": [
+    "BBB",
+    "BFB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "radiation_zone_reborn:decayed_stone"
+    },
+    "F": {
+      "item": "yixiangshouronglu:wasteland_dimension_fragment"
+    }
+  },
+  "result": {
+    "item": "gateways:gate_pearl",
+    "count": 1
+  },
+  "gateway": "yixiangshouronglu:wasteland_trial"
+}

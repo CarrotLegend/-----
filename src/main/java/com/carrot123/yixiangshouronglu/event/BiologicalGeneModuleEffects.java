@@ -69,6 +69,11 @@ public final class BiologicalGeneModuleEffects {
             return;
         }
         modules.recount();
+        if (modules.count(BiologicalGene.UNDEAD_TRANSFORMATION) > 0) {
+            player.removeEffect(MobEffects.POISON);
+            player.removeEffect(MobEffects.HUNGER);
+            player.removeEffect(MobEffects.WITHER);
+        }
         MutantGeneSkills.regeneration(player, modules.count(BiologicalGene.UNDYING_BODY) > 0);
         LegendaryGeneAttacks.discardUnequipped(player, modules);
         refreshFallenForm(player, modules);
@@ -298,6 +303,9 @@ public final class BiologicalGeneModuleEffects {
             refreshFallenForm(player, modules);
         }
         LegendaryGeneAttacks.tick(player, modules, now);
+        if (modules.tickUndeadHealing(player.isAlive()) && player.getHealth() < player.getMaxHealth()) {
+            player.heal(1.0F);
+        }
         if (modules.tickWaterHealing(player.isAlive() && player.isInWater())
                 && player.getHealth() < player.getMaxHealth()) {
             player.heal(BiologicalGene.WATER_HEAL);
@@ -358,6 +366,14 @@ public final class BiologicalGeneModuleEffects {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void preventHunger(MobEffectEvent.Applicable event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            var modules = PlayerGeneModules.getIfPresent(player);
+            var effect = event.getEffectInstance().getEffect();
+            if (modules != null && modules.count(BiologicalGene.UNDEAD_TRANSFORMATION) > 0
+                    && (effect == MobEffects.POISON || effect == MobEffects.HUNGER || effect == MobEffects.WITHER)) {
+                event.setResult(Event.Result.DENY);
+            }
+        }
         if (event.getEffectInstance().getEffect() == MobEffects.HUNGER && event.getEntity() instanceof ServerPlayer player) {
             var modules = PlayerGeneModules.getIfPresent(player);
             if (modules != null && modules.count(BiologicalGene.QUICKSAND_METABOLISM) > 0) {

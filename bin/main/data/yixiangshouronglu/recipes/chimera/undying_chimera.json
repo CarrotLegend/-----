@@ -1,0 +1,39 @@
+{
+  "type": "yixiangshouronglu:chimera_modification",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "hardtodestroyreptile"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "mutantmonsters"
+    }
+  ],
+  "inputs": [
+    {
+      "extract_entity": "hardtodestroyreptile:the_hard_to_destroy_reptile_small",
+      "count": 2
+    },
+    {
+      "gene_source": "mutantmonsters:mutant_zombie",
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:rotten_flesh"
+      },
+      "count": 12
+    },
+    {
+      "ingredient": {
+        "tag": "yixiangshouronglu:raw_meats"
+      },
+      "count": 12
+    }
+  ],
+  "result": {
+    "item": "yixiangshouronglu:undying_chimera",
+    "count": 1
+  }
+}

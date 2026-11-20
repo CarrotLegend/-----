@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    }
+  ],
+  "pattern": [
+    "BBB",
+    "BFB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "twilightforest:weathered_deadrock"
+    },
+    "F": {
+      "item": "yixiangshouronglu:twilight_dimension_fragment"
+    }
+  },
+  "result": {
+    "item": "yixiangshouronglu:twilight_dimension_core",
+    "count": 1
+  }
+}

@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "yixiangshouronglu:searing_burn",
     "minecraft:magic",
     "minecraft:indirect_magic",
     "yixiangshouronglu:chill"

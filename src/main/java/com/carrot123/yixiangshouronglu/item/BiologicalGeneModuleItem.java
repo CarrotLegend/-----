@@ -36,13 +36,17 @@ public final class BiologicalGeneModuleItem extends Item {
     }
 
     public static ItemStack displayStackForSource(ResourceLocation source) {
-        if (!ForgeRegistries.ENTITY_TYPES.containsKey(source)) {
+        return displayStackForSource(source, BiologicalGene.fromSource(source));
+    }
+
+    public static ItemStack displayStackForSource(ResourceLocation source, BiologicalGene gene) {
+        if (!ForgeRegistries.ENTITY_TYPES.containsKey(source) || !gene.supportsSource(source)) {
             return ItemStack.EMPTY;
         }
         var data = new CompoundTag();
         data.putString("id", source.toString());
         data.putUUID("UUID", new UUID(0, 0));
-        return create(source, data);
+        return create(source, data, gene);
     }
 
     @Nullable
@@ -51,9 +55,13 @@ public final class BiologicalGeneModuleItem extends Item {
     }
 
     private static ItemStack create(ResourceLocation source, CompoundTag snapshot) {
+        return create(source, snapshot, BiologicalGene.fromSource(source));
+    }
+
+    private static ItemStack create(ResourceLocation source, CompoundTag snapshot, BiologicalGene gene) {
         ItemStack stack = new ItemStack(ModItems.BIOLOGICAL_GENE_MODULE.get());
         CompoundTag data = stack.getOrCreateTag();
-        data.putString("GeneType", BiologicalGene.fromSource(source).id);
+        data.putString("GeneType", gene.id);
         data.putString("SourceEntityId", source.toString());
         data.put("EntityData", snapshot.copy());
         return stack;
@@ -69,8 +77,8 @@ public final class BiologicalGeneModuleItem extends Item {
         if (source == null) {
             return null;
         }
-        BiologicalGene gene = BiologicalGene.fromSource(source);
-        if (!gene.id.equals(tag.getString("GeneType"))) {
+        BiologicalGene gene = BiologicalGene.byId(tag.getString("GeneType"));
+        if (gene == null || !gene.supportsSource(source)) {
             return null;
         }
         var fragmentData = new CompoundTag();
@@ -114,6 +122,11 @@ public final class BiologicalGeneModuleItem extends Item {
             line(tooltip, "shock_cooldown", BiologicalGene.SHOCK_COOLDOWN / 20);
         }
         switch (gene) {
+            case GLUTTONY -> line(tooltip, "gluttony_food");
+            case UNDEAD_TRANSFORMATION -> {
+                line(tooltip, "undead_immunity");
+                line(tooltip, "undead_healing");
+            }
             case SOULFIRE_REACTOR_CORE -> {
                 line(tooltip, "incinerator_attack", 100);
                 line(tooltip, "all_damage", BiologicalGene.SOULFIRE_DAMAGE_PERCENT);

@@ -1,0 +1,31 @@
+{
+  "type": "gateways:gate_recipe",
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "gateways"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "iceandfire"
+    }
+  ],
+  "pattern": [
+    "BBB",
+    "BFB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "iceandfire:dragonbone"
+    },
+    "F": {
+      "item": "yixiangshouronglu:dragon_nest_dimension_fragment"
+    }
+  },
+  "result": {
+    "item": "gateways:gate_pearl",
+    "count": 1
+  },
+  "gateway": "yixiangshouronglu:dragon_nest_trial"
+}

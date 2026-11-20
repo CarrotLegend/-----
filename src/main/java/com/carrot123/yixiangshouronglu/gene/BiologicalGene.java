@@ -4,6 +4,8 @@ import com.carrot123.yixiangshouronglu.menu.GeneModificationMenu;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public enum BiologicalGene {
     COMMON("common", null, 0, 20, 0, 2, 1),
     SPINAL_VOIDIZATION("spinal_voidization", "cataclysm:ender_guardian", 1, 4, 2, 20, 4),
@@ -44,7 +46,9 @@ public enum BiologicalGene {
     HOGLIN_MUSCLE_BUNDLES("hoglin_muscle_bundles", "mutantmore:mutant_hoglin", 5, 8, 0, 20, 6),
     FROZEN_CIRCULATORY_TISSUE("frozen_circulatory_tissue", "mutantmore:mutant_frozen_zombie", 9, 12, 0, 8, 0),
     PLANT_MUSCLE_FIBERS("plant_muscle_fibers", "mutantmore:mutant_jungle_zombie", 5, 8, 0, 0, 5),
-    ARACHNID_APONEUROSIS("arachnid_aponeurosis", "mutantmonsters:spider_pig", 5, 8, 0, 0, 0);
+    ARACHNID_APONEUROSIS("arachnid_aponeurosis", "mutantmonsters:spider_pig", 5, 8, 0, 0, 0),
+    GLUTTONY("gluttony", "minecraft:pig", 9, 12, 0, 0, 0),
+    UNDEAD_TRANSFORMATION("undead_transformation", "minecraft:zombie", 0, 20, 0, 0, 0);
 
     public static final int BLAZING_MUSCLES_BURN_SECONDS = 4;
     public static final int ENDER_TELEPORT_COOLDOWN = 600;
@@ -130,7 +134,7 @@ public enum BiologicalGene {
 
     public static BiologicalGene fromSource(ResourceLocation source) {
         for (BiologicalGene gene : values()) {
-            if (source.equals(gene.source)) {
+            if (gene != COMMON && gene.supportsSource(source)) {
                 return gene;
             }
         }
@@ -138,7 +142,34 @@ public enum BiologicalGene {
     }
 
     public ResourceLocation displaySource() {
-        return source == null ? new ResourceLocation("minecraft", "zombie") : source;
+        return source == null ? new ResourceLocation("minecraft", "cow") : source;
+    }
+
+    @Nullable
+    public static BiologicalGene byId(String id) {
+        for (BiologicalGene gene : values()) {
+            if (gene.id.equals(id)) {
+                return gene;
+            }
+        }
+        return null;
+    }
+
+    public List<ResourceLocation> displaySources() {
+        if (this == UNDEAD_TRANSFORMATION) {
+            return List.of(source, new ResourceLocation("minecraft:skeleton"),
+                    new ResourceLocation("minecraft:husk"), new ResourceLocation("minecraft:stray"),
+                    new ResourceLocation("dungeonsmobs:jungle_zombie"), new ResourceLocation("dungeonsmobs:frozen_zombie"));
+        }
+        return List.of(displaySource());
+    }
+
+    public boolean supportsSource(ResourceLocation candidate) {
+        if (this == COMMON) {
+            BiologicalGene current = fromSource(candidate);
+            return current == COMMON || current == GLUTTONY || current == UNDEAD_TRANSFORMATION;
+        }
+        return this == UNDEAD_TRANSFORMATION ? displaySources().contains(candidate) : candidate.equals(source);
     }
 
     public boolean allowsSlot(int slot) {

@@ -37,6 +37,8 @@ public final class PlayerGeneModules {
     private int rageStacks;
     private long rageExpiresAt;
     private int waterTicks;
+    private int undeadTicks;
+    private int gluttonyRemainder;
     private UUID skyTarget;
     private int skyHits;
     private long skyReadyAt;
@@ -93,6 +95,9 @@ public final class PlayerGeneModules {
         }
         if (count(BiologicalGene.ABYSSAL_CIRCULATION) == 0) {
             waterTicks = 0;
+        }
+        if (count(BiologicalGene.UNDEAD_TRANSFORMATION) == 0) {
+            undeadTicks = 0;
         }
         if (count(BiologicalGene.SKY_STORM_CORE) == 0) {
             clearSkyCombo();
@@ -193,6 +198,27 @@ public final class PlayerGeneModules {
         return now >= chainReadyAt;
     }
 
+    public int gluttonyBonus(int nutrition) {
+        if (nutrition <= 0 || count(BiologicalGene.GLUTTONY) == 0) {
+            return 0;
+        }
+        long quarters = (long) nutrition + gluttonyRemainder;
+        gluttonyRemainder = (int) (quarters % 4);
+        return (int) Math.min(20, quarters / 4);
+    }
+
+    public boolean tickUndeadHealing(boolean alive) {
+        if (!alive || count(BiologicalGene.UNDEAD_TRANSFORMATION) == 0) {
+            undeadTicks = 0;
+            return false;
+        }
+        if (++undeadTicks < 40) {
+            return false;
+        }
+        undeadTicks = 0;
+        return true;
+    }
+
     public void startChainCooldown(long now) {
         chainReadyAt = now + 160;
     }
@@ -249,6 +275,7 @@ public final class PlayerGeneModules {
         tag.putLong("SkyReadyAt", skyReadyAt);
         tag.putLong("FallenReadyAt", fallenReadyAt);
         tag.putLong("AnnihilationReadyAt", annihilationReadyAt);
+        tag.putInt("GluttonyRemainder", gluttonyRemainder);
         return tag;
     }
 
@@ -269,6 +296,8 @@ public final class PlayerGeneModules {
         endFallenForm();
         clearRage();
         waterTicks = 0;
+        undeadTicks = 0;
+        gluttonyRemainder = Math.floorMod(tag.getInt("GluttonyRemainder"), 4);
         recount();
     }
 

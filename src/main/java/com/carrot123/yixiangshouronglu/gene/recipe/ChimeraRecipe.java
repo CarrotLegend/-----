@@ -1,5 +1,6 @@
 package com.carrot123.yixiangshouronglu.gene.recipe;
 
+import com.carrot123.yixiangshouronglu.gene.BiologicalGene;
 import com.carrot123.yixiangshouronglu.item.BiologicalGeneModuleItem;
 import com.carrot123.yixiangshouronglu.item.ContainmentExtractItem;
 import com.carrot123.yixiangshouronglu.registry.ModGeneRecipes;
@@ -25,14 +26,20 @@ public final class ChimeraRecipe implements Recipe<Container> {
     public static final int DURATION = 60;
     private static final int INPUT_SLOTS = 4;
     public record Input(Ingredient ingredient, int count, @Nullable ResourceLocation extractEntity,
-                        @Nullable ResourceLocation geneSource) {
+                        @Nullable ResourceLocation geneSource, @Nullable BiologicalGene geneType) {
+        public Input(Ingredient ingredient, int count, @Nullable ResourceLocation extractEntity,
+                     @Nullable ResourceLocation geneSource) {
+            this(ingredient, count, extractEntity, geneSource, null);
+        }
+
         public Input(Ingredient ingredient, int count, @Nullable ResourceLocation extractEntity) {
             this(ingredient, count, extractEntity, null);
         }
 
         boolean matches(ItemStack stack) {
             if (geneSource != null) {
-                return geneSource.equals(BiologicalGeneModuleItem.validatedSource(stack));
+                return geneSource.equals(BiologicalGeneModuleItem.validatedSource(stack))
+                        && (geneType == null || BiologicalGeneModuleItem.gene(stack) == geneType);
             }
             if (extractEntity != null) {
                 return stack.getCount() >= count && stack.is(ModItems.CONTAINMENT_EXTRACT.get())
@@ -43,7 +50,8 @@ public final class ChimeraRecipe implements Recipe<Container> {
 
         public List<ItemStack> displayStacks() {
             if (geneSource != null) {
-                ItemStack stack = BiologicalGeneModuleItem.displayStackForSource(geneSource);
+                ItemStack stack = BiologicalGeneModuleItem.displayStackForSource(geneSource,
+                        geneType == null ? BiologicalGene.fromSource(geneSource) : geneType);
                 return stack.isEmpty() ? List.of() : List.of(stack);
             }
             if (extractEntity != null) {
@@ -128,12 +136,19 @@ public final class ChimeraRecipe implements Recipe<Container> {
                 int count = count(input);
                 if (input.has("gene_source")) {
                     ResourceLocation source = ResourceLocation.tryParse(GsonHelper.getAsString(input, "gene_source"));
+                    BiologicalGene geneType = input.has("gene_type")
+                            ? BiologicalGene.byId(GsonHelper.getAsString(input, "gene_type")) : null;
                     if (input.has("ingredient") || input.has("extract_entity") || count != 1 || source == null
-                            || BiologicalGeneModuleItem.validatedSource(BiologicalGeneModuleItem.displayStackForSource(source)) == null) {
+                            || input.has("gene_type") && geneType == null
+                            || source != null && BiologicalGeneModuleItem.validatedSource(BiologicalGeneModuleItem.displayStackForSource(
+                                    source, geneType == null ? BiologicalGene.fromSource(source) : geneType)) == null) {
                         throw new JsonSyntaxException("Invalid or unavailable chimera gene source: " + input.get("gene_source"));
                     }
-                    inputs.add(new Input(Ingredient.of(ModItems.BIOLOGICAL_GENE_MODULE.get()), count, null, source));
+                    inputs.add(new Input(Ingredient.of(ModItems.BIOLOGICAL_GENE_MODULE.get()), count, null, source, geneType));
                     continue;
+                }
+                if (input.has("gene_type")) {
+                    throw new JsonSyntaxException("Chimera gene_type requires gene_source");
                 }
                 if (input.has("extract_entity")) {
                     ResourceLocation entity = ResourceLocation.tryParse(

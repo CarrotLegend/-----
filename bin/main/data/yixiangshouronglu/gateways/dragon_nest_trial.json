@@ -1,0 +1,48 @@
+{
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "iceandfire"
+    }
+  ],
+  "size": "large",
+  "color": "#DCA43F",
+  "spawn_algorithm": "gateways:open_field",
+  "waves": [
+    {
+      "entities": [
+        {
+          "entity": "iceandfire:fire_dragon",
+          "count": 1
+        },
+        {
+          "entity": "iceandfire:ice_dragon",
+          "count": 1
+        },
+        {
+          "entity": "iceandfire:lightning_dragon",
+          "count": 1
+        }
+      ],
+      "modifiers": [],
+      "rewards": [],
+      "max_wave_time": 24000,
+      "setup_time": 300
+    }
+  ],
+  "rewards": [
+    {
+      "type": "gateways:stack",
+      "stack": {
+        "item": "yixiangshouronglu:dragon_nest_dimension_core",
+        "count": 1
+      }
+    }
+  ],
+  "failures": [],
+  "rules": {
+    "follow_range_boost": 0,
+    "spawn_range": 32,
+    "leash_range": 80
+  }
+}
